@@ -1,0 +1,18 @@
+@startuml ER Diagram
+' hide the spot
+hide circle
+
+' avoid problems with angled crows feet
+skinparam linetype ortho
+
+entity microsoftUsersOverrides{
+    *toUserId: string,
+    *reportees: string[],
+    *status: string,
+    *acknowledgedBy: string,
+    *acceptedBy: string,
+    *rejectedBy: string,
+    *isActive: string,
+    *mailRequestId: string,
+}
+@enduml
