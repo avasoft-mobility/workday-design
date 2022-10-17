@@ -1,0 +1,97 @@
+@startuml ER Diagram
+' hide the spot
+hide circle
+
+' avoid problems with angled crows feet
+skinparam linetype ortho
+
+entity microsoft_users{
+    *_id: number
+    --
+    *userId: string,
+    *name: string,
+    *role: string,
+    *practice: string,
+    *mail: string,
+    *employeeId: string,
+    *reportings: string,
+    *last_access: Date,
+    *managerId: string,
+    *isAdmin: Boolean,
+}
+
+entity microsoft_users_overrides{
+    *_id: number
+    --
+    *toUserId: string,
+    *reportees: string[],
+    *status: string,
+    *acknowledgedBy: string,
+    *acceptedBy: string,
+    *rejectedBy: string,
+    *isActive: string,
+    *mailRequestId: string,
+}
+
+entity leader_ships{
+    *_id: number
+    --
+    *microsoftUserId: string,
+    *name: string,
+    *domain: string,
+    *mail: string,
+    *hrpoc: string,
+    *hrmail: string,
+}
+
+entity tags{
+    *_id: number
+    --
+    *microsoftUserId: string,
+    *tagName: string,
+    *type: string,
+    *createdAt: Date 
+    *updatedAt: Date,
+}
+
+entity todos{
+    *_id: number
+    --
+    *microsoftUserId: string,
+    *title: string,
+    *comments: string,
+    *status: string 
+    *type: string,
+    *eta: number,
+    *ata: number,
+    *date: Date,
+    *tags: string[],
+}
+
+entity attendance{
+    *_id: number
+    --
+    *microsoftUserId: string,
+    *attendance_status: string,
+    *date: Date,
+    *createdAt: Date 
+    *updatedAt: Date,
+}
+
+entity mobile_version{
+    *_id: number
+    --
+    *isRequired: Boolean,
+    *appId: string,
+    *latestVersion: string,
+    *createdAt: Date 
+    *updatedAt: Date,
+}
+
+microsoft_users ||..o{ todos
+microsoft_users ||..o{ tags
+microsoft_users ||..o{ attendance
+todos ||..o{ tags
+
+
+@enduml

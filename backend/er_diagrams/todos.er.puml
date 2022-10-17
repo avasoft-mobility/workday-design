@@ -1,0 +1,22 @@
+@startuml ER Diagram
+' hide the spot
+hide circle
+
+' avoid problems with angled crows feet
+skinparam linetype ortho
+
+entity todos{
+    *_id: number
+    --
+    *microsoftUserId: string,
+    *title: string,
+    *comments: string,
+    *status: string 
+    *type: string,
+    *eta: number,
+    *ata: number,
+    *date: Date,
+    *tags: string[],
+}
+
+@enduml
