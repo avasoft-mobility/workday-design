@@ -1,0 +1,35 @@
+@startuml Helloworld
+participant Client #64D1AF
+participant app.ts
+participant MobileAppController.ts
+participant DB #FFC0CB
+
+Client -> app.ts : "/mobile/versions"
+activate Client #D3D3D3
+activate app.ts #D3D3D3
+app.ts -> MobileAppController.ts : (**GET**) "/mobile/versions"
+activate MobileAppController.ts #D3D3D3
+
+MobileAppController.ts -> DB : Request for get mobileapp version with appId and assign it to \na variable **mobileVersion**
+
+activate DB #D16587
+DB -> DB : MobileVersionDb.find({appid: req.query["appId"]});
+
+MobileAppController.ts <-- DB : return MobileVersionBO[] | []
+
+deactivate DB
+
+alt case: **mobileVersion** is null
+    MobileAppController.ts -> MobileAppController.ts : if  **mobileVersion** is null
+    app.ts <-- MobileAppController.ts  : status: 404,\n message: No result available for this app ID.
+end
+
+app.ts <-- MobileAppController.ts  : status: 200,\ndata: **mobileVersion**
+
+deactivate MobileAppController.ts
+
+Client <-- app.ts :  return response with response.code and response.body
+
+deactivate app.ts
+deactivate Client
+@enduml

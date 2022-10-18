@@ -1,0 +1,84 @@
+@startuml Helloworld
+participant Client #64D1AF
+participant app.ts
+participant MobileAppController.ts
+participant DB #FFC0CB
+
+Client -> app.ts : "/mobile/versions"
+activate Client #D3D3D3
+activate app.ts #D3D3D3
+app.ts -> MobileAppController.ts : (**POST**) "/mobile/versions"
+activate MobileAppController.ts #D3D3D3
+
+alt case : appId doesn't \n exist in query params 
+    MobileAppController.ts -> MobileAppController.ts : !req.query["appId"] or req.query["appId"] === ""
+    activate  MobileAppController.ts #D16587
+        app.ts <-- MobileAppController.ts  : status: 401,\nmessage: appId is required.
+    deactivate MobileAppController.ts
+end
+
+alt case : body doesn't \n available or latestversion \n doesn't available in  body
+    MobileAppController.ts -> MobileAppController.ts : !req.body["latestversion"] ||\n !req.body["latestversion"] === ""
+    activate  MobileAppController.ts #D16587
+        app.ts <-- MobileAppController.ts  : status: 401,\n message: latest version is required.
+    deactivate MobileAppController.ts
+end
+
+alt case : body doesn't \n have isrequired \n doesn't available in  body
+    MobileAppController.ts -> MobileAppController.ts : !req.body["isrequired"]
+    activate  MobileAppController.ts #D16587
+        app.ts <-- MobileAppController.ts  : status: 401,\n message: parameter 'isrequired' must be passed.
+    deactivate MobileAppController.ts
+end
+
+MobileAppController.ts -> MobileAppController.ts : declare a variable appID assign \nvalue req.query["appId"].toString()
+
+activate MobileAppController.ts #D16587 
+
+MobileAppController.ts -> MobileAppController.ts : call updateMobileVerison with appId, latestVersion and isRequired \nand assign return value to **Updatedversion**
+
+MobileAppController.ts -> DB : find mobileverion with appId and assign \nthe value to **queryResult** variable
+
+activate DB #D16587
+DB -> DB : MobileVersionDb.find({appid: appid});
+
+MobileAppController.ts <-- DB : return MobileVersionBO[] | []
+
+deactivate DB
+
+alt case: queryResult.length !== 0
+    MobileAppController.ts -> DB : request for update mobileapp varsion
+    activate DB #D16587
+    note right of DB : newItem : {\n\tappid: appid, \n\tlatestversion: latestversion,\n\tisrequired: isrequired,\n}
+
+    DB -> DB : MobileVersionDb.find({appid: newItem.appid}).updateOne(newItem);
+
+    MobileAppController.ts <-- DB : return updated response
+    deactivate DB
+else 
+    MobileAppController.ts -> DB : request for create mobileapp varsion
+    activate DB #D16587
+    note right of DB : newItem : {\n\tappid: appid, \n\tlatestversion: latestversion,\n\tisrequired: isrequired,\n}
+
+    DB -> DB : MobileVersionDb.create(newItem);
+
+    MobileAppController.ts <-- DB : return created response
+    deactivate DB
+end
+
+deactivate MobileAppController.ts
+
+
+alt case: **Updateversion** is undefined
+    app.ts <-- MobileAppController.ts  : status: 404,\n message: No creation or updation happend.
+else 
+    app.ts <-- MobileAppController.ts  : status: 200,\ndata: **Updateversion**
+end
+
+deactivate MobileAppController.ts
+
+Client <-- app.ts :  return response with response.code and response.body
+
+deactivate app.ts
+deactivate Client
+@enduml

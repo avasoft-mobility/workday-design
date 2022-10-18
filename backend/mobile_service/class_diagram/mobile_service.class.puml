@@ -1,0 +1,20 @@
+@startuml Mobile Service
+
+class MobileAppController {
+  updateMobileVersion  \t\t:MobileVersionBO
+}
+
+
+entity MobileVersionBO {
+  _id \t\t\tstring
+  ..
+  appid \t\tstring
+  ..
+  isrequired \tboolean
+  ..
+  latestversion \tstring
+  ..
+  __v \t\t\tnumber
+}
+
+@enduml
