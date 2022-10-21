@@ -1,0 +1,33 @@
+@startuml getCommonTags
+participant Client #64D1AF
+participant app.ts
+participant commonTags.controller.ts
+participant commonTags.service.ts
+participant DB #FFC0CB
+
+Client -> app.ts : "/tags/private/common"
+activate Client #D3D3D3
+activate app.ts #D3D3D3
+
+app.ts -> commonTags.controller.ts : (**GET**) "/"
+activate commonTags.controller.ts #D3D3D3
+
+commonTags.controller.ts -> commonTags.service.ts : **getCommonTags()**
+activate commonTags.service.ts #D3D3D3
+
+commonTags.service.ts -> DB : tags.find(query)
+activate DB #D3D3D3
+note right of DB: query: {microsoftUserId: { $exists: false }}
+
+commonTags.service.ts <-- DB : return Tag[]\nstore the Tag array response in variable allTags
+deactivate DB
+
+commonTags.controller.ts <-- commonTags.service.ts: return\nCommonTagResponse\n(body: allTags, message: "successful", code: 200)
+deactivate commonTags.service.ts
+
+app.ts <-- commonTags.controller.ts: return CommonTagResponse
+deactivate commonTags.controller.ts
+
+Client <-- app.ts : return CommonTagResponse
+deactivate app.ts
+@enduml

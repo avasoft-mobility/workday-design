@@ -1,0 +1,40 @@
+@startuml getCommonTags
+participant Client #64D1AF
+participant app.ts
+participant commonTags.controller.ts
+participant commonTags.service.ts
+participant DB #FFC0CB
+
+Client -> app.ts : "/tags/private/common"
+activate Client #D3D3D3
+activate app.ts #D3D3D3
+
+app.ts -> commonTags.controller.ts : (**GET**) "/:tagId"
+activate commonTags.controller.ts #D3D3D3
+
+commonTags.controller.ts -> commonTags.service.ts : **getCommonTags(tagId)**
+activate commonTags.service.ts #D3D3D3
+
+alt tagId && !isValidObjectId(tagId)
+    commonTags.controller.ts <-- commonTags.service.ts : return CommonTagResponse\n(code: 400, message: Id is not valid)
+end
+
+alt tagId
+    commonTags.service.ts -> DB : tags.findById(query)
+    activate DB #D3D3D3
+    note right of DB: query: { _id: tagId }
+    commonTags.service.ts <-- DB : return Tag\nstore the Tag object in variable tag
+    deactivate DB
+    alt !tag
+        commonTags.controller.ts <-- commonTags.service.ts : return CommonTagResponse\n(code: 404, message: Id not exist)
+    else tag exist
+        return return CommonTagResponse\n(code: 200, message: "successful", body: tag)
+    end
+end
+
+app.ts <-- commonTags.controller.ts: return CommonTagResponse
+deactivate commonTags.controller.ts
+
+Client <-- app.ts : return CommonTagResponse
+deactivate app.ts
+@enduml

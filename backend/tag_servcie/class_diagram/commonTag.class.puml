@@ -1,0 +1,33 @@
+@startuml CommonTagClassDiagram
+
+class commonTagsService {
+  getCommonTag(): \t\t return CommonTagResponse
+  ..
+  createCommonTag(): \t return CommonTagResponse
+  ..
+  editCommonTag(): \t\t return CommonTagResponse
+  ..
+  deleteCommonTag(): \t return CommonTagResponse
+}
+
+class CommonTagResponse{
+    code: number
+    message: string
+    body: Tag | Tag[]
+}
+
+entity Tag{
+    _id: \t\t\t\t string
+    ..
+    microsoftUserId: \t string
+    ..
+    tagName: \t\tstring 
+    ..
+    type: \t\t\t string
+    ..
+    createdAt: \t\t string
+    ..
+    updatedAt: \t\t string
+}
+
+@endumlsss
