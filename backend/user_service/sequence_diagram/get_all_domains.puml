@@ -1,0 +1,34 @@
+@startuml get all domains
+participant Client #64D1AF
+participant app.ts
+participant microsoftUser.router.ts
+participant microsoftUser.service.ts
+participant DB #FFC0CB
+
+Client -> app.ts : "/users"
+activate Client #D3D3D3
+    activate app.ts #D3D3D3
+        app.ts -> microsoftUser.router.ts : (**get**) "/domains"
+        activate microsoftUser.router.ts #D3D3D3
+            microsoftUser.router.ts -> microsoftUser.service.ts : getAllDomains()
+            activate microsoftUser.service.ts #D3D3D3
+                microsoftUser.service.ts -> DB :microsoftUsersSchema.distinct("practice")
+                activate DB #D3D3D3
+                    microsoftUser.service.ts <-- DB :string[]
+                deactivate DB
+                microsoftUser.service.ts -> microsoftUser.service.ts : get the return string[]\n and save that in a variable\n called **allDomains**
+                microsoftUser.router.ts <-- microsoftUser.service.ts : string[]
+            deactivate microsoftUser.service.ts
+            microsoftUser.router.ts -> microsoftUser.router.ts : get the result\n and save it in a variable\n called **result**
+            alt case: **result** is undefined
+                app.ts <-- microsoftUser.router.ts : status:400,\n message: No domains found. 
+            end
+            Client <-- app.ts: status:400,\n message: No domains found.
+            alt case: **result** is defined
+                app.ts <-- microsoftUser.router.ts : status:200,\n body: result. 
+            end
+            Client <-- app.ts:  status:200,\n body: result.
+        deactivate microsoftUser.router.ts
+    deactivate app.ts
+deactivate Client
+@enduml

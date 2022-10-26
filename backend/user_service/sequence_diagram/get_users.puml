@@ -1,0 +1,36 @@
+@startuml get all users
+participant Client #64D1AF
+participant app.ts
+participant microsoftUser.router.ts
+participant microsoftUser.service.ts
+participant DB #FFC0CB
+
+Client -> app.ts : "/users"
+activate Client #D3D3D3
+    activate app.ts #D3D3D3
+        app.ts -> microsoftUser.router.ts : (**get**) "/"
+        activate microsoftUser.router.ts #D3D3D3
+            microsoftUser.router.ts -> microsoftUser.service.ts : getAllUsers()
+            activate microsoftUser.service.ts #D3D3D3
+                microsoftUser.service.ts -> DB :microsoftUsersSchema.find()
+                activate DB #D3D3D3
+                    microsoftUser.service.ts <-- DB :TeamReport[]
+                deactivate DB
+                microsoftUser.service.ts -> microsoftUser.service.ts : get the return TeamReport[]\n and save that in a variable\n called **allUsers**
+                microsoftUser.router.ts <-- microsoftUser.service.ts : TeamReport[]
+            deactivate microsoftUser.service.ts
+            microsoftUser.router.ts -> microsoftUser.router.ts : get the result\n and save it in a variable\n called **result**
+            alt case: **result** is undefined
+                app.ts <-- microsoftUser.router.ts : status:400,\n message: No users found. 
+            end
+            Client <-- app.ts: status:400,\n message: No users found.
+            alt case: **result** is defined
+                app.ts <-- microsoftUser.router.ts : status:200,\n body: result. 
+            end
+            Client <-- app.ts:  status:200,\n body: result.
+        deactivate microsoftUser.router.ts
+
+
+    deactivate app.ts
+deactivate Client
+@enduml
