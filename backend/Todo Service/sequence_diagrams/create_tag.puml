@@ -1,0 +1,82 @@
+@startuml create tag
+participant Client #64D1AF
+participant app.ts
+participant tags.controller.ts
+participant tags.service.ts
+participant UsersLambda 
+participant DB #FFC0CB
+
+Client -> app.ts : "/tags"
+activate Client #D3D3D3
+activate app.ts #D3D3D3
+app.ts -> tags.controller.ts : (**POST**) "/"
+activate tags.controller.ts #D3D3D3
+
+alt case :userID doesn't \n exist in query params
+    tags.controller.ts -> tags.controller.ts : !req.query["userId"]
+    activate  tags.controller.ts #D16587
+        app.ts <-- tags.controller.ts  : status: 400,\nmessage: userId is required.
+    deactivate tags.controller.ts
+end
+
+Client <-- app.ts : status: 400,\nmessage: userId is required.
+
+alt case : body doesn't \n available or tagname \n doesn't available in  body
+    tags.controller.ts -> tags.controller.ts : !req.body ||\n !req.body["tagname"]
+    activate  tags.controller.ts #D16587
+        app.ts <-- tags.controller.ts  : status: 400,\n message:tag name is required.
+    deactivate tags.controller.ts
+end
+
+Client <-- app.ts :  status: 400,\n message:tag name is required
+
+
+tags.controller.ts -> tags.service.ts : createTag(req.query["userId"] as string,\n req.body["tagname"],\n req.body["type"] ? req.body["type"] : undefined)
+activate tags.service.ts #D3D3D3
+
+tags.service.ts -> UsersLambda : `/users/${userId}/managers`
+activate UsersLambda #D3D3D3
+tags.service.ts <-- UsersLambda : MicrosoftUser[]
+deactivate UsersLambda
+
+tags.service.ts -> tags.service.ts : save the return response in the \n variable called **managers**
+loop map managers
+tags.service.ts -> tags.service.ts : loop the **managers** and\n store each MicrosoftUser\n userId in a variable called\n **managerIds** 
+end
+
+tags.service.ts -> tags.service.ts : isTagExist(userId,\n managerIds, tagname)
+activate tags.service.ts #D16587
+    tags.service.ts -> DB : tagsSchema.finisTagExistd(query)
+    activate DB #D3D3D3
+    note right of DB : query :{\n $or: [{$and: [\n{ tagName: tagname }, { microsoftUserId: `${userId}` }],},\n{$and: [\n{ tagName: tagname },\n{ microsoftUserId: { $in: managerIds } },\n{ type: "team" },],},\n{$and: [\n{ tagName: tagname },\n microsoftUserId: {\n $exists: false,\n},},]\n,},],\n}
+    tags.service.ts <-- DB : tags[]
+    deactivate DB
+    tags.service.ts -> tags.service.ts : save the return response\n in the variable called **tags**
+    alt case: tags is not empty
+    tags.service.ts -> tags.service.ts : return true
+    end 
+    tags.service.ts -> tags.service.ts : return false
+deactivate tags.service.ts
+tags.service.ts -> tags.service.ts : save the return response\n from the **isTagExist** method\n in the variable called\n **isTagNameExist**
+alt case: isTagNameExist is true
+tags.controller.ts <-- tags.service.ts : code: 400,\n message: "Tag name already exist"
+end
+tags.service.ts -> DB : tags.create(item)
+activate DB #D3D3D3
+note right of DB : item = {\nmicrosoftUserId: userId,\ntagName: tagname,\ntype: tagType,\n};
+tags.service.ts <-- DB : tags
+deactivate DB
+tags.service.ts -> tags.service.ts : save the return response\n in a variable called **result**
+tags.controller.ts <-- tags.service.ts : code: 201,\n message: "Tag created successfully",\n data: result
+deactivate tags.service.ts
+tags.controller.ts -> tags.controller.ts : save the return response\n in the variable called **response**
+alt case : reponse.code is 400
+app.ts <-- tags.controller.ts : status : response.code,\n message: response.message.
+end
+Client <-- app.ts: response.code,\n message: response.message.
+app.ts <-- tags.controller.ts : status:201,\n message: response.data
+Client <-- app.ts: status:201,\n message: response.data
+
+deactivate app.ts
+deactivate Client
+@enduml
