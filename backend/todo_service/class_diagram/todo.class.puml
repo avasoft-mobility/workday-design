@@ -1,0 +1,114 @@
+@startuml CommonTagClassDiagram
+
+class todosService {
+  getTodos(): \t\t\t\t return TodoResponse
+  ..
+  getTodosForStats(): \t\t return ServiceResponse<TodoStats>
+  ..
+  getHiveTodos(): \t\t\t return ServiceResponse<HiveTodo[]>
+  ..
+  fetchTodoDefaultTags(): \t\t return string[]
+  ..
+  getTodosByDate(): \t\t\t return TodoResponse
+  ..
+  getTodosByMonth(): \t\t return TodoResponse
+  ..
+  getTodosByMultipleDates(): \t return TodoResponse
+  ..
+  getMultiUserTodosByDate(): \t return Todo[]
+  ..
+  createTodo(): \t\t\t\t return TodoResponse
+  ..
+  createRecurringTodos(): \t return TodoResponse
+  ..
+  createTodoByDate(): \t\t return TodoResponse
+  ..
+  createTodoByDate(): \t\t return TodoResponse
+  ..
+  updateTodo(): \t\t\t\t return TodoResponse
+  ..
+  deleteParticularDateTodos(): \t return TodoResponse
+  ..
+  deleteTodo(): \t\t\t\t return TodoResponse
+}
+
+class TodoResponse{
+    code:\tnumber
+    ..
+    message: string
+    ..
+    body?:\tTodo | Todo[]
+}
+
+class ServiceResponse<T>{
+  message?: string
+  ..
+  code: \t  number
+  ..
+  body?: \t  T
+}
+
+class TodoStats{
+  interestedDateTodo: Todo[]
+  ..
+  dateIntervalTodos: Todo[]
+  ..
+  reportingsInterestedDateTodos: Todo[]
+}
+
+entity Todo{
+  _id: string
+  ..
+  microsoftUserId: string
+  ..
+  title: string
+  ..
+  comments?: string
+  ..
+  status: string
+  ..
+  type: string
+  ..
+  eta: number
+  ..
+  ata: number
+  ..
+  date: Date
+  ..
+  tags?: Tag[]
+  ..
+  __v: number
+}
+
+entity HiveTodo{
+  user_id: string
+  ..
+  work_item: string
+  ..
+  estimated_hours: number
+  ..
+  actual_hours: number
+  ..
+  due_date: string
+  ..
+  status: string
+  ..
+  tags: string[]
+}
+
+
+entity Tag{
+    _id: \t\t\t\t string
+    ..
+    microsoftUserId: \t string
+    ..
+    tagName: \t\tstring 
+    ..
+    type: \t\t\t string
+    ..
+    createdAt: \t\t string
+    ..
+    updatedAt: \t\t string
+}
+
+@endumlsss
