@@ -1,0 +1,98 @@
+@startuml updateTodo
+participant Client #64D1AF
+participant app.ts
+participant todos.controller.ts
+participant todos.service.ts
+participant DB #FFC0CB
+
+Client -> app.ts : "/todos"
+activate Client #D3D3D3
+activate app.ts #D3D3D3
+
+app.ts -> todos.controller.ts : (**PUT**) "/:todoId"
+activate todos.controller.ts #D3D3D3
+
+todos.controller.ts -> todos.controller.ts : store todoId from uri \nparams in variable **todoId**
+todos.controller.ts -> todos.controller.ts : store userId from uri query string in variable **userId**
+todos.controller.ts -> todos.controller.ts : store body from request body in variable **body**
+
+todos.controller.ts -> todos.service.ts : **updateTodo(todoId, userId, body)**
+activate todos.service.ts #D3D3D3
+
+alt if todoId is null
+    todos.controller.ts <-- todos.service.ts : return TodoResponse\n(message: "Todo Id required", code: 400)
+end
+
+alt if userId is null
+    todos.controller.ts <-- todos.service.ts : return TodoResponse\n(code: 400, message: "User Id is required")
+end
+
+alt if title from body is null
+    todos.controller.ts <-- todos.service.ts : return TodoResponse\n(code: 400, message: "Todo title is required")
+end
+
+alt if status from body is null
+    todos.controller.ts <-- todos.service.ts : return TodoResponse\n(code: 400, message: "Todo status is required")
+end
+
+alt if type from body is null
+    todos.controller.ts <-- todos.service.ts : return TodoResponse\n(code: 400, message: "Todo type is required")
+end
+
+alt if ata from body is null and \nstatus from body is equal to "Completed"
+    todos.controller.ts <-- todos.service.ts : return TodoResponse\n(code: 400, message: "Todo ata is required")
+end
+
+alt if ata from body is less than 0 and \nstatus from body is equal to "Completed"
+    todos.controller.ts <-- todos.service.ts : return TodoResponse\n(code: 400, message: "Todo ata is invalid")
+end
+
+alt if tags exist in body
+    loop tags from body
+        note right of todos.service.ts: check whether tagId is valid \nby using mongoose.isValidObjectId() method
+        alt if tagId is not valid
+            todos.controller.ts <-- todos.service.ts : return TodoResponse\n(code: 400, message: "Tag Id is invalid")
+        else 
+            todos.service.ts -> todos.service.ts : create a new variable **currentTag**
+            todos.service.ts -> DB : tags.findById(tagId)
+            activate DB #D3D3D3
+            DB --> todos.service.ts: return tag, \nstore the reponse in a variable **currentTag**
+            deactivate DB
+
+            alt if currentTag is null
+                todos.controller.ts <-- todos.service.ts : return TodoResponse\n(code: 400, message: `Tag not found for the given this ${tagId} Tag Id`)
+            end
+        end
+    end
+end
+
+todos.service.ts -> todos.service.ts : create a new variable **todo**
+todos.service.ts -> DB : todo.find(query)
+activate DB #D3D3D3
+note right of DB: {\n _id: new mongoose.Types.ObjectId(todoId), \nmicrosoftUserId: userId \n}
+DB --> todos.service.ts: return todo[], \nstore the reponse in a variable **todo**
+deactivate DB
+
+alt todo's length is 0
+    todos.controller.ts <-- todos.service.ts : return TodoResponse\n(code: 404, message: "Todo not found")
+end
+
+todos.service.ts -> todos.service.ts : create a new variable **item** and assign { \nmicrosoftUserId: userId, \ntitle: body.title, \ncomments: body.comments, \nstatus: body.status, \ntype: body.type, \nata: body.ata, \ntags: body.tags, \ndate: body.date ? new Date(body.date) : body.date \n}
+todos.service.ts -> todos.service.ts : create a new variable **response**
+
+alt todo's length is greater than 0
+    todos.service.ts -> DB : tags.findByIdAndUpdate(query)
+    activate DB #D3D3D3
+    note right of DB: query: { \n{ _id: new mongoose.Types.ObjectId(todoId) }, \nitem \n}
+    todos.service.ts <-- DB : return Todo object \nstore it in a variable reponse
+    deactivate DB
+    todos.controller.ts <-- todos.service.ts : return TodoResponse\n(body: response, message: "Successful", code: 200)
+    deactivate todos.service.ts
+end
+
+app.ts <-- todos.controller.ts: return TodoResponse
+deactivate todos.controller.ts
+
+Client <-- app.ts : return TodoResponse
+deactivate app.ts
+@enduml
