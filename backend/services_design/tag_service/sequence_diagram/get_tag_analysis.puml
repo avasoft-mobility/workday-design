@@ -1,0 +1,84 @@
+@startuml get tag analysis
+participant Client #64D1AF
+participant app.ts
+participant tags.controller.ts
+participant tags.service.ts
+participant usersService.ts
+participant DB #FFC0CB
+
+Client -> app.ts : "/tags"
+activate Client #D3D3D3
+    activate app.ts #D3D3D3
+        app.ts -> tags.controller.ts : (**POST**) "/analyse"
+        activate tags.controller.ts #D3D3D3
+            tags.controller.ts -> tags.controller.ts : get the **tagIds**\n from req.body.tagIds\n and save that in a variable\n called **tagIds**
+            tags.controller.ts -> tags.controller.ts : get the **fromDate**, **toDate**\n **userId** from req.query and\n save that in a variable\n called **fromDate**, **toDate**\n **userId**
+            alt case: fromDate is undefined\n fromDate is empty
+                app.ts <-- tags.controller.ts : status:400\n message: From date is required
+            end
+            Client <-- app.ts : code:400\n message: From date is required
+            alt case: toDate is undefined\n toDate is empty
+                app.ts <-- tags.controller.ts : status:400\n message: To date is required
+            end
+            Client <-- app.ts : code:400\n message: To date is required
+            alt case: userId is undefined
+                app.ts <-- tags.controller.ts : status:400\n message: UserId is required
+            end
+            Client <-- app.ts : code:400\n message: UserId is required
+            tags.controller.ts -> tags.controller.ts : convert the **fromDate**\n to Date format and save that\n in a variable called\n **parsedFromDate**
+            tags.controller.ts -> tags.controller.ts : convert the **toDate**\n to Date format and save that\n in a variable called\n **parsedToDate**
+            tags.controller.ts -> tags.service.ts : getTagAnalytics(\ntagIds,parsedFromDate,\nparsedToDate,userId);
+            activate tags.service.ts #D3D3D3
+                tags.service.ts -> tags.service.ts : declare a variable called\n **totalEta**,**totalAta**\n **totalTodos** in **number**\n as data type and value\n as **0**
+                tags.service.ts -> tags.service.ts : declare a variable called\n **tags** in **TagAnalysis[]**\n as data type and value\n as **[]** empty array
+                tags.service.ts -> DB : tagsSchema.find({ _id: { $in: tagIds } })
+                activate DB #D3D3D3
+                    tags.service.ts <-- DB : tags[]
+                deactivate DB
+                tags.service.ts -> tags.service.ts : get the tags[] response\n and save that in a variable\n caled **totalTags**
+                alt case: **totalTags.length** !== **tagIds.length**
+                    tags.controller.ts <-- tags.service.ts : code: 400\n message: Some of the given tag id is not found
+                end
+                tags.service.ts -> DB : todoSchema.find(query)
+                activate DB #D3D3D3
+                    note right of DB : query: {\n$and: [\n{ date: { $gte: fromDate } },\n{ date: { $lte: toDate } },\n{\ntags: {\n$in: tagIds,\n},\n},\n{\nmicrosoftUserId: {\n$eq: userId,\n},\n},\n],\n};
+                    tags.service.ts <-- DB : todo[]
+                deactivate DB
+                tags.service.ts -> tags.service.ts : get the todo[] and\n save that in a variable\n called **todos**
+                loop map managers
+                    tags.service.ts -> tags.service.ts : loop **totalTags** and\n made a tagAnalysis by calling\n a new function called\n **analyseSingleTag(tag, todos)**
+                    tags.service.ts -> tags.service.ts : analyseSingleTag(tag, todos)
+                    activate tags.service.ts #D16587
+                        loop loop **todos**
+                            tags.service.ts -> tags.service.ts :loop the todos\n and return the todos\n which matches the props\n tag.id and save that in a\n variable called **filteredTodos**
+                        end
+                        tags.service.ts -> tags.service.ts : save the **filteredTodos.length**\n in a variable called **totalTodos**
+                        tags.service.ts -> tags.service.ts : Add each **filteredTodos ETA**\n and save it in a variable called\n **totalEta**
+                        tags.service.ts -> tags.service.ts : Add each **filteredTodos ATA**\n and save it in a variable called\n **totalAta**
+                        tags.service.ts -> tags.service.ts : return tag,totalTodos,\ntotalAta,totalEta,todos
+                    deactivate tags.service.ts
+                    tags.service.ts -> tags.service.ts : get the return response\n and save that in a variable\n called **response**, then push the\n **response** in **tags**
+                end
+                tags.service.ts -> tags.service.ts : analyseMultipleTags(todos)
+                activate tags.service.ts #D16587
+                    tags.service.ts -> tags.service.ts : save the **todos.length**\n in a variable called **totalTodos**
+                    tags.service.ts -> tags.service.ts : Add each **todos ETA**\n and save it in a variable called\n **totalEta**
+                    tags.service.ts -> tags.service.ts : Add each **todos ATA**\n and save it in a variable called\n **totalAta**
+                    tags.service.ts -> tags.service.ts : return tag,totalTodos,\ntotalAta,totalEta,todos
+                deactivate tags.service.ts
+                tags.service.ts -> tags.service.ts : get the return response\n and save that in a variable\n called **analysedMultipleTags**
+                alt case: tags.length === 0
+                    tags.controller.ts <-- tags.service.ts : code: 404\n message: No task found with this tags on the given date interval
+                end
+                tags.service.ts -> tags.service.ts : assign **analysedMultipleTags.totalEta**\n to **totalEta**
+                tags.service.ts -> tags.service.ts : assign **analysedMultipleTags.totalAta**\n to **totalAta**
+                tags.service.ts -> tags.service.ts : assign **analysedMultipleTags.totalTodos**\n to **totalTodos**
+                tags.controller.ts <-- tags.service.ts : tags, totalEta, totalAta, totalTodos
+            deactivate tags.service.ts
+            tags.controller.ts -> tags.controller.ts : get the return response\n and save that in a variable called\n **response**
+            app.ts <-- tags.controller.ts : code:200\n message: response
+        deactivate  tags.controller.ts
+        Client <-- app.ts : code:200\n message: response
+    deactivate app.ts
+deactivate Client
+@enduml

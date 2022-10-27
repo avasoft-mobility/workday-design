@@ -1,0 +1,38 @@
+@startuml get user by userId
+participant Client #64D1AF
+participant app.ts
+participant microsoftUser.router.ts
+participant DB #FFC0CB
+
+Client -> app.ts : "/users"
+activate Client #D3D3D3
+    activate app.ts #D3D3D3
+        app.ts -> microsoftUser.router.ts : (**get**) "/:userId"
+        activate microsoftUser.router.ts #D3D3D3
+            microsoftUser.router.ts -> microsoftUser.router.ts : get req.params and\n save it in a variable\n called **userId**
+            alt case: userId is undefined\n/empty/null
+                app.ts <--  microsoftUser.router.ts : status:400,\n message: userId is required.
+            end
+            Client <-- app.ts: status:400,\n message: userId is required.
+            microsoftUser.router.ts -> microsoftUser.router.ts : getUserById(userId.toString())
+            activate microsoftUser.router.ts #D16587
+                microsoftUser.router.ts -> DB : microsoftUser.findOne({\nuserId: id,\n})
+                activate DB #D3D3D3
+                    microsoftUser.router.ts <-- DB : TeamReport
+                deactivate DB
+                microsoftUser.router.ts -> microsoftUser.router.ts : get the TeamReport\n and save that in a variable\n called **queryResult**
+                microsoftUser.router.ts -> microsoftUser.router.ts : return **queryResult**
+            deactivate microsoftUser.router.ts
+            microsoftUser.router.ts -> microsoftUser.router.ts : get the return response\n and save that in a variable\n called **result**
+            alt case: **result** is undefined
+                app.ts <-- microsoftUser.router.ts : status: 400,\n message: User for the given userId was not found
+            end
+            Client <-- app.ts : status: 400,\n message: User for the given userId was not found
+            alt case: **result** is defined
+                app.ts <-- microsoftUser.router.ts : status: 200,\n message: result
+            end
+           Client <-- app.ts: status: 200,\n message: result
+        deactivate microsoftUser.router.ts
+    deactivate app.ts
+deactivate Client
+@enduml

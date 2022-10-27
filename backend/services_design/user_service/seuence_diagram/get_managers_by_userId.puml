@@ -1,0 +1,42 @@
+@startuml get managers by userId
+participant Client #64D1AF
+participant app.ts
+participant microsoftUser.router.ts
+participant DB #FFC0CB
+
+Client -> app.ts : "/users"
+activate Client #D3D3D3
+    activate app.ts #D3D3D3
+        app.ts -> microsoftUser.router.ts : (**get**) "/:userId/managers"
+        activate microsoftUser.router.ts #D3D3D3
+            microsoftUser.router.ts -> microsoftUser.router.ts : get req.params and\n save it in a variable\n called **userId**
+            alt case: userId is undefined\n/empty/null
+                app.ts <--  microsoftUser.router.ts : status:400,\n message: userId is required.
+            end
+            Client <-- app.ts : status: 400,\n message: userId is required.
+            microsoftUser.router.ts -> microsoftUser.router.ts : getUserById(userId.toString())
+            activate microsoftUser.router.ts #D16587
+                note right of microsoftUser.router.ts : refer getUserById in shared file
+                microsoftUser.router.ts -> microsoftUser.router.ts : return queryResut
+            deactivate microsoftUser.router.ts
+            microsoftUser.router.ts -> microsoftUser.router.ts : get the return result\n and save that in a variable\n called **result**
+            alt case: **result** is undefined
+                app.ts <-- microsoftUser.router.ts : status: 400,\n message: User for the given userId was not found
+            end
+            Client <-- app.ts : status: 400,\n message: User for the given userId was not found
+            microsoftUser.router.ts -> microsoftUser.router.ts : getManagerOfUser(userId.toString())
+            activate microsoftUser.router.ts #D16587
+                microsoftUser.router.ts -> DB :  microsoftUser.find({\n$and: [{\nreportings: {\n$elemMatch: { $eq: id },},},\n{\nuserId: { $nin: [id] },\n},],})
+                activate DB #D3D3D3
+                    microsoftUser.router.ts <-- DB : MicrosoftUser[]
+                deactivate DB 
+                microsoftUser.router.ts -> microsoftUser.router.ts : get the MicrosoftUser[]\n and save that in a variable called\n **managers**
+                microsoftUser.router.ts -> microsoftUser.router.ts : return **managers**
+            deactivate microsoftUser.router.ts
+            microsoftUser.router.ts -> microsoftUser.router.ts :  get the return response and\n save that in a variable called\n **managers**
+            app.ts <-- microsoftUser.router.ts : status:200,\n body: managers
+        deactivate microsoftUser.router.ts
+        Client <-- app.ts :  status:200,\n body: managers
+    deactivate app.ts
+deactivate Client
+@enduml
