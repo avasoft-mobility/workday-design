@@ -1,0 +1,69 @@
+@startuml edit tag
+participant Client #64D1AF
+participant app.ts
+participant tags.controller.ts
+participant tags.service.ts
+participant usersService.ts
+participant DB #FFC0CB
+
+Client -> app.ts : "/tags"
+activate Client #D3D3D3
+    activate app.ts #D3D3D3
+        app.ts -> tags.controller.ts : (**PUT**) "/:tagId"
+        activate tags.controller.ts #D3D3D3
+            alt case : tagId is not a \n valid object Id
+                app.ts <-- tags.controller.ts : code : 400\n message : Invalid Tag id 
+            end
+            Client <-- app.ts :  code : 400\n message : Invalid Tag id 
+            alt case : userId is undefined
+                app.ts <-- tags.controller.ts : code : 400\n message : user id is required 
+            end
+            Client <-- app.ts :  code : 400\n message : user id is required
+            alt case: body is missing or\n tagname in the body\n is missing
+                app.ts <-- tags.controller.ts : code : 400\n message: tag name is requred
+            end
+            Client <-- app.ts :  code : 400\n message : tag name is requred
+            tags.controller.ts -> tags.service.ts : updateTag(\nreq.params["tagId"],\nreq.query["userId"] as string,\nreq.body["tagname"]\n);
+                activate tags.service.ts #D3D3D3
+                    tags.service.ts -> DB :  tags.\nwhere("_id").equals(new mongoose.\nTypes.ObjectId(tagId))
+                    activate DB #D3D3D3
+                        tags.service.ts <-- DB : Tag
+                    deactivate DB 
+                    tags.service.ts ->tags.service.ts : get the return Tag and save\n that in a variable called\n **existingTag**
+                    alt case: existingTag is not available(!existingTag)
+                        tags.controller.ts <-- tags.service.ts :  code: 404,\n message: "Cannot find a tag with this tag id"
+                    end
+                    alt case: existingTag.tagname is same as\n updatedTagName(existingTag[0].tagName === tagname)
+                        tags.controller.ts <-- tags.service.ts :   body: existingTag[0],\n code: 200,\n message: "Updated successfully" 
+                    end
+                    tags.service.ts -> usersService.ts : `/users/${userId}/managers`
+                    activate usersService.ts #D3D3D3
+                        tags.service.ts <-- usersService.ts : MicrosoftUser[]
+                    deactivate usersService.ts
+                    tags.service.ts -> tags.service.ts : save the return response in the \n variable called **managers**
+                    loop map managers
+                        tags.service.ts -> tags.service.ts : loop the **managers** and\n store each MicrosoftUser\n userId in a variable called\n **managerIds** 
+                    end
+                    tags.service.ts -> tags.service.ts : isTagExist(userId,\n managerIds, tagname)
+                    activate tags.service.ts #DarkSalmon
+                        tags.service.ts -> DB : tagsSchema.finisTagExistd(query)
+                        activate DB #D3D3D3
+                        note right of DB : query :{\n $or: [{$and: [\n{ tagName: tagname }, { microsoftUserId: `${userId}` }],},\n{$and: [\n{ tagName: tagname },\n{ microsoftUserId: { $in: managerIds } },\n{ type: "team" },],},\n{$and: [\n{ tagName: tagname },\n microsoftUserId: {\n $exists: false,\n},},]\n,},],\n}
+                        tags.service.ts <-- DB : tags[]
+                        deactivate DB
+                        tags.service.ts -> tags.service.ts : save the return response\n in the variable called **tags**
+                        alt case: tags is not empty
+                        tags.service.ts -> tags.service.ts : return true
+                        end 
+                        tags.service.ts -> tags.service.ts : return false
+                    deactivate tags.service.ts
+                    tags.service.ts -> tags.service.ts : save the return response\n from the **isTagExist** method\n in the variable called\n **isTagNameExist**
+                    alt case: isTagNameExist is true
+                        tags.controller.ts <-- tags.service.ts : code: 400,\n message: "Tag name already exist"
+                    end
+                deactivate tags.service.ts
+        deactivate tags.controller.ts
+
+    deactivate app.ts
+deactivate Client
+@enduml

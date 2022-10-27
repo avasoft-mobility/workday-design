@@ -1,0 +1,116 @@
+@startuml
+
+class tagsController {
+  post "/"  \t\t\t {status:number, data:tags}
+}
+
+class tagsService {
+  createTag  \t\t\t\t\t {status:number,message: string,data:tags}
+  ..
+  /users/#{userId}/managers  \t\t MicrosoftUser[]
+  ..
+  isTagExists  \t\t\t\t\t Boolean
+  ..
+  getTags \t\t\t\t\t\t TagResponse
+  ..
+  getAllTags \t\t\t\t\t TagResponse
+  ..
+  getTagById \t\t\t\t\t TagResponse
+  ..
+  getTagsByUserId \t\t\t\t TagResponse
+  ..
+  updateTag  \t\t\t\t\t TagResponse
+  ..
+  deleteTagById \t\t\t\t\t TagResponse
+  ..
+  getTagAnalytics \t\t\t\t {tags: TagAnalysis, totalEta: number, totalAta: number, totalTodos: number}
+  ..
+  analyseSingleTag \t\t\t\t {tag: TagAnalysis,totalTodos: number,totalAta: number,totalEta: number,todos: Todo}
+  ..
+  analyseMultipleTags \t\t\t {totalTodos: number,totalAta: number,totalEta: number,todos: Todo}
+}
+
+
+entity MicrosoftUser{
+    _id: \t\t\t string
+    ..
+    userId: \t\t string
+    ..
+    name: \t\t string
+    ..
+    role: \t\t string
+    ..
+    practice: \t\t string
+    ..
+    employeeId: \t string
+    ..
+    managerId: \t string
+    ..
+    mail: \t\t string
+    ..
+    reportings: \t Array<string>
+    ..
+    last_access: \t string
+    ..
+    __v: \t\t\t number
+}
+
+entity tags{
+    _id: \t\t\t\t string
+    ..
+    microsoftUserId?: \t string
+    ..
+    tagName: \t\tstring 
+    ..
+    type?: \t\t\t string
+    ..
+    createdAt: \t\t string
+    ..
+    updatedAt: \t\t string
+}
+
+entity TagResponse {
+    code: \t\t number
+    ..
+    message: \t string
+    ..
+    body?: \t\t Tag | Tag[]
+}
+
+entity TagAnalysis {
+    tag: \t\t\t Tag
+    ..
+    totalTodos: \t number
+    ..
+    totalAta: \t\t number
+    ..
+    totalEta: \t\t number
+    ..
+    todos: \t\t Todo[]
+}
+
+entity Todo {
+    _id: \t\t\t\t\t string
+    ..
+    microsoftUserId: \t\t string
+    ..
+    title: \t\t\t\t\t string
+    ..
+    comments?: \t\t\t string
+    ..
+    status: \t\t\t\t string
+    ..
+    type: \t\t\t\t string
+    ..
+    eta: \t\t\t\t\t number
+    ..
+    ata: \t\t\t\t\t number
+    ..
+    date: \t\t\t\t Date
+    ..
+    tags?: \t\t\t\t Tag[]
+    ..
+    __v: \t\t\t\t\t number
+}
+
+@endumlsss
