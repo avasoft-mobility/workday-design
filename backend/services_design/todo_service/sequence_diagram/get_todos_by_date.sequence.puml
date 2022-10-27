@@ -1,0 +1,47 @@
+@startuml Utilities
+participant Client #64D1AF
+participant todos.service.ts
+participant Utilities.ts
+participant DB #FFC0CB
+
+Client -> todos.service.ts : getTodosByDate(userId, date, object)
+activate Client #D3D3D3
+activate todos.service.ts #D3D3D3
+    todos.service.ts -> Utilities.ts : Declare a variabe **processedDate** and \nCall **processUTCDateConversion(date)**
+    activate Utilities.ts #D3D3D3
+        note right of Utilities.ts: Refer **processUTCDateConversion()** method\ntechnical design in shared_services_design folder
+        Utilities.ts --> todos.service.ts: Assign the Date respone to \nprocessedDate variable
+    deactivate Utilities.ts
+    
+    todos.service.ts -> DB : todos.find(query)
+    activate DB #D3D3D3
+    note right of DB: query: { microsoftUserId: userId,\ndate: processedDate}
+    DB --> todos.service.ts: return Todo[] \nstore the response in variable **queryResult**
+    deactivate 
+    
+    alt if queryResult's length is 0
+        todos.service.ts --> Client : return TodoResponse\n(code: 200, body: [])
+    end
+
+    alt if queryResult's length is greater than 0
+        todos.service.ts -> todos.service.ts : call **getTags()** method
+        note right of DB: Refer **getTags()** in shared_services_design folder \nStore the return resonse **TodoResponse**\n**(code: 200, message: "Successful", body: Tag | Tag[])** in new \nvariable **userTags**
+    end
+
+    alt if response code from getTags() is not equal to 200
+        todos.service.ts --> Client : return TodoResponse\n(code: 200, message: "Successful", body: queryResult)
+    end
+
+    alt if object is not **undefined** and is equal to **"true"**
+        loop queryResult
+            todos.service.ts -> todos.service.ts: check each todo has tag ids \nif tag ids exist then loop the tag ids\nand compare the each tag id with each tag id in **userTags** \nif both ids matched then replace the tag id with tag object \nin each todo
+        end
+        todos.service.ts -> Client : return TodoResponse\n(code: 200, message: "Successful", body: queryResult)
+    end
+
+    alt if response code from getTags() is equal to 200 and \nobject is undefined or is not equal to "true"
+        todos.service.ts --> Client : return TodoResponse\n(code: 200, message: "Successful", body: queryResult)
+    end
+deactivate todos.service.ts
+deactivate Client
+@enduml

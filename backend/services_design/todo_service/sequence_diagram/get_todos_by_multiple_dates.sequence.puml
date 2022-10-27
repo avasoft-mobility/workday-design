@@ -1,0 +1,39 @@
+@startuml Utilities
+participant Client #64D1AF
+participant todos.service.ts
+participant Utilities.ts
+participant DB #FFC0CB
+
+Client -> todos.service.ts : getTodosByMultipleDates(userId, startDate, endDate)
+activate Client #D3D3D3
+activate todos.service.ts #D3D3D3
+    todos.service.ts -> Utilities.ts : Declare a variable **fromDate** and \nCall **processUTCDateConversion(startDate)**
+    activate Utilities.ts #D3D3D3
+        note right of Utilities.ts: Refer **processUTCDateConversion()** method\ntechnical design in shared_services_design folder
+        Utilities.ts --> todos.service.ts: Assign the Date respone to \n**fromDate** variable
+    deactivate Utilities.ts
+    
+    todos.service.ts -> Utilities.ts : Declare a variable **toDate** and \nCall **processUTCDateConversion(endDate)**
+    activate Utilities.ts #D3D3D3
+        note right of Utilities.ts: Refer **processUTCDateConversion()** method\ntechnical design in shared_services_design folder
+        Utilities.ts --> todos.service.ts: Assign the Date respone to \n**toDate** variable
+    deactivate Utilities.ts
+
+    todos.service.ts -> todos.service.ts : Declare a new variable **multipleDatesQuery** and \nassign a query \n{ \nmicrosoftUserId: userId, \ndate: { \n$gte: fromDate, \n$lt: moment(toDate).add(1).toDate() } \n}
+
+    todos.service.ts -> DB : todos.find(query)
+    activate DB #D3D3D3
+    note right of DB: query: { \nmicrosoftUserId: userId, \ndate: { \n$gte: fromDate, \n$lt: moment(toDate).add(1).toDate() } \n}
+    DB --> todos.service.ts: return Todo[] \nstore the response in variable **queryResult**
+    deactivate 
+    
+    alt if queryResult's length is 0
+        todos.service.ts --> Client : return TodoResponse\n(code: 200, body: [])
+    end
+
+    alt if queryResult's length is greater than 0
+        todos.service.ts --> Client : return TodoResponse\n(code: 200, message: "Successful", body: queryResult)
+        deactivate todos.service.ts
+    end
+deactivate Client
+@enduml

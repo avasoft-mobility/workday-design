@@ -1,0 +1,60 @@
+@startuml getTodos
+participant Client #64D1AF
+participant app.ts
+participant todos.controller.ts
+participant todos.service.ts
+
+Client -> app.ts : "/todos?userId & date & month& \n year & startDate & endDate & object"
+activate Client #D3D3D3
+activate app.ts #D3D3D3
+
+app.ts -> todos.controller.ts : (**GET**) "/"
+activate todos.controller.ts #D3D3D3
+
+todos.controller.ts -> todos.service.ts : **getTodos(userId, date, month,** \n**year, startDate, endDate, object)**
+activate todos.service.ts #D3D3D3
+
+alt if userId is null
+    todos.controller.ts <-- todos.service.ts : return TodoResponse\n(code: 400, message: User Id is required)
+end
+
+alt if date exist
+    todos.service.ts -> todos.service.ts
+    note right of todos.service.ts: call getTodosByDate(userId, date, object)\n Refer getTodosByDate() technical design
+    todos.service.ts -> todos.controller.ts : return TodoResponse\n(code: 200, message: "Successful", body: Todo | Todo[])
+end
+
+alt if month and startDate is null
+    todos.controller.ts <-- todos.service.ts : return TodoResponse\n(code: 400, message: "Month is required")
+end
+
+alt if month exist but year and startDate is null
+    todos.controller.ts <-- todos.service.ts : return TodoResponse\n(code: 400, message: "Year is required")
+end
+
+alt if month and year exist
+    todos.service.ts -> todos.service.ts
+    note right of todos.service.ts: call getTodosByMonth(userId, month, year)\n Refer getTodosByMonth() technical design
+    todos.service.ts -> todos.controller.ts : return TodoResponse\n(code: 200, message: "Successful", body: Todo | Todo[])
+end
+
+alt if startDate is null
+    todos.controller.ts <-- todos.service.ts : return TodoResponse\n(code: 400, message: "Start date is required")
+end
+
+alt if endDate is null
+    todos.controller.ts <-- todos.service.ts : return TodoResponse\n(code: 400, message: "End date is required")
+end
+
+alt if startDate and endDate exist
+    todos.service.ts -> todos.service.ts
+    note right of todos.service.ts: call getTodosByMultipleDates(userId, startDate, endDate)\n Refer getTodosByMultipleDates() technical design
+    todos.service.ts -> todos.controller.ts : return TodoResponse\n(code: 200, message: "Successful", body: Todo | Todo[])
+end
+
+app.ts <-- todos.controller.ts: return TodoResponse
+deactivate todos.controller.ts
+
+Client <-- app.ts : return TodoResponse
+deactivate app.ts
+@enduml
