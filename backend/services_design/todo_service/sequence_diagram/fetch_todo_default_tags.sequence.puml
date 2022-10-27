@@ -1,0 +1,18 @@
+@startuml fetchTodoDefaultTags
+participant Client #64D1AF
+participant todos.service.ts
+
+Client -> todos.service.ts : fetchTodoDefaultTags(tags, defaultTags)
+activate Client #D3D3D3
+activate todos.service.ts #D3D3D3   
+
+todos.service.ts -> todos.service.ts: create a new variable **result**
+
+loop tags
+    todos.service.ts -> todos.service.ts: Loop the todo's tags and \ncompare the each tag id \nwith each tag id in **defaultTags** \nif both the ids matched then store the \nmatched value in **result** variable \nand continue the process
+end
+
+todos.service.ts --> Client: return **result**
+deactivate todos.service.ts
+deactivate Client
+@enduml
