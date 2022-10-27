@@ -1,0 +1,171 @@
+@startuml user service class diagram
+
+class tagsService {
+  getMyTeamReport  \t\t\t\t\t\t Response
+  ..
+  getMicrosoftUser  \t\t\t\t\t\t TeamReport
+  ..
+  getMultipleMicrosoftUser  \t\t\t\t TeamReport[]
+  ..
+  getMicrosoftUsersAttendance \t\t\t\t Attendance[]
+  ..
+  mapUsersWithAttendance \t\t\t\t TeamReport[]
+  ..
+  mapUsersWithReporterName \t\t\t\t TeamReport[]
+  ..
+  getAllUsers \t\t\t\t\t\t\t TeamReport[]
+  ..
+  getAllDomains  \t\t\t\t\t\t string[]
+  ..
+  alterCollection \t\t\t\t\t\t\t any
+  ..
+  getMigration \t\t\t\t\t\t\t {code: number;message?: string;body?: PopulateMicrosoftUserOverride}
+  ..
+  requestReporteesMigration \t\t\t\t {code: number;message?: string;body?: MicrosoftUserOverride}
+  ..
+  updateAcknowledgementDetails \t\t\t {code: number;message?: string;body?: MicrosoftUserOverride}
+  ..
+  acceptMigrationRequest \t\t\t\t\t {code: number;message?: string;body?: MicrosoftUserOverride}
+  ..
+  rejectMigrationRequest \t\t\t\t\t {code: number;message?: string;body?: PopulateMicrosoftUserOverride}
+  ..
+  findPracticeManager \t\t\t\t\t MicrosoftUser
+  ..
+  findDirectManager \t\t\t\t\t\t MicrosoftUser
+  ..
+  getReporteeDetails \t\t\t\t\t\t MicrosoftUser[]
+  ..
+  migrateReportees \t\t\t\t\t\t MicrosoftUser
+  ..
+  getUserById \t\t\t\t\t\t\t MicrosoftUser
+}
+
+entity Response{
+    code: \t\t\t number
+    ..
+    message: \t\t string
+    ..
+    body: \t\t  TeamReport[]
+}
+
+entity PopulateMicrosoftUserOverride{
+    _id: \t\t\t\t\t string
+    ..
+    status: \t\t\t\t string
+    ..
+    mailRequestId: \t\t string
+    ..
+    acknowledgedBy?: \t\t string
+    ..
+    acceptedBy?: \t\t\t string
+    ..
+    rejectedBy?: \t\t\t string
+    ..
+    isActive: \t\t\t\t string
+    ..
+    createdAt: \t\t\t string
+    ..
+    updatedAt: \t\t\t string
+    ..
+    __v?: \t\t\t\t number
+    ..
+    toUser: \t\t\t MicrosoftUser
+    ..
+    reportees: \t\t MicrosoftUser[]
+}
+
+entity MicrosoftUserOverride{
+    _id: \t\t\t\t\t string
+    ..
+    status: \t\t\t\t string
+    ..
+    mailRequestId: \t\t string
+    ..
+    acknowledgedBy?: \t\t string
+    ..
+    acceptedBy?: \t\t\t string
+    ..
+    rejectedBy?: \t\t\t string
+    ..
+    isActive: \t\t\t\t string
+    ..
+    createdAt: \t\t\t string
+    ..
+    updatedAt: \t\t\t string
+    ..
+    __v?: \t\t\t\t number
+    ..
+    toUserId: \t\t\t\t string
+    ..
+    reportees: \t\t\t string[]
+}
+
+entity TeamReport{
+  _id: \t\t\t\t\t string
+  ..
+  userId: \t\t\t\t string
+  ..
+  name: \t\t\t\t string
+  ..
+  role: \t\t\t\t string
+  ..
+  practice: \t\t\t\t string
+  ..
+  mail: \t\t\t\t string
+  ..
+  employeeId: \t\t\t string
+  ..
+  reportings: \t\t\t string[]
+  ..
+  managerId: \t\t\t string
+  ..
+  last_access: \t\t\t string
+  ..
+  __v: \t\t\t\t\t 0
+  ..
+  attendanceStatus: \t\t string
+  ..
+  reporter_name: \t\t string;
+}
+
+entity Attendance{
+  _id?: \t\t\t\t string
+  ..
+  userId?: \t\t\t\t string;
+  ..
+  microsoftUserID: \t\t string;
+  ..
+  date: \t\t\t\t Date;
+  ..
+  attendance_status: \t\t string;
+  ..
+  __v?: \t\t\t\t number;
+}
+
+entity MicrosoftUser{
+  _id: \t\t\t\t string
+  ..
+  userId: \t\t\t string
+  ..
+  name: \t\t\t string
+  ..
+  role: \t\t\t string
+  ..
+  practice: \t\t\t string
+  ..
+  mail: \t\t\t string
+  ..
+  reportings: \t\t Array<string>
+  ..
+  managerId: \t\t string
+  ..
+  last_access: \t\t string
+  ..
+  employeeId: \t\t string
+  ..
+  isAdmin?: \t\t Boolean
+  ..
+  __v: \t\t\t\t number;
+}
+
+@enduml
