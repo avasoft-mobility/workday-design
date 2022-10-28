@@ -1,0 +1,85 @@
+@startuml Get attendance
+
+participant Client #64D1AF
+participant App.tsx
+participant AttendanceRouter.ts
+participant AttendanceService.ts
+participant DB #FFC0CB
+
+Client -> App.tsx : "/attendance" in GET Method
+activate Client #D3D3D3
+activate App.tsx #D3D3D3
+
+App.tsx -> AttendanceRouter.ts : request hit on the attendance controller
+activate AttendanceRouter.ts #D3D3D3
+
+alt if request userId and date is defined 
+    AttendanceRouter.ts -> AttendanceService.ts : call **getAttendanceStatus** method \nin AttendanceService.ts with **userId and date** \nand assign the return value to **response** variable
+    activate AttendanceService.ts #D3D3D3
+        AttendanceService.ts -> AttendanceService.ts : call **getAttendance** method \nin AttendanceService.ts with **userId and date**
+        activate AttendanceService.ts #D16587
+            AttendanceService.ts -> AttendanceService.ts : Declare a variable **parsedDate**, \nthe value as new Date(date) 
+            AttendanceService.ts -> AttendanceService.ts : Generate a find **query** with \nmicrosoftUserID as **userId** and date as **date**
+            AttendanceService.ts -> DB : request for the attendance
+            activate DB #D3D3D3
+                note right of DB : query : { \n\tmicrosoftUserID: userId, \n\tdate: new Date(\n\t\tnew Date(\n\t\t\tparsedDate.getFullYear(),\n\t\t\tparsedDate.getMonth(), \n\t\t\tparsedDate.getDate()\n\t\t).setHours(0, 0, 0, 0) \n\t),\n }
+                DB -> DB : AttendanceDB.find(query)
+                AttendanceService.ts <-- DB : return **Attendance[]**
+            deactivate DB
+            AttendanceRouter.ts <-- AttendanceService.ts : return **Attendance[]**
+        deactivate AttendanceService.ts
+    deactivate AttendanceService.ts
+
+    alt if respnse.length === 0 
+        alt if request.query have object === "true"
+            AttendanceRouter.ts -> AttendanceRouter.ts : if request.query have object === "true"
+            activate AttendanceRouter.ts #D16587
+            App.tsx <-- AttendanceRouter.ts :  status(200)\nsend({\n\tattendance_status: "Not Filled",\n\tdate: new Date(req.query["date"].toString()),\n});
+        else 
+            App.tsx <-- AttendanceRouter.ts :  status(200)\nsend({ status: "Not Filled" }}
+            deactivate AttendanceRouter.ts
+        end
+    else if request.query have object === "true"
+        AttendanceRouter.ts -> AttendanceRouter.ts : if request.query have object and is quals to "true"
+        activate AttendanceRouter.ts #D16587
+            App.tsx <-- AttendanceRouter.ts : status(200)\nsend(response[0]);
+        deactivate AttendanceRouter.ts
+    else 
+        AttendanceRouter.ts -> AttendanceRouter.ts : Declare a vatiable status with value response[0].attendance_status \nwhen response[0].lenth is greater than 0 \nelse "Not Filled"
+        activate AttendanceRouter.ts #D16587
+            App.tsx <-- AttendanceRouter.ts : status(200)\nsend({status: status});
+        deactivate AttendanceRouter.ts
+    end
+    
+end
+
+alt if request userId and fromDate , toDate is defined 
+    AttendanceRouter.ts -> AttendanceService.ts : call **getAttendanceForParticularDates()** method \nin AttendanceService.ts with **userId and startDate, endDate** \nand assign the return value to **attendanceArray** variable
+    activate AttendanceService.ts #D3D3D3
+        AttendanceService.ts -> AttendanceService.ts : **getAttendanceForParticularDates()**
+        activate AttendanceService.ts #D16587
+            AttendanceService.ts -> AttendanceService.ts : Declare a variable **parsedFromDate** \nwith value as new Date(new Date(fromDate).setHours(0, 0, 0, 0));) 
+            AttendanceService.ts -> AttendanceService.ts : Declare a variable **parsedToDate** \nwith value as new Date(new Date(toDate).setHours(0, 0, 0, 0));) 
+            AttendanceService.ts -> AttendanceService.ts : Generate a find **query** with \nmicrosoftUserID as **userId** and date between parsedFromdate to parserToDate \nand assign the query to query variable
+            AttendanceService.ts -> DB : request for to get the attendances
+            activate DB #D3D3D3
+                note right of DB : query : { \n\tdate: { $gte: parsedFromDate, $lte: moment(parsedToDate).add(1).toDate() }, \n\tmicrosoftUserID: userId, \n}
+                DB -> DB : AttendanceDB.find(query)
+                AttendanceService.ts <-- DB: return **Attendance[]** 
+            deactivate DB 
+            AttendanceRouter.ts <-- AttendanceService.ts : return **Attendance[]**
+        deactivate AttendanceService.ts
+    deactivate AttendanceService.ts
+    App.tsx <-- AttendanceRouter.ts : status(200)\nsend(attendanceArray);  
+end
+    AttendanceRouter.ts -> AttendanceRouter.ts : Declare a variable **response**, \nget all attendance from DB and assign
+    AttendanceRouter.ts -> DB : request for all attendance 
+    activate DB #D3D3D3
+        DB -> DB : AttendanceDB.find()
+        AttendanceRouter.ts <-- DB : return **Attendance[]**
+    deactivate DB
+    App.tsx <-- AttendanceRouter.ts : status(200)\nsend(response); 
+    Client <-- App.tsx : return response
+deactivate App.tsx
+deactivate Client
+@enduml

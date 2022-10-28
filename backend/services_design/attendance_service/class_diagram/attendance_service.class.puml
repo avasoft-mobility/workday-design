@@ -1,0 +1,44 @@
+@startuml Attendance Service
+class AttendacanceService {
+  getAttendanceStatus()  \t\t\t\tAttendance[]  
+  ..
+  getAttendanceForParticularDates()   \tAttendance[]
+  ..
+  updateOrCraeteAttendance()  \t\tAttendance[]
+  ..
+  getAttendance() \t\t\t\t\tAttendance[]
+  ..
+  getMultiUserInterestedDateAttendance() \tAttendance[]
+  ..
+  getAttendanceForStats() \t\t\tServiceResponse<AttendanceStats>
+}
+
+entity Attendance {
+  _id \t\t\t\tstring
+  ..
+  microsoftUserID \tstring
+  ..
+  date \t\t\tDate
+  ..
+  attendance_status   string
+  ..
+  __v \t\t\t\tnumber
+}
+
+entity AttendanceStats {
+  interestedDateAttendance \t\t\tAttendance
+  ..
+  dateIntervalAttendances \t\t\t\tAttendance
+  ..
+  reportingInterestedDateAttendances \tAttendance
+}
+
+entity ServiceResponse<T> {
+    code \t\tnumber
+    ..
+    message? \tstring
+    ..
+    body? \t\tT
+}
+
+@enduml

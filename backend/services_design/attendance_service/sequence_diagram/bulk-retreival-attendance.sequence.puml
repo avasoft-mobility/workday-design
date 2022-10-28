@@ -1,0 +1,51 @@
+@startuml client-AttendanceRouter.ts
+
+participant Client #64D1AF
+participant App.tsx
+participant AttendanceRouter.ts
+participant DB #FFC0CB
+
+Client -> App.tsx : "/attendance/bulk-retrieve" in POST Method
+activate Client #D3D3D3
+activate App.tsx #D3D3D3
+
+App.tsx -> AttendanceRouter.ts : request hit on the attendance controller
+activate AttendanceRouter.ts #D3D3D3
+
+AttendanceRouter.ts -> AttendanceRouter.ts : declare a variable **userIds** and assign request.body.userIds
+AttendanceRouter.ts -> AttendanceRouter.ts : declare a variable **date** and assign request.body.date
+
+alt if userIds is undefined 
+    AttendanceRouter.ts -> AttendanceRouter.ts : if **userIds** is undefined or userIds.length === 0
+    activate AttendanceRouter.ts #D16587
+    AttendanceRouter.ts -> App.tsx : return status(400) \nsend({ message: "User ids must be passed" })
+    deactivate AttendanceRouter.ts
+end
+
+alt if date is undefined 
+    AttendanceRouter.ts -> AttendanceRouter.ts : if **date** is undefined
+    activate AttendanceRouter.ts #D16587
+    AttendanceRouter.ts -> App.tsx : return status(400) \nsend({ message: "date must be passed" })
+    deactivate AttendanceRouter.ts
+end
+
+AttendanceRouter.ts -> AttendanceRouter.ts : declare a variable **parsedDate** and assign value as  new Date(date)
+
+AttendanceRouter.ts -> DB : request for attendance details for the userIds
+activate DB #D3D3D3
+
+note right of DB : query : { \n\tmicrosoftUserID: { $in: userIds as string[] }, \n\tdate: new Date(\n\t\tnew Date(\n\t\t\tparsedDate.getFullYear(),\n\t\t\tparsedDate.getMonth(), \n\t\t\tparsedDate.getDate()\n\t\t).setHours(0, 0, 0, 0) \n\t),\n }
+
+DB -> DB : AttendanceDB.find(query)
+
+DB -> AttendanceRouter.ts : return **Attendance[]**
+deactivate DB
+
+AttendanceRouter.ts -> App.tsx : return status(200) \nsend(**Attendance[]**)
+
+deactivate AttendanceRouter.ts
+App.tsx  -> Client: return response
+
+deactivate App.tsx
+deactivate Client
+@enduml

@@ -1,0 +1,77 @@
+@startuml Update or Create attendance
+
+participant Client #64D1AF
+participant App.tsx
+participant AttendanceRouter.ts
+participant AttendanceService.ts
+participant DB #FFC0CB
+
+Client -> App.tsx : "/attendance?userId=<>&date=<>" in POST Method
+activate Client #D3D3D3
+activate App.tsx #D3D3D3
+
+App.tsx -> AttendanceRouter.ts : request hit on the attendance controller
+activate AttendanceRouter.ts #D3D3D3
+
+alt if userId is undefined 
+    AttendanceRouter.ts -> AttendanceRouter.ts : if **request.query["userId"]** is undefined
+    activate AttendanceRouter.ts #D16587
+    AttendanceRouter.ts -> App.tsx : return status(400)\nsend({ message: "userid is required" })
+    deactivate AttendanceRouter.ts
+end
+
+alt if date is undefined 
+    AttendanceRouter.ts -> AttendanceRouter.ts : if **request.query["date"]** is undefined
+    activate AttendanceRouter.ts #D16587
+    AttendanceRouter.ts -> App.tsx : return status(400)\nsend({ message: "date is required" })
+    deactivate AttendanceRouter.ts
+end
+
+alt if body is undefined 
+    AttendanceRouter.ts -> AttendanceRouter.ts : if **request.body** is undefined or \n **request.body** is not a object
+    activate AttendanceRouter.ts #D16587
+    AttendanceRouter.ts -> App.tsx : return status(400)\nsend({ message: "body is required" })
+    deactivate AttendanceRouter.ts
+end
+
+AttendanceRouter.ts -> AttendanceService.ts : make an method call **updateOrCraeteAttendance** with **userid,** \n **date, attendanceStatus** in AttendanceService.ts for update \n attendance status if there else create attendance
+activate AttendanceService.ts #D3D3D3
+
+AttendanceService.ts -> AttendanceService.ts : Declare a variable **parsedDate**, \nthe value as new Date(date) 
+
+AttendanceService.ts -> AttendanceService.ts : Generate a find **query** with \nmicrosoftUserID as userId and date as date
+AttendanceService.ts -> AttendanceService.ts : Declare a variable **update** and assign value \nis an update query with microsoftUserID as userId and \ndate as date and attendance_status as attendanceStatus
+AttendanceService.ts -> AttendanceService.ts : Declare a variable **options**, \nthe value is a object with upsert: true
+
+AttendanceService.ts -> DB : request for to update the attendance
+activate DB #D3D3D3
+    note right of DB : **query** : { \n\tmicrosoftUserID: userId, \n\tdate: new Date(\n\t\tnew Date(\n\t\t\tparsedDate.getFullYear(),\n\t\t\tparsedDate.getMonth(), \n\t\t\tparsedDate.getDate()\n\t\t).setHours(0, 0, 0, 0) \n\t),\n }
+    note right of DB : **update** : { \n\t$set: {\n\t\tmicrosoftUserID: userId, \n\t\tdate: new Date(\n\t\t\tnew Date(\n\t\t\t\tparsedDate.getFullYear(),\n\t\t\t\tparsedDate.getMonth(), \n\t\t\t\tparsedDate.getDate()\n\t\t\t).setHours(0, 0, 0, 0) \n\t\t),\n\t\tattendance_status: attendanceStatus,\n\t } \n }
+    note right of DB : **options** : { upsert: true }
+
+    DB -> DB : AttendanceDb.updateOne(query, update, options)
+
+    DB -> AttendanceService.ts : return **Attendance**
+deactivate DB
+
+AttendanceService.ts -> AttendanceService.ts : call **getAttendance** method \nin AttendanceService.ts with **userId and date**
+    activate AttendanceService.ts #D16587
+        AttendanceService.ts -> AttendanceService.ts : Declare a variable **parsedDate**, \nthe value as new Date(date) 
+        AttendanceService.ts -> AttendanceService.ts : Generate a find **query** with \nmicrosoftUserID as **userId** and date as **date**
+        AttendanceService.ts -> DB : request for the attendance
+        activate DB #D3D3D3
+            note right of DB : query : { \n\tmicrosoftUserID: userId, \n\tdate: new Date(\n\t\tnew Date(\n\t\t\tparsedDate.getFullYear(),\n\t\t\tparsedDate.getMonth(), \n\t\t\tparsedDate.getDate()\n\t\t).setHours(0, 0, 0, 0) \n\t),\n }
+            DB -> DB : AttendanceDB.find(query)
+            AttendanceService.ts <-- DB : return **Attendance[]**
+        deactivate DB
+        AttendanceRouter.ts <-- AttendanceService.ts : return **Attendance[]**
+    deactivate AttendanceService.ts
+deactivate AttendanceService.ts
+AttendanceRouter.ts -> App.tsx : return response.status(201).send(**Attendance[]**)
+
+deactivate AttendanceRouter.ts
+App.tsx  -> Client: return response
+
+deactivate App.tsx
+deactivate Client
+@enduml

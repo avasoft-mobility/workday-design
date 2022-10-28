@@ -1,0 +1,136 @@
+@startuml Attendance Statatics
+
+participant Client #64D1AF
+participant App.tsx
+participant AttendanceRouter.ts
+participant AttendanceService.ts
+participant DB #FFC0CB
+
+Client -> App.tsx : "/attendance/stats" in POST Method
+activate Client #D3D3D3
+activate App.tsx #D3D3D3
+
+App.tsx -> AttendanceRouter.ts : request hit on the attendance controller
+activate AttendanceRouter.ts #D3D3D3
+
+AttendanceRouter.ts -> AttendanceRouter.ts : declare a variable **userIds** and \nassign request.body.userIds
+AttendanceRouter.ts -> AttendanceRouter.ts : declare a variable **interestedDate** and \nassign request.body.interestedDate
+AttendanceRouter.ts -> AttendanceRouter.ts : declare a variable **startDate** and \nassign request.body.startDate
+AttendanceRouter.ts -> AttendanceRouter.ts : declare a variable **endDate** and \nassign request.body.endDate
+AttendanceRouter.ts -> AttendanceRouter.ts : declare a variable **reportings** and \nassign request.body.reportings
+
+AttendanceRouter.ts -> AttendanceRouter.ts : declare a variable **response**, \ncall getAttendanceForStats with userIds, interestedDate, startDate, \nendDate , reportings and assign response to it
+activate AttendanceRouter.ts  #D16587
+
+AttendanceRouter.ts -> AttendanceService.ts : **getAttendanceForStats(userIds, interestedDate, startDate, **\n**endDate , reportings)**
+activate AttendanceService.ts #D3D3D3
+
+alt if userIds is undefined 
+    AttendanceService.ts -> AttendanceService.ts : if request userIds is undefined
+    activate AttendanceService.ts #D16587
+    AttendanceRouter.ts <-- AttendanceService.ts : code: 400, \nmessage: "User id is required"\nas **ServiceResponse<AttendanceStats>**
+    deactivate AttendanceService.ts
+end
+
+alt if interestedDate is undefined 
+    AttendanceService.ts -> AttendanceService.ts : if request interestedDate is undefined
+    activate AttendanceService.ts #D16587
+    AttendanceRouter.ts <-- AttendanceService.ts : code: 400, \nmessage: "Interested date is required"\nas **ServiceResponse<AttendanceStats>**
+    deactivate AttendanceService.ts
+end
+
+alt if startDate is undefined 
+    AttendanceService.ts -> AttendanceService.ts : if request startDate is undefined 
+    activate AttendanceService.ts #D16587
+    AttendanceRouter.ts <-- AttendanceService.ts : code: 400, \nmessage: "Start date is required"\nas **ServiceResponse<AttendanceStats>**
+    deactivate AttendanceService.ts
+end
+
+alt if endDate is undefined 
+    AttendanceService.ts -> AttendanceService.ts : if request endDate is undefined
+    activate AttendanceService.ts #D16587
+    AttendanceRouter.ts <-- AttendanceService.ts : code: 400, \nmessage: "End date is required"\nas **ServiceResponse<AttendanceStats>**
+    deactivate AttendanceService.ts
+end
+
+AttendanceService.ts -> AttendanceService.ts : declare a variable **interestedDateAttendance**, \ncall **getAttendance()** assign response to it
+
+activate AttendanceService.ts #D16587
+
+    AttendanceService.ts -> DB : request for the attendance of userId with date
+
+    activate DB #D3D3D3
+
+    note right of DB : query : { \n\tmicrosoftUserID: { $in: userIds as string[] }, \n\tdate: new Date(\n\t\tnew Date(\n\t\t\tparsedDate.getFullYear(),\n\t\t\tparsedDate.getMonth(), \n\t\t\tparsedDate.getDate()\n\t\t).setHours(0, 0, 0, 0) \n\t),\n }
+
+    DB -> DB : AttendanceDB.find(query)
+
+    AttendanceService.ts <-- DB : return **7Attendance[]**
+
+    deactivate DB
+
+deactivate AttendanceService.ts
+
+AttendanceService.ts -> AttendanceService.ts : declare a variable **dateIntervelAttendance**, \ncall **getAttendanceForParticularDates()** with **userId, startDate, endDate**. \nand assign response to it
+
+activate AttendanceService.ts #D16587
+
+    AttendanceService.ts -> AttendanceService.ts : declare a variable **parsedFromDate** and assign value \nnew Date(new Date(fromDate).setHours(0, 0, 0, 0))
+    AttendanceService.ts -> AttendanceService.ts : declare a variable **parsedToDate** and assign value \nnew Date(new Date(toDate).setHours(0, 0, 0, 0));
+
+    AttendanceService.ts -> DB : Generate a query and request for the attendance \nand assign the value in **result** variable
+    activate DB #D3D3D3
+
+    note right of DB : query = {\n\tdate: {$gte: parsedFromDate, \n\t\t $lte: moment(parsedToDate).add(1).toDate() \n\t},\n\tmicrosoftUserID: userId,\n};
+    DB -> DB : AttendanceDB.find(query)
+
+    AttendanceService.ts <-- DB : return **Attendance[]** 
+
+    deactivate DB
+
+    AttendanceService.ts -> AttendanceService.ts : Declare a **attendanceArray** variable and parse the result into JSON, \nand change the "_id" key to "id" and "__v" to "v"
+
+    note right of AttendanceService.ts : attendanceArray = JSON.parse(\n\t\t JSON.stringify(result)\n\t\t\t.replace(new RegExp("_id", "g"), "id")\n\t\t\t.replace(new RegExp("__v", "g"), "v")\n\t);
+
+    AttendanceService.ts -> AttendanceService.ts : return **attendanceArray**
+
+deactivate AttendanceService.ts
+
+AttendanceService.ts -> AttendanceService.ts : declare a variable **reportingInterestedDateAttendances**, \ncall **getMultiUserInterestedDateAttendance** with **interestedDate, reportings** \nand assign response to it
+
+activate AttendanceService.ts #D16587
+
+    AttendanceService.ts -> AttendanceService.ts : Declare a variable **parsedDate** and assign value as new Date(date)
+
+    AttendanceService.ts -> DB : Declare a variable **attendance** and Generate query \nand request DB for the attendances
+
+    activate DB #D3D3D3
+
+    note right of DB : query = {\n\tmicrosoftUserID: { $in: users }, \n\tdate: new Date(\n\t\tnew Date(\n\t\t\tparsedDate.getFullYear(),\n\t\t\tparsedDate.getMonth(),\n\t\t\tparsedDate.getDate(),\n\t\t).setHours(0, 0, 0, 0)\n\t),\n}
+    DB -> DB : AttendanceDB.find(query)
+
+    AttendanceService.ts <-- DB : return **Attendance[]**
+
+    deactivate DB
+
+    AttendanceService.ts -> AttendanceService.ts : return **attendance**
+
+deactivate AttendanceService.ts 
+
+AttendanceRouter.ts <-- AttendanceService.ts : code: 200, body: {\n\tdateIntervalAttendances: **dateIntervelAttendance**,\n\tinterestedDateAttendance: **interestedDateAttendance**,\n\treportingInterestedDateAttendances: **reportingInterestedDateAttendances**,\n}}\nas **ServiceResponse<AttendanceStats>**
+deactivate AttendanceService.ts
+
+deactivate AttendanceRouter.ts
+
+alt if response.code is 200 
+    App.tsx <-- AttendanceRouter.ts : status : response.code ,\n send : response.body
+end
+
+App.tsx <-- AttendanceRouter.ts : status : response.code ,\n send : {message: response.message}
+
+deactivate AttendanceRouter.ts
+Client <-- App.tsx : return response 
+
+deactivate App.tsx
+deactivate Client
+@enduml
