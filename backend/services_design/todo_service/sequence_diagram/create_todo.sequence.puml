@@ -1,0 +1,134 @@
+@startuml Create Todo
+participant Client #64D1AF
+participant App.tsx
+participant todos.controller.ts
+participant todos.service.ts
+participant DB #FFC0CB
+
+Client -> App.tsx : "/todos" in POST Method
+activate Client #D3D3D3
+activate App.tsx #D3D3D3
+App.tsx -> todos.controller.ts : request hit on the todos controller
+activate todos.controller.ts #D3D3D3
+
+todos.controller.ts -> todos.controller.ts : Declare a variable **userId** and \nassign request.query.userId
+todos.controller.ts -> todos.controller.ts : Declare a variable **body**  as **TodoCreateRequest** and \nassign request.body
+todos.controller.ts -> todos.controller.ts : Declare a variable **date** and \nassign request.query.date 
+
+todos.controller.ts -> todos.service.ts : Call **createTodo method with (userId, body, date)** \nand assign the return value to **response** variable
+
+activate todos.service.ts #D3D3D3
+
+alt case :userId is undefined
+    todos.service.ts -> todos.service.ts : !userId
+    activate  todos.service.ts #D16587
+        todos.controller.ts <-- todos.service.ts  : code: 400,\nmessage: "user Id is required" \nas **TodoResponse**
+    deactivate todos.service.ts
+end
+
+alt case :date is undefined
+    todos.service.ts -> todos.service.ts : !date && !(body.recurringDates.length > 0
+    activate  todos.service.ts #D16587
+        todos.controller.ts <-- todos.service.ts  : code: 400,\nmessage: "Todo date is required" \nas **TodoResponse**
+    deactivate todos.service.ts
+end
+
+alt case :title is undefined
+    todos.service.ts -> todos.service.ts : !body.title
+    activate  todos.service.ts #D16587
+        todos.controller.ts <-- todos.service.ts  : code: 400,\nmessage: "Todo title is required" \n as **TodoResponse**
+    deactivate todos.service.ts
+end
+
+alt case :status is undefined
+    todos.service.ts -> todos.service.ts : !body.status
+    activate  todos.service.ts #D16587
+        todos.controller.ts <-- todos.service.ts  : code: 400,\nmessage: "Todo status is required" \nas **TodoResponse**
+    deactivate todos.service.ts
+end
+
+alt case :eta is undefined
+    todos.service.ts -> todos.service.ts : !body.eta
+    activate  todos.service.ts #D16587
+        todos.controller.ts <-- todos.service.ts  : code: 400,\nmessage: "Todo eta is required" \nas **TodoResponse**
+    deactivate todos.service.ts
+end
+
+alt case lesser ETA is undefined
+    todos.service.ts -> todos.service.ts : body.eta < 0.25
+    activate  todos.service.ts #D16587
+        todos.controller.ts <-- todos.service.ts  : code: 400,\nmessage: "Todo title is required" \nas **TodoResponse**
+    deactivate todos.service.ts
+end
+
+alt case :body.tags
+    todos.service.ts -> todos.service.ts : body.tags
+    activate  todos.service.ts #D16587
+        loop let tagId of body.tags
+            alt case body.tags
+                todos.service.ts -> todos.service.ts : if (!mongoose.isValidObjectId(tagId))
+                todos.controller.ts <-- todos.service.ts  :  code: 400,\nmessage: "Tag Id is invalid" \nas **TodoResponse**
+            end
+
+            todos.service.ts -> DB : request DB for fetch tag details and assign it to **currentTag** variable
+            activate DB #D16587
+                DB -> DB : tags.findById(tagId)
+                todos.service.ts <-- DB : return **Tag**
+            deactivate DB
+            alt case : !currentTag
+                todos.service.ts -> todos.service.ts : if (!**currentTag**)
+                todos.controller.ts <-- todos.service.ts  :  code: 404,\nmessage: "Tag not found for the given this **tagId** Tag Id" \nas **TodoResponse**
+            end
+        end
+    deactivate todos.service.ts
+end
+
+alt #0000001a case : body.recurringDates.length > 0
+    todos.service.ts -> todos.service.ts :  if **body**.recurringDates.length > 0
+    activate  todos.service.ts #D16587
+        todos.service.ts -> todos.service.ts : call **createRecurringTodos** with userId and body \nand assign value to **recurringTodos** variable.
+        activate  todos.service.ts #D5d5d5
+            todos.service.ts -> todos.service.ts : Declare a variable **results** and \nassign value as an empty array 
+            loop body.recurringDates 
+                todos.service.ts -> todos.service.ts : declare a variable **item** and assign todo values with todo data
+                note right of todos.service.ts : item = {\n\ttitle: body.title\n\tcomments: body.comments,\n\tstatus: body.status,\n\ttype: body.type,\n\teta: body.eta,\n\ttags: body.tags,\n\tmicrosoftUserId: userId,\n\tata: 0,\n\tdate: new Date(new Date(date).setHours(0, 0, 0, 0)),\n}
+                todos.service.ts -> DB : request DB for create todo for the date and asign the value to **result** variable
+                activate DB #D16587
+                DB -> DB : todos.create(item)
+                return response **Todo**
+                deactivate DB
+                todos.service.ts -> todos.service.ts : push the **result** variable into **results** array
+            end
+        todos.service.ts -> todos.service.ts  : return  code: 200,\nmessage: "success", \nbody: **results** \nas **TodoResponse**
+        deactivate todos.service.ts
+
+        todos.service.ts -> todos.controller.ts : return recurringTodos \nas **TodoResponse**
+    deactivate todos.service.ts
+else #FFFFFF
+    todos.service.ts -> todos.service.ts : call **createTodoByDate** with **userId, body,date**\nand assign value to **todo** variable.
+    activate  todos.service.ts #D16587 
+            todos.service.ts -> todos.service.ts : declare a variable **item** and assign todo values with todo data
+            todos.service.ts -> DB : request DB for create todo for the date and asign the value to **response** variable
+            activate DB #D16587
+            note right of DB : item = {\n\ttitle: body.title\n\tcomments: body.comments,\n\tstatus: body.status,\n\ttype: body.type,\n\teta: body.eta,\n\ttags: body.tags,\n\tmicrosoftUserId: userId,\n\tata: 0,\n\tdate: new Date(new Date(date).setHours(0, 0, 0, 0)),\n}
+            DB -> DB : todos.create(item)
+            return response **Todo**
+            deactivate DB
+    todos.service.ts -> todos.service.ts  : return code: 200,\nmessage: "success", \nbody: **response** \nas **TodoResponse**
+    deactivate todos.service.ts
+    todos.service.ts -> todos.controller.ts : return **createTodoByDate** \nas **TodoResponse**
+    deactivate todos.service.ts
+end
+
+
+alt #DBDBDB case : response.code === 200 
+    App.tsx <-- todos.controller.ts : status: 200\nsend(response.body)
+else #FFFFFF
+    App.tsx <-- todos.controller.ts : status: response.status\nsend(response.message)
+    deactivate todos.controller.ts
+end
+Client <-- App.tsx : return response
+
+deactivate App.tsx
+deactivate Client
+@enduml

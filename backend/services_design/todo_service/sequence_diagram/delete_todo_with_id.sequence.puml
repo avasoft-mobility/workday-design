@@ -1,0 +1,66 @@
+@startuml Delete Todo with Id
+participant Client #64D1AF
+participant App.tsx
+participant todos.controller.ts
+participant todos.service.ts
+participant DB #FFC0CB
+
+Client -> App.tsx : "/todos/:todoId" in DELETE Method
+activate Client #D3D3D3
+activate App.tsx #D3D3D3
+App.tsx -> todos.controller.ts : request hit on the todos controller
+activate todos.controller.ts #D3D3D3
+
+todos.controller.ts -> todos.controller.ts : Declare a variable **userId** and \nassign request.query.userId
+todos.controller.ts -> todos.controller.ts : Declare a variable **todoId** and \nassign request.params.todoId
+
+todos.controller.ts -> todos.service.ts : Call **deleteTodo method with (userId, todoId)** \nand assign the return value to **response** variable
+
+activate todos.service.ts #D3D3D3
+
+alt case :userId is undefined
+    todos.service.ts -> todos.service.ts : !userId
+    activate  todos.service.ts #D16587
+        todos.controller.ts <-- todos.service.ts  : code: 400,\nmessage: "user Id is required"\nas **TodoResponse**
+    deactivate todos.service.ts
+end
+
+alt case :todoId is undefined
+    todos.service.ts -> todos.service.ts : !todoId
+    activate  todos.service.ts #D16587
+        todos.controller.ts <-- todos.service.ts  : code: 400,\nmessage: "Todo id is required"\nas **TodoResponse**
+    deactivate todos.service.ts
+end
+
+todos.service.ts -> DB : request DB to find todo with todoId and assign it to **todo** variable
+activate DB #D16587
+DB -> DB : todos.find({\n\t_id: new mongoose.Types.ObjectId(todoId),\n\tmicrosoftUserId: userId,\n})
+todos.service.ts <-- DB : return **Todo[]** 
+deactivate DB
+
+alt #DBDBDB4a todo.length === 0
+    todos.controller.ts <-- todos.service.ts : code: 404, message: "Todo not found"
+else #FFFFFF
+    todos.service.ts -> DB : create a delete query and assign it to **item** variable\nusing the delete query request DB to delete todo and \nassign the value to **result** variable
+    activate DB #D16587
+    note right of DB : item = {\n\t_id: new mongoose.Types.ObjectId(todoId),\n\tmicrosoftUserId: userId,\n\tstatus: { $ne: "Completed" },\n}
+    DB -> DB : todos.findByIdAndDelete(item)
+    todos.service.ts <-- DB : return **Todo** 
+    deactivate DB
+    return code: 200\nmessage: "successfull"\nbody: **result**\nas **TodoResponse**
+end
+
+todos.controller.ts -> todos.controller.ts  : assign the return value to **response** variable
+
+alt #DBDBDB4a case : response.status === 200 
+    App.tsx <-- todos.controller.ts : status: 200\nsend(**response**.body)
+else #FFFFFF
+    App.tsx <-- todos.controller.ts : status: response.status\nsend({message: **response**.message})
+    deactivate todos.controller.ts
+end
+
+Client <-- App.tsx : return response
+
+deactivate App.tsx
+deactivate Client
+@enduml

@@ -1,0 +1,60 @@
+@startuml Update Todo
+participant Client #64D1AF
+participant App.tsx
+participant todos.controller.ts
+participant todos.service.ts
+participant DB #FFC0CB
+
+Client -> App.tsx : "/todos/" in DELETE Method
+activate Client #D3D3D3
+activate App.tsx #D3D3D3
+App.tsx -> todos.controller.ts : request hit on the todos controller
+activate todos.controller.ts #D3D3D3
+
+todos.controller.ts -> todos.controller.ts : Declare a variable **userId** and \nassign request.query.userId 
+todos.controller.ts -> todos.controller.ts : Declare a variable **date** and \nassign request.query.date
+
+todos.controller.ts -> todos.service.ts : Call **deleteParticularDateTodos method with (userId, date)** \nand assign the return value to **response** variable
+
+activate todos.service.ts #D3D3D3
+
+alt case :userId is undefined
+    todos.service.ts -> todos.service.ts : !userId
+    activate  todos.service.ts #D16587
+        todos.controller.ts <-- todos.service.ts  : status: 400,\nmessage: "user Id is required" \nas **TodoService**
+    deactivate todos.service.ts
+end
+
+alt case :date is undefined
+    todos.service.ts -> todos.service.ts : !date
+    activate  todos.service.ts #D16587
+        todos.controller.ts <-- todos.service.ts  : status: 400,\nmessage: "Todo date is required" \nas **TodoService**
+    deactivate todos.service.ts
+end
+
+todos.service.ts -> todos.service.ts : create a query for delete todos for date and request the db for delete
+activate  todos.service.ts #D16587 
+        todos.service.ts -> DB : request DB for delete todo for the date and \nasign the value to **result** variable
+        activate DB #D16587
+            note right of DB : item = {\n\tmicrosoftUserId: userId,\n\tdate: new Date(new Date(date).setHours(0, 0, 0, 0)),\n\tstatus: { $ne: "Completed" },\n}
+            DB -> DB : todos.deleteMany(item)
+            todos.service.ts <-- DB : return DeleteResult 
+        deactivate DB
+todos.controller.ts <-- todos.service.ts  : status: 200,\nmessage: "success", \nbody: **result** \nas **TodoService**
+deactivate todos.service.ts
+
+deactivate todos.service.ts
+todos.controller.ts -> todos.controller.ts  : assign the return value to **response** variable
+
+alt #DBDBDB4a case : response.status === 200 
+    App.tsx <-- todos.controller.ts : status: 200\nsend(response.body)
+else #FFFFFF
+    App.tsx <-- todos.controller.ts : status: response.status\nsend({message: response.message})
+    deactivate todos.controller.ts
+end
+
+Client <-- App.tsx : return response
+
+deactivate App.tsx
+deactivate Client
+@enduml

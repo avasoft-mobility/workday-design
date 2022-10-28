@@ -1,0 +1,183 @@
+@startuml Update Todo
+participant Client #64D1AF
+participant App.tsx
+participant todos.controller.ts
+participant todos.service.ts
+participant Utilities.ts
+participant DB #FFC0CB
+participant tags.service.ts
+
+Client -> App.tsx : "/todos" in POST Method
+activate Client #D3D3D3
+activate App.tsx #D3D3D3
+App.tsx -> todos.controller.ts : request hit on the todos controller
+activate todos.controller.ts #D3D3D3
+
+todos.controller.ts -> todos.controller.ts : Declare a variable **userId** and \nassign request.query.userId
+todos.controller.ts -> todos.controller.ts : Declare a variable **interestedDate** and \nassign request.body.interestedDate
+todos.controller.ts -> todos.controller.ts : Declare a variable **startDate** and \nassign request.query.startDate
+todos.controller.ts -> todos.controller.ts : Declare a variable **endDate** and \nassign request.query.endDate
+todos.controller.ts -> todos.controller.ts : Declare a variable **reportings** and \nassign request.body.reportings
+
+todos.controller.ts -> todos.service.ts : declare a variabe and Call **getTodosForStats method with **\n**(userId, interestedDate, startDate, endDate, reportings)** \nand assign the return value.
+
+activate todos.service.ts #D3D3D3
+
+alt case :userId is undefined
+    todos.service.ts -> todos.service.ts : !userId
+    activate  todos.service.ts #D16587
+        todos.controller.ts <-- todos.service.ts  : code: 400,\nmessage: "user Id is required" \nas **ServiceResponse<TodoStats>**
+    deactivate todos.service.ts
+end
+
+alt case :interestedDate is undefined
+    todos.service.ts -> todos.service.ts : !interestedDate
+    activate  todos.service.ts #D16587
+        todos.controller.ts <-- todos.service.ts  : code: 400,\nmessage: "Interested date is required" \nas **ServiceResponse<TodoStats>**
+    deactivate todos.service.ts
+end
+
+alt case :startDate is undefined
+    todos.service.ts -> todos.service.ts : !startDate
+    activate  todos.service.ts #D16587
+        todos.controller.ts <-- todos.service.ts  : code: 400,\nmessage: "Start Date is required" \nas **ServiceResponse<TodoStats>**
+    deactivate todos.service.ts
+end
+
+alt case :endDate is undefined
+    todos.service.ts -> todos.service.ts : !endDate
+    activate  todos.service.ts #D16587
+        todos.controller.ts <-- todos.service.ts  : code: 400,\nmessage: "End date is required" \nas **ServiceResponse<TodoStats>**
+    deactivate todos.service.ts
+end
+
+todos.service.ts -> todos.service.ts : declare a variabe **interestedDateTodo** and \nCall **getTodosByDate method with (userId, interestedDate)** \nand assign the returned TodoResponse.body.
+
+activate todos.service.ts #D16587
+
+todos.service.ts -> Utilities.ts : declare a variabe **processedDate** and \nCall **processUTCDateConversion method with (date)** \nand assign the returned Date.
+
+activate Utilities.ts #D3D3D3
+    note right of Utilities.ts : Refere the **processUTCDateConversion** \nin shared_services_design
+    todos.service.ts <-- Utilities.ts : return **Date**
+deactivate Utilities.ts
+
+todos.service.ts -> DB : declare a **queryResult** variable and request todos for a perticular date todos with userId
+
+activate DB #D16587
+ DB -> DB : todos.find({\n\tmicrosoftUserId: userId,\n\tdate: processedDate,\n});
+ todos.service.ts <-- DB : return Todo[]
+deactivate DB
+
+alt case: queryResult.length === 0 
+    todos.service.ts -> todos.service.ts : return code: 200\nbody: []
+else
+    todos.service.ts -> todos.service.ts : declare a variable **userTags** and call **getTags with userId** and \nassign value to it
+    todos.service.ts -> tags.service.ts : **getTags(userId)**
+    activate tags.service.ts 
+        note right of tags.service.ts : Refer **getTags** method \nin shared_service_design
+        todos.service.ts <-- tags.service.ts : return **TagResponse**
+    deactivate tags.service.ts
+
+    alt userTags.code !== 200
+        todos.service.ts -> todos.service.ts : return code: 200\nbody: queryResult
+    end
+
+    alt #DBDBDB4a case: object is defined and object value is "true"
+        loop **queryResult** using map, in each **todo** and assign it in **queryResult**
+            alt **todo.tags** is defined 
+                loop **todo.tags** using map
+                    todos.service.ts -> todos.service.ts :return **todo**, if the tag is present in the **userTags**
+                end
+            else 
+                todos.service.ts -> todos.service.ts : return **todo**
+            end
+        end
+        todos.service.ts -> todos.service.ts : return code: 200\n body: **queryResult**
+    else #FFFFFF
+        todos.service.ts -> todos.service.ts : return code: 200\n body: **queryResult**
+    end
+    deactivate todos.service.ts
+end
+
+todos.service.ts -> todos.service.ts : assign the response.body to **interestedDateTodo** variable
+
+
+todos.service.ts -> todos.service.ts : declare a variabe **dateIntervelTodos** and Call \n**getTodosByMultipleDates method with (userId, startDate, endDate)** \nand assign the returned TodoResponse.body.
+ 
+activate todos.service.ts #D16587
+
+todos.service.ts -> Utilities.ts : declare a variabe **fromDate** and Call \n**processUTCDateConversion method with (startDate)** \nand assign the returned date.
+activate Utilities.ts #D3D3D3
+    note right of Utilities.ts : Refere the **processUTCDateConversion** \nin shared_services_design
+    todos.service.ts <-- Utilities.ts : return **Date**
+deactivate Utilities.ts
+
+todos.service.ts -> Utilities.ts : declare a variabe **toDate** and Call \n**processUTCDateConversion method with (endDate)** \nand assign the returned date.
+activate Utilities.ts #D3D3D3
+    note right of Utilities.ts : Refere the **processUTCDateConversion** \nin shared_services_design
+    todos.service.ts <-- Utilities.ts : return **Date**
+deactivate Utilities.ts
+todos.service.ts -> todos.service.ts : declare a variabe **multipleDatesQuery** and assign find query to it
+
+todos.service.ts -> DB : declare a **queryResult** variable and request DB \nfor todos in between particular dates and assign it to **queryResult** varable
+
+activate DB #D16587
+    note right of DB : multipleDatesQuery = {\n\tmicrosoftUserId: userId,\n\tdate: { $gte: fromDate, $lt: moment(toDate).add(1).toDate() },\n}
+    DB -> DB : todos.find(multipleDatesQuery)
+    return return **Todo[]**
+deactivate DB
+
+alt queryResult.length === 0 
+    todos.service.ts -> todos.service.ts : return code: 200\nbody: []
+else
+    todos.service.ts -> todos.service.ts : return code: 200\nbody: **queryResult**
+end
+
+deactivate todos.service.ts
+
+todos.service.ts -> todos.service.ts : assign the response.body to **dateIntervelTodos** variable
+
+
+todos.service.ts -> todos.service.ts : declare a variabe **reportingsInterestedDateTodos** and \nCall **getMultiUserTodosByDate method with (interestedDate , reportings)** \nand assign the returned value.
+ 
+activate todos.service.ts #D16587
+
+todos.service.ts -> Utilities.ts : declare a variabe **processedDate** and \nCall **processUTCDateConversion method with interestedDate** \nand assign the returned date.
+activate Utilities.ts #D3D3D3
+    note right of Utilities.ts : Refere the **processUTCDateConversion** \nin shared_services_design
+    todos.service.ts <-- Utilities.ts : return **Date**
+deactivate Utilities.ts
+
+todos.service.ts -> DB : declare a **queryResult** variable and \nrequest DB for **reportings** todos for **processedDate** assign it to **queryResult** varable
+
+activate DB #D16587
+    DB -> DB : todos.find({\n\tmicrosoftUserId: { $in: users },\n\tdate: processedDate,\n})
+    return return **Todo[]**
+deactivate DB
+
+alt queryResult.length === 0 
+    todos.service.ts -> todos.service.ts : return []
+else
+    todos.service.ts -> todos.service.ts : return **queryResult**
+end
+
+deactivate todos.service.ts
+
+todos.service.ts -> todos.service.ts : assign the response to **reportingsInterestedDateTodos** variable
+
+todos.controller.ts <-- todos.service.ts : return code: 200, \nbody: {\n\tdateIntervalTodos: **dateIntervelTodos**,\n\tinterestedDateTodo: **interestedDateTodo**,\n\treportingsInterestedDateTodos: **reportingsInterestedDateTodos**,\n}\nas **ServiceResponse<TodoStats>**
+deactivate todos.service.ts
+
+alt #DBDBDB4a case : response.code === 200 
+    App.tsx <-- todos.controller.ts : status: 200\nsend(response.body)
+else #FFFFFF
+    App.tsx <-- todos.controller.ts : status: response.status\nsend(response.message)
+    deactivate todos.controller.ts
+end
+
+Client <-- App.tsx : return response
+
+deactivate App.tsx
+deactivate Client
+@enduml

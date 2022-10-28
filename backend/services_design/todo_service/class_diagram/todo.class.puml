@@ -23,13 +23,15 @@ class todosService {
   ..
   createTodoByDate(): \t\t return TodoResponse
   ..
-  createTodoByDate(): \t\t return TodoResponse
-  ..
   updateTodo(): \t\t\t\t return TodoResponse
   ..
   deleteParticularDateTodos(): \t return TodoResponse
   ..
   deleteTodo(): \t\t\t\t return TodoResponse
+}
+
+class helpers {
+    processUTCDateConversion \t\t:Date
 }
 
 class TodoResponse{
@@ -111,4 +113,32 @@ entity Tag{
     updatedAt: \t\t string
 }
 
-@endumlsss
+entity TodoCreateRequest {
+  title: \t\t\tstring;
+  ..
+  comments: \tstring;
+  ..
+  type: \t\tstring;
+  ..
+  status: \t\tstring;
+  ..
+  eta: \t\t\tnumber;
+  ..
+  ata: \t\t\tnumber;
+  ..
+  tags: \t\tstring[];
+  ..
+  recurringDates: string[];
+  ..
+  date?: \t\tstring;
+}
+
+entity TagResponse {
+  code \t\tnumber
+  ..
+  message \t\tstring
+  ..
+  body? \t\tTag | Tag[]
+}
+
+@enduml
