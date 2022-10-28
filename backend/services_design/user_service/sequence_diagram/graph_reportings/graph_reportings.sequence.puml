@@ -1,0 +1,124 @@
+@startuml get all users
+participant Client #64D1AF
+participant app.ts
+participant microsoftUser.router.ts
+participant microsoftUser.service.ts
+participant DB #FFC0CB
+
+Client -> app.ts : "/users"
+activate Client #D3D3D3
+activate app.ts #D3D3D3
+
+app.ts -> microsoftUser.router.ts : (**GET**) "/:userId/graph-reportings/:targetUserId"
+activate microsoftUser.router.ts #D3D3D3
+
+microsoftUser.router.ts -> microsoftUser.router.ts : store userId from uri \nparams in variable **userId**
+microsoftUser.router.ts -> microsoftUser.router.ts : store targetUserId from uri \nparams in variable **targetUserId**
+microsoftUser.router.ts -> microsoftUser.router.ts : store date from uri \nquery string in variable **date**
+
+microsoftUser.router.ts -> microsoftUser.router.ts : create a new variable **validationResponse**
+
+microsoftUser.router.ts -> microsoftUser.service.ts : **graphReportingsValidation(userId, targetUserId)**
+activate microsoftUser.service.ts #D3D3D3
+
+alt if userId is null
+    microsoftUser.router.ts <-- microsoftUser.service.ts : return ErrorResponse\n(message: "UserId Required", code: 400)
+end
+
+alt if targetUserId is null
+    microsoftUser.router.ts <-- microsoftUser.service.ts : return ErrorResponse\n(message: "Target UserId Required", code: 400)
+end
+microsoftUser.router.ts <-- microsoftUser.service.ts : return ErrorResponse\n(message: "Successful", code: 200) \nstore the reponse in variable **validationResponse**
+deactivate microsoftUser.service.ts
+
+alt if response code from validationResponse is equal to 400
+    microsoftUser.router.ts --> app.ts : return \nstatus code: **validationResponse.code** and message as **validationResponse.message**
+end
+
+microsoftUser.router.ts -> microsoftUser.router.ts : create a new variable **loggedInUser**
+
+microsoftUser.router.ts -> DB : microsoftUser.findOne(query)
+activate DB #D3D3D3
+note right of DB: query: { userId: userId}
+microsoftUser.router.ts <-- DB : return microsoftUser, \nstore the reponse in **loggedInUser**
+deactivate DB #D3D3D3
+
+alt if loggedInUser is null
+    microsoftUser.router.ts --> app.ts : return \nstatus code: 404 and message: "User not found"
+end
+
+microsoftUser.router.ts -> microsoftUser.router.ts : create a new variable **authorizationResponse**
+microsoftUser.router.ts -> microsoftUser.service.ts : **exceptionalValidation(loggedInUser)**
+activate microsoftUser.service.ts #D3D3D3
+
+alt if loggedInUser's practice is "Human Resource" and \nloggedInUser's reportings length is greater than 1 
+    microsoftUser.service.ts -> microsoftUser.service.ts : Replace loggedInUser's userId with **Vivek's user Id**
+    microsoftUser.router.ts <-- microsoftUser.service.ts : return ExceptionalValidationResponse\n(code: 200, hasAccess: true, user: loggedInUser)
+end
+
+alt if loggedInUser's practice is not "Human Resource" and \nloggedInUser's reportings length is greater than 1 only
+    microsoftUser.router.ts <-- microsoftUser.service.ts : return ExceptionalValidationResponse\n(code: 200, hasAccess: true, user: loggedInUser)
+end
+
+alt if loggedInUser's practice is not "Human Resource" and \nloggedInUser's reportings length is not greater than 1
+    microsoftUser.router.ts <-- microsoftUser.service.ts : return ExceptionalValidationResponse\n(code: 403, hasAccess: false, user: loggedInUser)
+    deactivate microsoftUser.service.ts
+end
+
+microsoftUser.router.ts -> microsoftUser.router.ts : store the reponse in variable **authorizationResponse**
+
+alt if authorizationResponse.hasAccess is false
+    microsoftUser.router.ts --> app.ts : return \nstatus code: **authorizationResponse.code** and message: "Access Denied"
+end
+
+microsoftUser.router.ts -> microsoftUser.router.ts : create a new variable **response**
+microsoftUser.router.ts -> microsoftUser.service.ts : **getGraphViewData(authorizationResponse.user, targetUserId, date)**
+activate microsoftUser.service.ts #D3D3D3
+
+microsoftUser.service.ts -> microsoftUser.service.ts : create a new variable **response**
+microsoftUser.service.ts -> microsoftUser.service.ts : create a new variable **targetUser**
+
+microsoftUser.service.ts -> DB : microsoftUser.findOne(query)
+activate DB #D3D3D3
+note right of DB: query: \n{ userId: targetUserId}
+microsoftUser.service.ts <-- DB : return microsoftUser, \nstore the reponse in **targetUser**
+deactivate DB #D3D3D3
+
+microsoftUser.service.ts -> microsoftUser.service.ts : create a new variable **directReports**
+
+microsoftUser.service.ts -> DB : microsoftUser.findOne(query)
+activate DB #D3D3D3
+note right of DB: query: \n{ managerId: targetUserId}
+microsoftUser.service.ts <-- DB : return microsoftUser[], \nstore the reponse in **directReports**
+deactivate DB #D3D3D3
+
+microsoftUser.service.ts -> microsoftUser.service.ts : create a new variable **matchingReports**
+microsoftUser.service.ts -> microsoftUser.service.ts : call **getMatchingReports(targetUserId)** \n**Refer getMatchingReports method technical design** and \nstore the response to variable **matchingReports**
+
+microsoftUser.service.ts -> microsoftUser.service.ts : create a new variable **defaultTags**
+microsoftUser.service.ts -> microsoftUser.service.ts : make **(GET)****/tags/private/common** api call, \n**Refer:** get default tags technical design \nstore the response to the variable defaultTags
+
+microsoftUser.service.ts -> microsoftUser.service.ts : create a new variable **response**
+microsoftUser.service.ts -> microsoftUser.service.ts : call **processMatchingReports(matchingReports, targetUser, loggedInUser)** \n**Refer processMatchingReports method technical design** and \nstore the response to variable **matchingReports**
+
+loop directReports
+    microsoftUser.service.ts -> microsoftUser.service.ts : Loop the directReports and \nform a new object structure which \nincludes each reportee's todo and attendance details \nlike structure shown in the note..and \npush the newly structured object \nto the **reportingDetails Array** object in **reponse** variable \non **0th** index
+    note right of microsoftUser.service.ts: { \n_id: directReport._id, \nuserId: directReport.userId, \nname: directReport.name, \nrole: directReport.role, \npractice: directReport.practice, \nmail: directReport.mail, \nreportings: directReport.reportings, \nmanagerId: directReport.managerId, \nlast_access: directReport.last_access, \ntodos: **getUserTodos(directReport.userId, defaultTags, date)** \n**Refer:** getUserTodos method technical design, \nattendance: **getUserAttendance(directReport.userId, date)** \n**Refer:** getUserAttendance method technical design, \n_v: directReport.__v \n}
+end
+
+microsoftUser.service.ts -> microsoftUser.service.ts : call orderReverseSorting(response)
+note right of microsoftUser.service.ts: Sort the **response** in the \nreverse order by using **order** object and \nassign the sorting response to the \n**response** variable again
+
+microsoftUser.service.ts -> microsoftUser.service.ts : call directReportsSorting(response)
+note right of microsoftUser.service.ts: Sort the **response** based on the \neach reportee's highest reportings length and \nassign the sorting response to the \n**response** variable again
+
+microsoftUser.service.ts --> microsoftUser.router.ts: return \nresponse as GraphViewUser[] and \nstore the response in variable **response**
+deactivate microsoftUser.service.ts
+
+microsoftUser.router.ts --> app.ts: return \nstatus code: validationResponse.code and reponse
+deactivate microsoftUser.router.ts
+
+Client <-- app.ts:  return \nstatus code: validationResponse.code and reponse
+deactivate app.ts
+deactivate Client
+@enduml

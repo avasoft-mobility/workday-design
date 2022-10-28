@@ -1,0 +1,19 @@
+@startuml getMatchingReports
+participant Client #64D1AF
+participant microsoftUser.service.ts
+participant DB #FFC0CB
+
+Client -> microsoftUser.service.ts : **getMatchingReports(targetUserId)**
+activate Client #D3D3D3
+activate microsoftUser.service.ts #D3D3D3
+
+microsoftUser.service.ts -> DB : MicrosoftUser.find(query)
+activate DB #D3D3D3
+note right of DB: query: { reportings: targetUserId }
+DB --> microsoftUser.service.ts: return array of MicrosoftUsers
+deactivate DB
+
+Client <-- microsoftUser.service.ts : return GraphViewUser[]
+deactivate microsoftUser.service.ts
+deactivate Client
+@enduml

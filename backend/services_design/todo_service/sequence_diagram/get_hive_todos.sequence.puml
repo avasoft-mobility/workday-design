@@ -32,7 +32,7 @@ note right of todos.service.ts: create a new variable **todos** and \ncall **get
 
 loop todos
     todos.service.ts -> todos.service.ts: loop the todos and form a new object structure \nfor each todo like below and then\nstore the each result in the new variable **hiveTodos**
-    note right of todos.service.ts:{ \nuser_id: todo.microsoftUserId, \nwork_item: todo.title, \nestimated_hours: todo.eta, \nactual_hours: todo.ata, \ndue_date: moment(todo.date).format("YYYY-MM-DD"), \nstatus: todo.status, \ntags: **fetchTodoDefaultTags(todo.tags ? todo.tags : [], defaultTags)**} \n**Refer fetchTodoDefaultTags method technical design**
+    note right of todos.service.ts:{ \nuser_id: todo.microsoftUserId, \nwork_item: todo.title, \nestimated_hours: todo.eta, \nactual_hours: todo.ata, \ndue_date: moment(todo.date).format("YYYY-MM-DD"), \nstatus: todo.status, \ntags: **fetchTodoDefaultTags(todo.tags ? todo.tags : [], defaultTags)**} \n**Refer fetchTodoDefaultTags method technical design in shared_services_design**
 end
 
 todos.service.ts --> todos.controller.ts: return ServiceResponse<HiveTodo[]>\n(code: 200, body: hiveTodos)

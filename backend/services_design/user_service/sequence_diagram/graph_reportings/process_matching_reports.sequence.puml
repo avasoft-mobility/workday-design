@@ -1,0 +1,35 @@
+@startuml getCommonTags
+participant Client #64D1AF
+participant microsoftUser.service.ts
+
+Client -> microsoftUser.service.ts : **processMatchingReports(matchingReports, targetUser, loggedInUser)**
+activate Client #D3D3D3
+activate microsoftUser.service.ts #D3D3D3
+
+microsoftUser.service.ts -> microsoftUser.service.ts : create a new variable **duplicateTargetUser** \nand assign a **targetUser** to it
+microsoftUser.service.ts -> microsoftUser.service.ts : create a new variable **response** \nand assign a **[]**(null array) to it
+
+    alt if matchingReports length is greater than 1
+        microsoftUser.service.ts -> microsoftUser.service.ts : Sort the **matchingReports** based on the \neach reportee's highest reportings length and \nassign the sorting response to the \n**matchingReports** variable
+
+        loop matchingReports
+            microsoftUser.service.ts -> microsoftUser.service.ts : Loop the matchingReports and form the new object structure \nfor each matchingReport which includes **reportingDetails** and \n**order** object like structure shown in the note. \nBased on the following conditions
+            note right of microsoftUser.service.ts: { \n_id: duplicateTargetUser._id, \nuserId: duplicateTargetUser.userId, \nname: duplicateTargetUser.name, \nrole: duplicateTargetUser.role, \npractice: duplicateTargetUser.practice, \nmail: duplicateTargetUser.mail, \nreportings: duplicateTargetUser.reportings, \n**reportingDetails: []**, \nmanagerId: duplicateTargetUser.managerId, \n**order: orderValue**, \nlast_access: duplicateTargetUser.last_access, \n__v: duplicateTargetUser.__v \n}
+            alt if duplicateTargetUser's managerId is equal \nto any of the matchingReports user id
+                microsoftUser.service.ts -> microsoftUser.service.ts : form the new object structure \nwith _id, userId, name, role, practice, mail, reportings, \n**(reportingDetails: [](null array))**, managerId, \n**(order: matched index value)**, last_access and __v \nthen push the newly formed object to the response \nvariable and replace **duplicateTargetUser** with matched \nmatchingReport and **Set matched matchingReport index value to -1**
+            end
+
+            alt if duplicateTargetUser's user id is \nequal to loggedInUser's user id
+                microsoftUser.service.ts -> microsoftUser.service.ts : increament the matched matchingReport index value by 1 and \nform the new object structure with _id, userId, name, role, \npractice, mail, reportings, **(reportingDetails: [](null array))**, \nmanagerId, **(order: matched index value)**, last_access and __v \nthen push newly formed object to the response \nvariable and break the loop and return the response
+            end
+        end
+    end
+
+    alt if matchingReports length \nis not greater than 1
+        microsoftUser.service.ts -> microsoftUser.service.ts : form the new object structure \nwith _id, userId, name, role, practice, mail, reportings, \n**(reportingDetails: [](null array))**, managerId, \n**(order: 1)**, last_access and __v \nthen push to the response variable and return the response
+    end
+
+Client <-- microsoftUser.service.ts : return GraphViewUser[]
+deactivate microsoftUser.service.ts
+deactivate Client
+@enduml
