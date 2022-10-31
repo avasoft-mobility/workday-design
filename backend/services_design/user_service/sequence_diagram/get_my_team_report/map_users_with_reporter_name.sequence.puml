@@ -1,0 +1,16 @@
+@startuml mapUsersWithReporterName
+participant Client #64D1AF
+participant microsoftUser.service.ts
+
+Client -> microsoftUser.service.ts : **mapUsersWithReporterName**\n**(reportingsDetail, currentUser)**
+activate microsoftUser.service.ts
+microsoftUser.service.ts -> microsoftUser.service.ts: create a new variable **response**
+
+loop reportingsDetail(targetUser)
+    loop reportingsDetail(managingUser)
+        microsoftUser.service.ts -> microsoftUser.service.ts: compare each targetUsers **managerId** with each \nand every managingUsers **userId** \n**if matched** \nadd a new property **reporter_name** in **reportingsDetail(targetUser)** and\nassign the matched reportingsDetail(managingUser) detail like \n**{reporter_name: managingUser.name}** \n**else** \nadd a new property **reporter_name** in **reportingsDetail(targetUser)** and \nassign **current user's name** \nstore the final response to the **response** variable
+    end
+end
+
+microsoftUser.service.ts -> Client: return response as TeamReport[]
+@enduml

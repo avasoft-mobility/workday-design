@@ -1,0 +1,15 @@
+@startuml getMicrosoftUsersAttendance
+participant Client #64D1AF
+participant microsoftUser.service.ts
+
+Client -> microsoftUser.service.ts : getMicrosoftUsersAttendance(usersId)
+activate Client #D3D3D3
+activate microsoftUser.service.ts #D3D3D3   
+
+microsoftUser.service.ts -> microsoftUser.service.ts: create a new variable **usersAttendance**
+microsoftUser.service.ts -> microsoftUser.service.ts: make an **POST** api call \n"`**BASE URL**/attendance/bulk-retrieve`" and \npass **{userIds: usersId, date: "current date"}** \nin body and store the response \nin the variable **usersAttendance**
+
+microsoftUser.service.ts --> Client: return **usersAttendance** as **AttendanceModel[]**
+deactivate microsoftUser.service.ts
+deactivate Client
+@enduml

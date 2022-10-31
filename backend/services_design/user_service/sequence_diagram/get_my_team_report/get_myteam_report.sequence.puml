@@ -1,0 +1,67 @@
+@startuml getMatchingReports
+participant Client #64D1AF
+participant app.ts
+participant microsoftUser.router.ts
+participant microsoftUser.service.ts
+
+Client -> app.ts : "/users"
+activate Client #D3D3D3
+activate app.ts #D3D3D3
+
+app.ts -> microsoftUser.router.ts : (**GET**) "/:userId/my-team"
+activate microsoftUser.router.ts #D3D3D3
+
+microsoftUser.router.ts -> microsoftUser.router.ts : store userId from uri \nparams in variable **userId**
+microsoftUser.router.ts -> microsoftUser.router.ts : create a new variable **response**
+
+microsoftUser.router.ts -> microsoftUser.service.ts : **getMyTeamReport(userId)**
+activate microsoftUser.service.ts #D3D3D3
+
+microsoftUser.service.ts -> microsoftUser.service.ts : create a new variable **reportingUsers** \nand assign a [](null array)
+
+alt if userId is null
+    microsoftUser.router.ts <-- microsoftUser.service.ts : return Response\n(code: 400, message: "UserId is required", body: [])
+end
+
+microsoftUser.service.ts -> microsoftUser.service.ts : create a new variable **currentUser**
+microsoftUser.service.ts -> microsoftUser.service.ts : call **getMicrosoftUser(userId)** \n**Refer:** getMicrosoftUser method in shared_services_design folder \nand assign the response to the **currentUser**
+
+alt if currentUser is null
+    microsoftUser.router.ts <-- microsoftUser.service.ts : return Response\n(code: 404, message: "User not found", body: [])
+end
+
+alt if currentUser is not null
+    microsoftUser.service.ts -> microsoftUser.service.ts : remove current user's user id from the \ncurrent user's reportings array
+
+    microsoftUser.service.ts -> microsoftUser.service.ts : create a new variable **reportingsDetail**
+    microsoftUser.service.ts -> microsoftUser.service.ts : call **getMultipleMicrosoftUser(currentUser.reportings)** \n**Refer:** getMultipleMicrosoftUser method in shared_services_design folder \nand assign the response to the **reportingsDetail**
+
+    microsoftUser.service.ts -> microsoftUser.service.ts : create a new variable **reportingsAttendance**
+    microsoftUser.service.ts -> microsoftUser.service.ts : call **getMicrosoftUsersAttendance(currentUser.reportings)** \n**Refer:** getMicrosoftUsersAttendance method in get_my_team_report folder \nand assign the response to the **reportingsAttendance**
+
+    alt if reportingsAttendance is not null
+        microsoftUser.service.ts -> microsoftUser.service.ts : call **mapUsersWithAttendance(reportingsDetail, reportingsAttendance)** \n**Refer:** mapUsersWithAttendance method below \nand assign the response to the **reportingUsers**
+        microsoftUser.service.ts -> microsoftUser.service.ts : call **mapUsersWithReporterName(reportingsDetail, currentUser)** \n**Refer:** mapUsersWithReporterName method below \nand assign the response to the **reportingUsers**
+    end
+
+    alt if reportingsAttendance is null
+        microsoftUser.service.ts -> microsoftUser.service.ts : call **mapUsersWithReporterName(reportingsDetail, currentUser)** \n**Refer:** mapUsersWithReporterName method below \nand assign the response to the **reportingUsers**
+    end
+
+     microsoftUser.router.ts <-- microsoftUser.service.ts : return Response\n(code: 200, message: "success", body: reportingUsers)
+     deactivate microsoftUser.service.ts
+end
+
+alt if response.code is not equal to 200
+    microsoftUser.router.ts --> app.ts: return \nstatus code: **response.code** and message as **response.message**
+end
+
+alt if response.code is equal to 200
+    microsoftUser.router.ts --> app.ts: return \nstatus code: **response.code** and body: **response.body**
+    deactivate microsoftUser.router.ts
+end
+
+Client <-- app.ts : return \nstatus code: **response.code**, message: **response.message** \nand body: **response.body**
+deactivate app.ts
+deactivate Client 
+@enduml
