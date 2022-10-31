@@ -1,0 +1,187 @@
+@startuml Reject Migration Request
+participant Client #64D1AF
+participant App.tsx
+participant microsoftUser.router.ts
+participant microsoftUser.service.ts
+participant DB #FFC0CB
+
+Client -> App.tsx : **"/users/:userId/reportee-migration/reject"** in **GET** Method
+activate Client #D3D3D3
+activate App.tsx #D3D3D3
+App.tsx -> microsoftUser.router.ts : request hit on the todos controller
+activate microsoftUser.router.ts #D3D3D3
+
+microsoftUser.router.ts -> microsoftUser.router.ts : Declare a variable **userId** and \nassign request.params.userId
+microsoftUser.router.ts -> microsoftUser.router.ts : Declare a variable **migrationId** and \nassign request.params.migrationId
+
+microsoftUser.router.ts -> microsoftUser.router.ts : declare a variabe **response** and Call **rejectMigrationRequest **\n**method with (userId, migrationId)** \nand assign the return value.
+
+microsoftUser.router.ts -> microsoftUser.service.ts : **rejectMigrationRequest(userId, migrationId)**
+
+activate microsoftUser.service.ts #D3D3D3
+
+alt case :userId is undefined
+    microsoftUser.service.ts -> microsoftUser.service.ts : !**userId**
+    activate  microsoftUser.service.ts #D16587
+        microsoftUser.router.ts <-- microsoftUser.service.ts  : code: 400,\nmessage: "user Id is required"
+    deactivate microsoftUser.service.ts
+end
+
+microsoftUser.service.ts -> microsoftUser.service.ts : decalre a variable **currentUser** and assign the return value \nfrom method **getUserById(userId)**
+
+activate microsoftUser.service.ts #D16587 
+    note right of microsoftUser.service.ts : Refer the getUserById method \nin shared_services_designs
+    microsoftUser.service.ts -> microsoftUser.service.ts : return **MicrosoftUser**
+deactivate microsoftUser.service.ts
+
+alt case :currentUser is undefined
+    microsoftUser.service.ts -> microsoftUser.service.ts : !**currentUser**
+    activate  microsoftUser.service.ts #D16587
+        microsoftUser.router.ts <-- microsoftUser.service.ts  : code: 404,\nmessage: "user not found"
+    deactivate microsoftUser.service.ts
+end
+
+alt case :migrationId is undefined
+    microsoftUser.service.ts -> microsoftUser.service.ts : !**migrationId**
+    activate  microsoftUser.service.ts #D16587
+        microsoftUser.router.ts <-- microsoftUser.service.ts  : code: 404,\nmessage: "migration id is required"
+    deactivate microsoftUser.service.ts
+end
+
+alt case :migrationId is not an valid objectId
+    microsoftUser.service.ts -> microsoftUser.service.ts : !**isValidObjectId(migrationId)**
+    activate  microsoftUser.service.ts #D16587
+        microsoftUser.router.ts <-- microsoftUser.service.ts  : code: 404,\nmessage: "migration id is not valid"
+    deactivate microsoftUser.service.ts
+end
+
+microsoftUser.service.ts -> DB : declare a variable **result** and request DB for \nmigration details with migrationId
+
+activate DB #D3D3D3
+    DB -> DB : microsoftUserOverrideSchema.findOne({_id: mirationId});
+    microsoftUser.service.ts <-- DB : return **MicrosoftUserOverride**
+deactivate DB
+
+alt case :result is undefined
+    microsoftUser.service.ts -> microsoftUser.service.ts : !**result**
+    activate  microsoftUser.service.ts #D16587
+        microsoftUser.router.ts <-- microsoftUser.service.ts  : code: 404,\nmessage: "Migration detail is not found"
+    deactivate microsoftUser.service.ts
+end
+
+alt case :migration is rejected and isActive
+    microsoftUser.service.ts -> microsoftUser.service.ts : !**result.status === "rejected"**
+    activate  microsoftUser.service.ts #D16587
+        microsoftUser.router.ts <-- microsoftUser.service.ts  : code: 400,\nmessage: "Your migration request is already rejected"
+    deactivate microsoftUser.service.ts
+end
+
+alt case :migration is accepeted
+    microsoftUser.service.ts -> microsoftUser.service.ts : !**result.**status === "accepted"
+    activate  microsoftUser.service.ts #D16587
+        microsoftUser.router.ts <-- microsoftUser.service.ts  : code: 400,\nmessage: "Accepted migration cannot reject again"
+    deactivate microsoftUser.service.ts
+end
+
+microsoftUser.service.ts -> DB :request DB for update the migration request and assign \nthe returned value to a declared variable **updateUserOverride**
+
+activate DB #D3D3D3
+    DB -> DB : microsoftUserOverrideSchema.findOneAndUpdate(\n\t{_id: mirationId},\n\t{\n\t$set: {\n\t\tstatus: "rejected",\n\t\trejectedBy: currentUser.name\n\t\t}\n\t}\n)
+    microsoftUser.service.ts <-- DB : return **MicrosoftUserOverride**
+deactivate DB
+
+alt case :updateUserOverride is undefined
+    microsoftUser.service.ts -> microsoftUser.service.ts : !**updateUserOverride**
+    activate  microsoftUser.service.ts #D16587
+        microsoftUser.router.ts <-- microsoftUser.service.ts  : code: 400,\nmessage: "Failed to reject request"
+    deactivate microsoftUser.service.ts
+end
+
+microsoftUser.service.ts -> microsoftUser.service.ts : remove the duplicates from the result.reportees and \nassign it in **reporteeIds** variable
+
+microsoftUser.service.ts -> microsoftUser.service.ts : call **getReporteeDetails method with reporteeIds** to \nget the reportee details 
+
+activate microsoftUser.service.ts #D16587
+    note right of microsoftUser.service.ts : Refer getReporteeDetails method \nin shared_services_designs
+    microsoftUser.service.ts -> microsoftUser.service.ts : return **MicrosoftUser[]**
+deactivate microsoftUser.service.ts
+
+microsoftUser.service.ts -> microsoftUser.service.ts : decalre a variable **toUser** and assign the return value \nfrom method **getUserById(result.toUserId)**
+
+activate microsoftUser.service.ts #D16587 
+    note right of microsoftUser.service.ts : Refer the getUserById method \nin shared_services_designs
+    microsoftUser.service.ts -> microsoftUser.service.ts : return **MicrosoftUser**
+deactivate microsoftUser.service.ts
+
+alt case :toUser is undefined
+    microsoftUser.service.ts -> microsoftUser.service.ts : !**toUser**
+    activate  microsoftUser.service.ts #D16587
+        microsoftUser.router.ts <-- microsoftUser.service.ts  : code: 400,\nmessage: "To user not found"
+    deactivate microsoftUser.service.ts
+end
+
+microsoftUser.service.ts -> microsoftUser.service.ts : decalre a variable **practiceManager** and assign the return value \nfrom method **findPracticeManager(toUserId,toUser.practice)**
+
+activate microsoftUser.service.ts #D16587 
+    note right of microsoftUser.service.ts : Refer the findPracticeManager method \nin shared_services_designs
+    microsoftUser.service.ts -> microsoftUser.service.ts : return **MicrosoftUser**
+deactivate microsoftUser.service.ts
+
+microsoftUser.service.ts -> microsoftUser.service.ts : decalre a variable **directManager** and assign the return value \nfrom method **findDirectManager(toUser.managerId)**
+
+activate microsoftUser.service.ts #D16587
+    note right of microsoftUser.service.ts : Refer the findDirectManager method \nin shared_services_designs
+    microsoftUser.service.ts -> microsoftUser.service.ts : return **MicrosoftUser**
+deactivate microsoftUser.service.ts
+
+alt directManager is undefined
+    microsoftUser.router.ts <-- microsoftUser.service.ts  : code: 400,\nmessage: "Direct Manger not found"
+end
+
+microsoftUser.service.ts -> microsoftUser.service.ts : decalre a variable **ccMails** and assign empty []
+
+alt practiceManager is defined
+    microsoftUser.service.ts -> microsoftUser.service.ts : push practiceManager.mail to a toMails []
+end
+
+microsoftUser.service.ts -> microsoftUser.service.ts : push directManager.mail  to toMails[]
+
+microsoftUser.service.ts -> microsoftUser.service.ts : push toUser.mail and workday mail to ccMail[]
+
+microsoftUser.service.ts -> microsoftUser.service.ts : call sendMigrationMail() and assign return value to **mailResponse** variable
+
+activate microsoftUser.service.ts #D16587
+    note right of microsoftUser.service.ts : sendMigrationMail( \n greetings as string,\n mailType as string,/n mail subject as string,\n migrationId ,\n message in mail bosy as string,\n reportees list as MicrosoftUser[],\n toUser as MicrosoftUser[],\n **ccMails**, \n **toMails**, \n **origin** as string \n)
+    note right of microsoftUser.service.ts : Refer the sendMigrationMail method \nin shared_services_designs
+    microsoftUser.service.ts -> microsoftUser.service.ts : return ClientResponse | {}
+deactivate microsoftUser.service.ts
+
+alt #0000001a case: mailResponse is undefined
+    microsoftUser.router.ts <-- microsoftUser.service.ts : code: 400\nmessage: "There is a problem in sending mail"
+else #FFFFFF
+    microsoftUser.service.ts -> DB : request DB for update the migrationRequest and \nupdate the result on **updateMailRequestId** variable
+    activate DB #D3D3D3
+        DB -> DB : microsoftUserOverrideSchema.findByIdAndUpdate(**result**._id, {\n\tmailRequestId: **mailResponse[0]**.headers["x-message-id"],\n })
+        microsoftUser.service.ts <-- DB : return **MicrosoftUserOverride**
+    deactivate DB
+
+    alt case: updateMailRequestId is undefined
+        microsoftUser.router.ts <-- microsoftUser.service.ts : code: 400\nmessage: "Mail request Id not updated successfully"
+    end
+    microsoftUser.router.ts <-- microsoftUser.service.ts : code: 200\nmessage: "Migration request successful"
+end
+deactivate microsoftUser.service.ts
+
+alt #0000001a case: response.code === 200
+    App.tsx  <-- microsoftUser.router.ts : status(response.code)\njson(message: response.message)
+else #FFFFFF
+    App.tsx  <-- microsoftUser.router.ts : status(response.code)\njson(message: response.message)
+end
+
+deactivate microsoftUser.router.ts 
+
+Client <-- App.tsx : return response
+
+deactivate App.tsx
+deactivate Client
+@enduml

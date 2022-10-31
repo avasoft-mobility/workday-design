@@ -1,0 +1,41 @@
+@startuml getReporteeDetails method
+participant Client #64D1AF
+participant SgMail.ts
+
+activate Client #D3D3D3
+activate SgMail.ts #D3D3D3
+
+note right of Client : sendMigrationMail(\n\tteamName: string,\n\tmailRequest: string,\n\tmailSubject: string,\n\tmigrationId: string,\n\tmessage: string,\n\treportees: MicrosoftUser[],\n\ttoUserDetails: MicrosoftUser,\n\tccUsers: string[],\n\ttoUsers: string[],\n\torigin?: string\n)
+ 
+Client -> SgMail.ts : **sendMigrationMail()**
+
+SgMail.ts -> SgMail.ts : set sgMail.setApiKey with sendGrid api key
+
+SgMail.ts -> SgMail.ts : declare a variable **REQUEST_MESSAGE**
+
+SgMail.ts -> SgMail.ts : to get the redirectionLink in onclick of mail link
+
+SgMail.ts -> SgMail.ts : call **redirectionLink(migrationId: string, origin?: string)**
+
+activate SgMail.ts #64D1AF
+
+alt #0000001a origin is undefined
+    SgMail.ts -> SgMail.ts : `<a href="https://hive.avasoft.com/todo/index.html#/migration/${migrationId}">https://hive.avasoft.com/todo/index.html#/migration/${migrationId}</a>`
+else origin.includes("workday.avasoft.com")
+    SgMail.ts -> SgMail.ts : `<a href=https://workday.avasoft.com/migration/${migrationId}">https://workday.avasoft.com/migration/${migrationId}</a>`
+else origin.includes("hivenp")
+    SgMail.ts -> SgMail.ts : `<a href=https://hivenp.avasoft.com/workday/index.html#/migration/${migrationId}">https://hivenp.avasoft.com/workday/index.html#/migration/${migrationId}</a>`
+else #FFFFFF
+    SgMail.ts -> SgMail.ts : `<a href="https://hive.avasoft.com/todo/index.html#/migration/${migrationId}">https://hive.avasoft.com/todo/index.html#/migration/${migrationId}</a>`
+end
+
+deactivate SgMail.ts 
+
+note right of SgMail.ts : REQUEST_MESSAGE = {\n\tto: **toUser** , \n\tcc: **ccUsers**, \n\tfrom: "workday@avasoft.com", \n\tsubject: **mailSubject**,html: {html content to show on mail}\n}
+
+SgMail.ts -> SgMail.ts : using sgMail.sendMultiple(REQUEST_MESSAGE) send mail and \nassign the response of sgMail.ClienResponse to **result** variable 
+
+Client <-- SgMail.ts : return **response** as **sgMail.ClientResponse**
+deactivate SgMail.ts
+deactivate Client
+@enduml
