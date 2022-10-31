@@ -1,0 +1,69 @@
+@startuml Weekly Todo Mail
+
+participant Client #64D1AF
+participant App.tsx
+participant reports.controller.ts
+participant ReportGenerator.ts
+
+Client -> App.tsx : "/reports/weekly-todo/mail" in GET Method
+activate Client #D3D3D3
+activate App.tsx #D3D3D3
+
+App.tsx -> reports.controller.ts : request hit on the reports controller
+activate reports.controller.ts #D3D3D3
+
+alt current day is saturday or sunday 
+    App.tsx <-- reports.controller.ts : return 
+end
+reports.controller.ts -> reports.controller.ts : declare a variable **queryResult** and establish \nan API connection and request for \nthe leadership details
+reports.controller.ts -> UserServiceBE : **"/users/leadership"** in GET method
+activate UserServiceBE #D3D3D3
+    reports.controller.ts <-- UserServiceBE : return **Leadership[]**
+deactivate UserServiceBE
+reports.controller.ts -> reports.controller.ts : call **getTwoWeekDateInterval()** and assign the return \nvalue to **startDate & endDate** variables
+reports.controller.ts -> ReportGenerator.ts : **getTwoWeekDateInterval()**
+activate ReportGenerator.ts #D3D3D3
+    ReportGenerator.ts -> ReportGenerator.ts : decalre a variable **previousWeekMonday** and \n**getPreviousWeekMonday() with (date** as current date)
+    activate ReportGenerator.ts #D16587
+        alt #0000001a date is not sunday
+            ReportGenerator.ts -> ReportGenerator.ts : set **date** as current week monday
+            ReportGenerator.ts -> ReportGenerator.ts : change the **date** to previous monday by substracting date with 7
+            ReportGenerator.ts -> ReportGenerator.ts : return **date**
+        else #FFFFFF
+            ReportGenerator.ts -> ReportGenerator.ts : set **date** as current week monday
+            ReportGenerator.ts -> ReportGenerator.ts : return **date**
+        end
+    deactivate ReportGenerator.ts
+    ReportGenerator.ts -> ReportGenerator.ts : declare a variable **startDate** and assign constructed date using\n**new Date(previousWeekMonday.getTime())**
+    ReportGenerator.ts -> ReportGenerator.ts : declare a variable **endDate** and assign constructed date using\n**new Date(previousWeekMonday.getTime())**
+    ReportGenerator.ts -> ReportGenerator.ts : set the **startDate** and assign date as next Monday using\n**moment(startDate).add(7, "days").toDate();**
+    ReportGenerator.ts -> ReportGenerator.ts : set the **endDate** and assign date as second next monday\n**moment(endDate).add(18, "days").toDate();**
+    reports.controller.ts <-- ReportGenerator.ts : return [**startDate, endDate**] as **Date[]**
+deactivate ReportGenerator.ts
+
+loop const iterator of queryResult
+    reports.controller.ts -> reports.controller.ts : declare a variable **result** and \ncall **generateWeeklyReport with iterator.microsoftUserId** \nand assign the returned string value to it
+    activate reports.controller.ts #D16587
+        note right of reports.controller.ts : Refer generateWeeklyReport method in \nshared sequence method
+        reports.controller.ts -> reports.controller.ts : return string
+    deactivate reports.controller.ts
+
+    alt result !== ""
+        reports.controller.ts -> reports.controller.ts : concatinate **iterator.mail** and **iterator.hrmail** and \nassign the array of string into **toMailIds**
+        reports.controller.ts -> reports.controller.ts : call sendReportMail method
+        activate reports.controller.ts #D16587
+            note right of reports.controller.ts : **sendReportMail**(result,toMailIds,\n"TODO Weekly Update | "+iterator.domain,\n mailBody as string)
+            note right of reports.controller.ts : Refer sendReportMail method in \nshared sequence methods
+            reports.controller.ts -> reports.controller.ts : return sgMail.ClientResponse
+        deactivate reports.controller.ts 
+        App.tsx <-- reports.controller.ts : send {message: "Weekly Todo Reports Mail sent successfully"}
+    end
+end
+
+
+deactivate reports.controller.ts
+App.tsx  -> Client: return response
+
+deactivate App.tsx
+deactivate Client
+@enduml

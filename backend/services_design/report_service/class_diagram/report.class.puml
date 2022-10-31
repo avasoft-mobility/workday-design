@@ -1,0 +1,146 @@
+@startuml Report Service
+
+class  ReportGenerator {
+  generatePreviousDayReport()  \t\t\tDailyTodoReport[]
+  ..
+  generatePreviousTwoWeekReport()   \t\tTwoWeekTodoReport[]
+  ..
+  generateLastWorkingDayAttendanceReport() \tAttendanceReport[]
+  ..
+  generateReportFor()  \t\t\t\t\tAttendanceReport[]
+  ..
+  generateReportsForInterval() \t\t\t\tDailyTodoReport[]
+  ..
+  generateAttendanceReportFor() \t\t\tAttendanceReport[]
+  ..
+  generateUserTodoReport() \t\t\t\tDailyTodoReport
+  ..
+  generateUserReportForInterval() \t\t\tTwoWeekTodoReport
+  ..
+  generateUserAttendanceReport() \t\t\tAttendanceReport
+  ..
+  getWeeklyTodoReasonFor() \t\t\t\tstring
+  ..
+  getLastWorkingDate() \t\t\t\t\tDate
+  ..
+  getTwoWeekDateInterval() \t\t\t\tDate[]
+  ..
+  getPreviousWeekMonday() \t\t\t\tDate
+  ..
+  isMonday()  \t\t\t\t\t\t\tboolean
+}
+
+class  utility {
+  generateDailyReport()  \t\t\tstring
+  ..
+  generateWeeklyReport() \t\tstring
+  ..
+  generateDailyAttendanceReport() \tstring
+  ..
+  convertJsonToExcel()  \t\t\tstring
+  ..
+  sendReportMail() \t\t\t\tMailResponse
+}
+
+entity Leadership {
+  _id \t\t\t\tstring
+  ..
+  microsoftUserId \tstring
+  ..
+  name \t\t\tstring
+  ..
+  domain \t\t\tstring
+  ..
+  mail \t\t\tstring
+  ..
+  hrpoc \t\t\tstring
+  ..
+  hrmail \t\t\tstring[]
+  ..
+  __v? \t\t\tnumber
+}
+
+entity Todo {
+  _id \t\t\t\tstring
+  ..
+  userId \t\t\tstring
+  ..
+  microsoftUserId \tstring
+  ..
+  title \t\t\t\tstring
+  ..
+  comments \t\tstring
+  ..
+  status \t\t\tstring
+  ..
+  type \t\t\t\tstring
+  ..
+  eta \t\t\t\tnumber
+  ..
+  ata \t\t\t\tnumber
+  ..
+  date \t\t\tDate
+  ..
+  tags? \t\t\tTag[]
+  ..
+  tagNames? \t\tstring[]
+  ..
+  __v \t\t\t\tnumber
+}
+
+entity AttendanceModel {
+  _id? \t\t\t\tstring
+  ..
+  userId? \t\t\tstring
+  ..
+  microsoftUserID \tstring
+  ..
+  date \t\t\tDate
+  ..
+  attendance_status \tstring
+  ..
+  __v? \t\t\tnumber
+}
+
+entity Tag {
+  _id? \t\tstring
+  ..
+  userId \t\tstring
+  ..
+  tagName \t\tstring
+  ..
+  createdAt \tstring
+  ..
+  updatedAt \tstring
+}
+
+
+entity DailyTodoReport {
+  Name \t\tstring
+  ..
+  Domain \t\tstring
+  ..
+  Reason \t\tstring
+  ..
+  Attendance \tstring
+}
+
+entity AttendanceReport {
+  Name \t\tstring
+  ..
+  Domain\t\tstring
+  ..
+  Attendance \tstring
+}
+
+entity TwoWeekTodoReport {
+  Name \t\tstring
+  ..
+  Domain \t\tstring
+  ..
+  Status \t\tstring
+  ..
+  [key string] \tstring
+}
+
+@enduml

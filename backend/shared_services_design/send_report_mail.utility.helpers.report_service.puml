@@ -1,0 +1,24 @@
+@startuml sendReportMail method
+participant Client #64D1AF
+participant utility.ts
+
+utility.ts -> utility.ts : import **sgMail** from "@sendgrid/mail";
+utility.ts -> utility.ts : import **fs** from "fs";
+
+Client -> utility.ts : **sendReportMail(filePath ,toMailIds ,subject ,body)**
+activate Client #D3D3D3
+activate utility.ts #D3D3D3
+    utility.ts -> utility.ts : declare a variable **fileStream** and read the file using \nthe **fs.readFileSync(filePath)** and store it 
+    utility.ts -> utility.ts : declare a variable **fileName** and split the **filePath** by "/" \nand assign the value to it.
+    utility.ts -> utility.ts : set sendGrid api key from environment variable
+    
+    utility.ts -> utility.ts : declare a variable **html** and assign value as string in html, \nthat we want to show on mail body
+    note right of utility.ts : **attachments** = [{\n\tcontent: **fileStream.toString("base64")**,\n\tfilename: **fileName**,\n\tsubject: **subject**,\n\ttype: "application/xlsx",\n\tdisposition: "attachment",\n\tcontent_id: **fileName**,\n} ]
+    note right of utility.ts : **msg** = {\n\tto: **toMailIds**\n\tfrom: "workday@avasoft.com",\n\tsubject: **subject**,\n\thtml: **html**,\n\tattachments: **attachments**,\n}
+
+    utility.ts -> utility.ts : using the **sgMail.sendMultiple(msg)** send the mail with content \nand assign the return value to a **result** variable
+    Client <-- utility.ts : **result** of sgMail.ClientResponse
+deactivate utility.ts
+deactivate Client
+
+@enduml

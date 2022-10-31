@@ -1,0 +1,146 @@
+@startuml GenerateWeeklyReport method
+
+participant Client
+participant utility.ts
+participant ReportGenerator.ts
+
+utility.ts -> utility.ts : import **XLXS** from "xlxs"
+
+Client -> utility.ts : **generateWeeklyReport(microsoftUserId)**
+activate Client  #D3D3D3
+activate utility.ts #D3D3D3
+
+
+utility.ts -> utility.ts : declare a variable **reportGenerator** assign the \ninstance of **ReportGenerator(microsoftUserId)**
+utility.ts -> utility.ts : declare a variable **report** assign the \nresponse from **reportGenerator.generatePreviousTwoWeekReport()**
+
+utility.ts -> ReportGenerator.ts : **generatePreviousTwoWeekReport()**
+activate ReportGenerator.ts #D3D3D3
+    ReportGenerator.ts -> ReportGenerator.ts : call **getTwoWeekDateInterval()** and assign the return \nvalue to **startDate & endDate** variables
+    ReportGenerator.ts -> ReportGenerator.ts : **getTwoWeekDateInterval()**
+    activate ReportGenerator.ts  #D16587
+        ReportGenerator.ts -> ReportGenerator.ts : decalre a variable **previousWeekMonday** and \n**getPreviousWeekMonday() with date** as current date
+        activate ReportGenerator.ts #D3D3D3
+            alt #0000001a date is not sunday
+                ReportGenerator.ts -> ReportGenerator.ts : set date as current week monday
+                ReportGenerator.ts -> ReportGenerator.ts : change the date to previous monday by substracting date with 7
+                ReportGenerator.ts -> ReportGenerator.ts : return date
+            else #FFFFFF
+                ReportGenerator.ts -> ReportGenerator.ts : set date as current week monday
+                ReportGenerator.ts -> ReportGenerator.ts : return date
+            end
+        deactivate ReportGenerator.ts
+        ReportGenerator.ts -> ReportGenerator.ts : declare a variable **startDate** and assign constructed date using\n**new Date(previousWeekMonday.getTime())**
+        ReportGenerator.ts -> ReportGenerator.ts : declare a variable **endDate** and assign constructed date using\n**new Date(previousWeekMonday.getTime())**
+        ReportGenerator.ts -> ReportGenerator.ts : set the **startDate** and assign date as next Monday using\n**moment(startDate).add(7, "days").toDate();**
+        ReportGenerator.ts -> ReportGenerator.ts : set the **endDate** and assign date as second next monday\n**moment(endDate).add(18, "days").toDate();**
+        ReportGenerator.ts -> ReportGenerator.ts : return [**startDate, endDate**]
+    deactivate ReportGenerator.ts
+
+    ReportGenerator.ts -> ReportGenerator.ts : declare a variable **report** and \ncall **generateReportsForInterval()** method with **fromDate, toDate**
+    ReportGenerator.ts -> ReportGenerator.ts : **generateReportsForInterval(fromDate, toDate)**
+
+    activate ReportGenerator.ts #D16587
+        ReportGenerator.ts -> ReportGenerator.ts : declare a variable **targetUser** and \ncreate an Api gateway and request for userdetails \nfor **microsofuserId**
+        ReportGenerator.ts -> UserServiceBE : **"/users/:userId" in GET method**
+        activate UserServiceBE #D3D3D3
+            ReportGenerator.ts <-- UserServiceBE : return response as **MicrosoftUser**
+        deactivate UserServiceBE
+        alt #0000001a targetUser is undefined
+            ReportGenerator.ts -> ReportGenerator.ts : return null
+        else #FFFFFF
+            ReportGenerator.ts -> ReportGenerator.ts : declare a variable **reports** as **TwoWeekTodoReport[]**
+            loop let userId of targetUser.reportings
+                ReportGenerator.ts -> ReportGenerator.ts : declare a variable **userReport** and call **generateUserReportForInterval()** \nmethod with **userId, fromDate, toDate**
+                ReportGenerator.ts -> ReportGenerator.ts : **generateUserReportForInterval(userId, fromDate, toDate)**
+                activate ReportGenerator.ts #D3D3D3
+                    ReportGenerator.ts -> ReportGenerator.ts : declare a variable **user** and \ncreate an Api gateway and request for userdetails \nfor **userId**
+                    ReportGenerator.ts -> UserServiceBE : **"/users/:userId" in GET method**
+                    activate UserServiceBE #D3D3D3
+                        ReportGenerator.ts <-- UserServiceBE : return response as **MicrosoftUser**
+                    deactivate UserServiceBE
+                    ReportGenerator.ts -> ReportGenerator.ts : declare a **result** varaible as **TwoWeekTodoReport**
+
+                    note right of ReportGenerator.ts : **result** : { \n\tName: user.name \n\tDomain: user.practice,\n\tStatus: "",\n\tMonday_1: "",\n\tTuesday_1: "",\n\tWednesday_1: "",\n\tThursday_1: "",\n\tFriday_1: "",\n\tMonday_2: "",\n\tTuesday_2: "",\n\tWednesday_2: "",\n\tThursday_2: "",\n\tFriday_2: "",\n}
+
+                    ReportGenerator.ts -> ReportGenerator.ts : convert the **result** into keys and \nassign the values to **keys** variable
+
+                    loop let date = new Date(fromDate.getTime()), index = 3;\n date <= toDate;\ndate.setDate(date.getDate() + 1), index++
+                        ReportGenerator.ts -> ReportGenerator.ts : declare a variable **todos** and \ncreate an Api gateway and request for todoDetails \nfor **userId , date**
+                        ReportGenerator.ts -> TodoServiceBE : **"/todos?userId=userId&date=date" in GET method**
+                        activate TodoServiceBE #D3D3D3
+                            ReportGenerator.ts <-- TodoServiceBE : return response as **Todo[]**
+                        deactivate TodoServiceBE
+
+                        ReportGenerator.ts -> ReportGenerator.ts : declare a variable **attendance** and \ncreate an Api gateway and request for attendaceDetails \nfor **userId , date**
+                        ReportGenerator.ts -> AttendanceServiceBE : **"/attendance?userId=userId&date=date&object=true" in GET method**
+                        activate AttendanceServiceBE #D3D3D3
+                            ReportGenerator.ts <-- AttendanceServiceBE : return response as **Todo[]**
+                        deactivate AttendanceServiceBE
+
+                        alt date is saturday
+                            ReportGenerator.ts -> ReportGenerator.ts : set **date** to monday
+                        end
+
+                        ReportGenerator.ts -> ReportGenerator.ts : call the **getWeeklyTodoReasonFor(todos, attendance)** \nfunction and assign result's key value with index
+
+                        ReportGenerator.ts -> ReportGenerator.ts : **result[keys[index]] = getWeeklyTodoReasonFor(todos, attendance)**
+                        activate ReportGenerator.ts 
+                            alt #0000001a attendance_status is leave or comp off 
+                                ReportGenerator.ts -> ReportGenerator.ts : return **Leave**
+                            else number of todos equals 0
+                                ReportGenerator.ts -> ReportGenerator.ts : return **Not Filled Properly**
+                            else number of todos lessthan or equals 2
+                                ReportGenerator.ts -> ReportGenerator.ts : return **Have less than 2 todos**
+                            else find total eta for todos and is greaterthan or equals 3
+                                ReportGenerator.ts -> ReportGenerator.ts : return **Have less than 3 hours of ETA**
+                            else #FFFFFF
+                                ReportGenerator.ts -> ReportGenerator.ts : return **Filled Properly**
+                            end
+                        deactivate ReportGenerator.ts
+                    end
+
+                    ReportGenerator.ts -> ReportGenerator.ts : construct or convert the **result** into values and assign to **values**
+                    loop #FFFFFF values using some 
+                        ReportGenerator.ts -> ReportGenerator.ts : if **values** have "Have less than 2 todos" , "Have less than 3 hours of ETA" , \n"Not Filled Properly" and return string if matching to \n**isNotFilledProperty** variable
+                    end
+                    
+                    alt #0000001a isNotFilledProperty is defined
+                        ReportGenerator.ts -> ReportGenerator.ts : assign **result.status** = "Not filled Properly"
+                    else #FFFFFF
+                        ReportGenerator.ts -> ReportGenerator.ts : assign **result.status** = "Filled Properly"
+                    end
+                    ReportGenerator.ts -> ReportGenerator.ts : return **result** as **TwoWeekTodoReport**
+                deactivate ReportGenerator.ts
+
+                ReportGenerator.ts -> ReportGenerator.ts : push the **userReport** into **reports** array
+            end
+            ReportGenerator.ts -> ReportGenerator.ts : return **reports** as **TwoWeekTodoReport[]**
+        end
+    deactivate ReportGenerator.ts
+    alt #0000001a report is undefined
+        utility.ts <-- ReportGenerator.ts : return null
+    else #FFFFFF
+        utility.ts <-- ReportGenerator.ts : return **report** as **TwoWeekTodoReport[]**
+    end
+deactivate ReportGenerator.ts
+
+alt #dbdbdb report is undefined
+    Client <-- utility.ts : return ""
+else #FFFFFF
+    utility.ts -> utility.ts : declare a variable **exportedPath** and call **convertJsonToExcel with report and "Daily_attendance_reports"** \nand assign value to it
+    activate utility.ts #D16587
+        utility.ts -> utility.ts : declare a variable **reportWorkSheet** and\nusing the **XLXS.utils.json_to_sheet method with report** \nand assign value to it
+        utility.ts -> utility.ts : declare a variable **workbook** and\nusing the **XLXS.utils.book_new method** \nand assign it variable
+        utility.ts -> utility.ts : using **XLXS.utils.book_append_sheet(workbook, reportWorkSheet, fileName)** \nwhich is to append the book with sheet in a xl sheet
+        utility.ts -> utility.ts : create a variable **path** and assign string like **"/tmp/"+fileName+"_" + new Date().getTime() + ".xlsx"**
+        utility.ts -> utility.ts : using **XLXS.writeFile(workbook, path)** \nwhich is write the content into xl sheet with above data
+        utility.ts -> utility.ts : return **path** as **string**
+    deactivate utility.ts 
+    Client <-- utility.ts : return **exportedPath** as string
+    deactivate utility.ts
+end
+
+deactivate utility.ts
+deactivate Client
+@enduml
