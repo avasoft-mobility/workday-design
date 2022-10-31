@@ -1,0 +1,56 @@
+@startuml get team statistics
+participant Client #64D1AF
+participant microsoftUser.router.ts
+
+Client -> microsoftUser.router.ts : getTeamStatistics(\nuser,statsTodos,statsAttendance\n)
+activate Client #D3D3D3
+    activate microsoftUser.router.ts #D3D3D3
+        microsoftUser.router.ts -> microsoftUser.router.ts : create a variable\n called **result** and assign\n initial values of **-1** to it\n in **TeamStats** datatype
+        microsoftUser.router.ts -> microsoftUser.router.ts : getTeamTotalReportes(user)
+        activate microsoftUser.router.ts #D16587
+            microsoftUser.router.ts -> microsoftUser.router.ts : declare a variable **result**\n in the number as a DataType
+            alt case: user.reportings.length\n is lesser than 1
+                microsoftUser.router.ts -> microsoftUser.router.ts : assign **0** to **result**
+            else
+                microsoftUser.router.ts -> microsoftUser.router.ts : assign user.reportings.length-1 to **result**
+            end
+            microsoftUser.router.ts -> microsoftUser.router.ts : return result
+        deactivate microsoftUser.router.ts
+        microsoftUser.router.ts -> microsoftUser.router.ts : getTeamTotalWorkingHours(user,\n statsTodos,\n statsAttendance)
+        activate microsoftUser.router.ts #D16587
+            microsoftUser.router.ts -> microsoftUser.router.ts : create a variable **totalATA**\n and assign the initial values as **0**.
+            microsoftUser.router.ts -> microsoftUser.router.ts : create a variable **totalUsers**\n and assign the initial values as **0**.
+            alt case : user.reportings.length is greater than 1
+                microsoftUser.router.ts -> microsoftUser.router.ts : remove the **user.userId** from the user.reportings\n and save the remaining reportings\n in a variable called **reportings**    
+                loop case : loop the reportings\n and name single reportings as iterator
+                    microsoftUser.router.ts -> microsoftUser.router.ts : find the **iterator's** userattendance\n in statsAttendance.reportingInterestedDateAttendances\n and that in a variable called **userAttendance**.
+                    alt case: userAttendance is undefined
+                        microsoftUser.router.ts -> microsoftUser.router.ts : continue
+                    end
+                    alt case : userAttendance &&\n(userAttendance.attendance_status.includes("Leave") ||\n userAttendance.attendance_status === "Comp Off")
+                        microsoftUser.router.ts -> microsoftUser.router.ts : continue
+                    end
+                    microsoftUser.router.ts -> microsoftUser.router.ts : increament totalUsers by 1
+                    microsoftUser.router.ts -> microsoftUser.router.ts :  loop the statsTodos.reportingsInterestedDateTodos\n and return the todos which has the microsoftUserId\n as **iterator** and save the returned value in a variable\n called **todos**
+                    loop 
+                        microsoftUser.router.ts -> microsoftUser.router.ts :loop the todos and sum\n the every todo ATA and save\n in a variable called **todos**
+                    end
+                end
+            end
+            alt case : totalUsers === 0
+                microsoftUser.router.ts -> microsoftUser.router.ts : return [totalAta, "0"]
+            end
+            microsoftUser.router.ts -> microsoftUser.router.ts : create a variable called **average**\n and assign **totalAta / totalUsers** values
+            alt case : average > 0
+                microsoftUser.router.ts -> microsoftUser.router.ts :return [totalAta, average.toFixed(1)]
+            end
+            microsoftUser.router.ts -> microsoftUser.router.ts : return [totalAta, average.toFixed(2)]
+        deactivate microsoftUser.router.ts
+        microsoftUser.router.ts -> microsoftUser.router.ts : get the return response and save that\n in a vaiable called [**totalWorkingHours**, **averageWorkingHours**]
+        microsoftUser.router.ts -> microsoftUser.router.ts : assign **totalWorkingHours** to **result.totalWorkingAta**
+        microsoftUser.router.ts -> microsoftUser.router.ts : assign **averageWorkingHours** to **result.avgWorkingAta**
+    deactivate microsoftUser.router.ts
+    Client <-- microsoftUser.router.ts : result
+deactivate Client
+
+@enduml

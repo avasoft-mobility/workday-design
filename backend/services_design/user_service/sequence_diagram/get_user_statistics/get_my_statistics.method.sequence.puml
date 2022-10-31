@@ -1,0 +1,54 @@
+@startuml get my statistics
+participant Client #64D1AF
+participant microsoftUser.router.ts
+
+Client -> microsoftUser.router.ts : "getMyStatistics(\nuserId,statsTodos,statsAttendance\n)"
+activate Client #D3D3D3
+    activate microsoftUser.router.ts #D3D3D3
+        microsoftUser.router.ts -> microsoftUser.router.ts : create a variable\n called **result** and assign\n initial values of **-1** to it\n in **MyStats** datatype
+        microsoftUser.router.ts -> microsoftUser.router.ts :  getMyCurrentWorkingHours(\nstatsTodos,statsAttendance);
+        activate microsoftUser.router.ts #D16587
+            microsoftUser.router.ts -> microsoftUser.router.ts : create a variable called\n **totalATA** and assign\n the value as **0** initially.
+            microsoftUser.router.ts -> microsoftUser.router.ts : create a variable called\n **todos** and assign\n **statsTodos.interestedDateTodo**\n as the value.
+            alt case: statsAttendance.interestedDateAttendance.length > 0
+                microsoftUser.router.ts -> microsoftUser.router.ts : assign **statsAttendance.interestedDateAttendance[0]**\n to the variable called **attendance**
+            else 
+                microsoftUser.router.ts -> microsoftUser.router.ts : assign **null** to the variable called **attendance**
+            end
+            alt case: attendance is undefined
+                microsoftUser.router.ts -> microsoftUser.router.ts : return 0
+            end
+            alt case: **attendance.attendance_status** is "Leave" || "Comp Off"
+                microsoftUser.router.ts -> microsoftUser.router.ts : return 0
+            end
+            loop
+                microsoftUser.router.ts -> microsoftUser.router.ts : loop the todos and sum the\n each todos every ata and\n and save that in a variable\n called **totalAta** 
+            end
+            microsoftUser.router.ts -> microsoftUser.router.ts : return totalAta
+        deactivate microsoftUser.router.ts
+        microsoftUser.router.ts -> microsoftUser.router.ts : get the return response and save that\n in a varible called **result.myCurrentwrkgHrs**
+        microsoftUser.router.ts -> microsoftUser.router.ts :  getPreviousWeekWorkingHours(statsTodos,\nstatsAttendance)
+        activate microsoftUser.router.ts #D16587
+            microsoftUser.router.ts -> microsoftUser.router.ts : create a variable called **todos**\n and assign the value **statsTodos.dateIntervalTodos**
+            microsoftUser.router.ts -> microsoftUser.router.ts : create a variable called **attendances**\n and assign the value\n **statsAttendance.dateIntervalAttendances**
+            loop
+                microsoftUser.router.ts -> microsoftUser.router.ts : loop the **attendances** and\n filter the attendance\n which are in the status of\n **"leave"** || **"Comp Off"** and\n convert the date to string and\n save that in a variable called\n **presentAttendance**
+            end
+            microsoftUser.router.ts -> microsoftUser.router.ts : assign a variable called **totalAta**\n and assign the initial value as **0**.
+            loop
+                microsoftUser.router.ts -> microsoftUser.router.ts : loop the **todos** and if the todo date\n is present in the **presentAttendance** string[]\n then sum the particular todo ATA and save\n it in **totalAta** variable 
+            end
+            alt case: attendances is undefined
+                microsoftUser.router.ts -> microsoftUser.router.ts : return "0" 
+            end
+            alt case: totalAta === 0 || presentAttendance.length === 0
+                microsoftUser.router.ts -> microsoftUser.router.ts : return "0" 
+            end
+            microsoftUser.router.ts -> microsoftUser.router.ts : return(totalAta / presentAttendance.length).toFixed(2)
+        deactivate microsoftUser.router.ts
+        microsoftUser.router.ts ->  microsoftUser.router.ts : get the return response and save that in a\n variable called **result.myPreWekWrkngHrs**
+        Client <-- microsoftUser.router.ts : result
+    deactivate microsoftUser.router.ts
+deactivate Client
+
+@enduml

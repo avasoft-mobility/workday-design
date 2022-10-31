@@ -1,0 +1,79 @@
+@startuml get stats method
+participant Client #64D1AF
+participant microsoftUser.router.ts
+participant TodoLambda
+participant AttendanceLambda
+participant DB #FFC0CB
+
+Client -> microsoftUser.router.ts : "getStats(userId: string)"
+activate Client #D3D3D3
+    activate microsoftUser.router.ts #D3D3D3
+        microsoftUser.router.ts -> microsoftUser.router.ts : create a variable\n called **result** and assign\n initial values of **-1** to it\n in **UserTodoStatistics**\n datatype
+        microsoftUser.router.ts -> microsoftUser.router.ts : getDateForStats()
+        activate microsoftUser.router.ts #D16587
+            microsoftUser.router.ts -> microsoftUser.router.ts :create a variable\n called **intrestedDate**\n and assign today's\n date to it.
+            alt case: **intrestedDate's** time\n is greater than 2:00PM
+                microsoftUser.router.ts -> microsoftUser.router.ts : assign yesterday's date\n to **intrestedDate**
+            else 
+                microsoftUser.router.ts -> microsoftUser.router.ts : assign Day before yesterday's\n date to **intrestedDate**
+            end
+            alt case: **intrestedDate** is sunday
+                microsoftUser.router.ts -> microsoftUser.router.ts : assign previous friday's\n to **intrestedDate**
+            else case: **intrestedDate** is saturday
+                microsoftUser.router.ts -> microsoftUser.router.ts : assign previous friday's\n to **intrestedDate**
+            end
+            microsoftUser.router.ts -> microsoftUser.router.ts: return **interestedDate**
+        deactivate microsoftUser.router.ts
+        microsoftUser.router.ts -> microsoftUser.router.ts : get the return response and\n save that in a variable called\n **interestedDate**.
+        microsoftUser.router.ts -> microsoftUser.router.ts : getPreviousWeekDateRange()
+        activate microsoftUser.router.ts #D16587
+            microsoftUser.router.ts -> microsoftUser.router.ts : get the previous week's\n start date and assign that in\n a variable called **fromDate**
+            microsoftUser.router.ts -> microsoftUser.router.ts : get the previous week's\n end date and assign that in\n a variable called **toDate**
+            microsoftUser.router.ts -> microsoftUser.router.ts : return [**fromDate**,**toDate**]
+        deactivate microsoftUser.router.ts
+        microsoftUser.router.ts -> microsoftUser.router.ts : get the return response\n and save that in a variable called\n **fromDate** and **toDate**
+        microsoftUser.router.ts -> DB :  microsoftUser.findOne({ userId: userId })
+        activate DB #D3D3D3
+            microsoftUser.router.ts <-- DB : MicrosoftUser
+        deactivate DB 
+        microsoftUser.router.ts -> microsoftUser.router.ts : get the return response and save that\n in a variable called **user**
+        alt case: **user** is undefined
+            Client <-- microsoftUser.router.ts : result
+        end
+        microsoftUser.router.ts -> microsoftUser.router.ts : getTodosForStats(userId,\nmoment(interestedDate).format("YYYY-MM-DD"),\nmoment(fromDate).format("YYYY-MM-DD"),\nmoment(toDate).format("YYYY-MM-DD"),\nuser.reportings)
+        activate microsoftUser.router.ts #D16587
+            microsoftUser.router.ts -> TodoLambda : lambdaClient.post(\n"/todos/stats",{userId: userId,},\n{interestedDate: interestedDate,\nstartDate: fromDate,endDate: toDate,reportings: reportings,})
+            activate TodoLambda #D3D3D3
+                microsoftUser.router.ts <-- TodoLambda : TodoStats
+            deactivate TodoLambda
+            microsoftUser.router.ts -> microsoftUser.router.ts : get the return response and save that\n in a variable called **response**
+            microsoftUser.router.ts -> microsoftUser.router.ts  : return response
+        deactivate microsoftUser.router.ts
+        microsoftUser.router.ts -> microsoftUser.router.ts : get the return response and\n save that in a variable called **statsTodos**
+        microsoftUser.router.ts -> microsoftUser.router.ts : getAttendanceForStats(\nuserId,\nmoment(interestedDate).format("YYYY-MM-DD"),\nmoment(fromDate).format("YYYY-MM-DD"),\nmoment(toDate).format("YYYY-MM-DD"),\nuser.reportings)
+        activate microsoftUser.router.ts #D16587
+            microsoftUser.router.ts -> AttendanceLambda : lambdaClient.post("/attendance/stats",\n{userId: userId,},\n{interestedDate: interestedDate,startDate: fromDate,\nendDate: toDate,reportings: reportings,})
+            activate AttendanceLambda #D3D3D3
+                microsoftUser.router.ts <-- AttendanceLambda : AttendanceStats
+            deactivate AttendanceLambda
+            microsoftUser.router.ts -> microsoftUser.router.ts : get the return response and save that\n in a variable called **response**
+            microsoftUser.router.ts -> microsoftUser.router.ts  : return response
+        deactivate microsoftUser.router.ts
+        microsoftUser.router.ts -> microsoftUser.router.ts : get the return response and\n save that in a variable called **statsAttendance** 
+        microsoftUser.router.ts -> microsoftUser.router.ts : getMyStatistics(\nuserId,statsTodos,statsAttendance\n)
+        activate microsoftUser.router.ts #D16587
+            note right of microsoftUser.router.ts : refer **get_my_statistics** method
+            microsoftUser.router.ts -> microsoftUser.router.ts : return MyStats
+        deactivate microsoftUser.router.ts
+        microsoftUser.router.ts -> microsoftUser.router.ts : get the return response and save\n that in a existing variable called **result.myStatistics**
+        microsoftUser.router.ts -> microsoftUser.router.ts : getTeamStatistics(\nuser,statsTodos,statsAttendance\n)
+        activate microsoftUser.router.ts #D16587
+            note right of microsoftUser.router.ts : refer **get_team_statistics** method
+            microsoftUser.router.ts -> microsoftUser.router.ts : return TeamStats
+        deactivate microsoftUser.router.ts
+        microsoftUser.router.ts -> microsoftUser.router.ts : get the return response and save\n that in a existing variable called **result.teamStatistics**
+        microsoftUser.router.ts -> microsoftUser.router.ts : assign **interestedDate** value to\n the **result.date**
+        Client <-- microsoftUser.router.ts : result
+    deactivate microsoftUser.router.ts
+deactivate Client
+@enduml

@@ -1,0 +1,26 @@
+@startuml get user statistics
+participant Client #64D1AF
+participant app.ts
+participant microsoftUser.router.ts
+
+Client -> app.ts : "/users"
+activate Client #D3D3D3
+    activate app.ts #D3D3D3
+    app.ts -> microsoftUser.router.ts : (**get**) "/:userId/statistics"
+    activate microsoftUser.router.ts #D3D3D3
+        alt case: req.params["userId"] is null/\n empty/undefined
+            app.ts <-- microsoftUser.router.ts : status:400,\n message: userId is required
+        end
+        Client <-- app.ts : status:400,\n message: userId is required
+        microsoftUser.router.ts -> microsoftUser.router.ts : getStats(req.params["userId"])
+        activate microsoftUser.router.ts #D16587
+            note right of microsoftUser.router.ts : refer getStats method
+            microsoftUser.router.ts -> microsoftUser.router.ts: return UserTodoStatistics
+        deactivate microsoftUser.router.ts
+        microsoftUser.router.ts -> microsoftUser.router.ts: get the return response\n and save that in a variable\n called **result**
+        app.ts <-- microsoftUser.router.ts : status:200,\n body: result
+    deactivate microsoftUser.router.ts
+    Client <-- app.ts : status:200,\n body: result
+    deactivate app.ts
+deactivate Client
+@enduml
