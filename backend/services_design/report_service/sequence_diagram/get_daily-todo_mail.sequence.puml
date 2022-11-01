@@ -1,0 +1,48 @@
+@startuml get daily todo mail
+participant Client #64D1AF
+participant app.ts
+participant reports.controller.ts
+participant usersLamda
+participant reportGenerator.ts
+participant utility.ts
+
+Client -> app.ts : "/reports"
+activate Client #D3D3D3
+    activate app.ts #D3D3D3
+        app.ts -> reports.controller.ts : /daily-todo/mail
+        activate reports.controller.ts #D3D3D3
+        alt case : present date is\n sunday || saturday
+            app.ts <-- reports.controller.ts : status : 400,\n message: cannot send daily-todo mail\n on saturday and sunday
+        end
+        reports.controller.ts -> usersLamda : LambdaClient("Users").get(\n"/leadership")
+        activate usersLamda #D3D3D3
+            reports.controller.ts <-- usersLamda : Leadership[]
+        deactivate usersLamda
+        reports.controller.ts ->  reports.controller.ts : get the return response and\n save that in a variable called\n **queryResult**
+        reports.controller.ts -> reportGenerator.ts : getLastWorkingDate()
+        activate reportGenerator.ts #D3D3D3
+            reports.controller.ts <-- reportGenerator.ts : Date
+        deactivate reportGenerator.ts
+        reports.controller.ts -> reports.controller.ts : get the return response and\n save that in a variable called\n **previousWorkingDay**
+        loop case: loop queryResult and\n name each queryResult as iterator
+            reports.controller.ts -> utility.ts : generateDailyReport(iterator.microsoftUserId)
+            activate utility.ts #D3D3D3
+                note right of utility.ts : visit generate_daily_report method\n from shared service file
+                reports.controller.ts <-- utility.ts : string
+            deactivate  utility.ts
+            reports.controller.ts -> reports.controller.ts : get the return response and\n save that in a variable called\n **result**
+            alt case: result!== ""
+                reports.controller.ts -> reports.controller.ts : create a variable called **toMailIds**\n and save iterator.mail and iterator.hrmail\n in that variable.
+            end
+            reports.controller.ts -> utility.ts : sendReportMail(\nresult,\ntoMailIds,\n`TODO Daily Update | ${iterator.domain} | ${moment(\npreviousWorkingDay\n).format("Do MMMM, YYYY")}`,\n"Please find the attached report for TODO Updates.")
+            note right of utility.ts : visit send_report_mail utility file in\n shared service folder
+            activate utility.ts #D3D3D3
+                reports.controller.ts <-- utility.ts : return response from mail
+            deactivate utility.ts
+        end
+        app.ts <-- reports.controller.ts : message: "Daily Todo Reports Mail sent successfully"
+        deactivate reports.controller.ts  
+        Client <-- app.ts :  message: "Daily Todo Reports Mail sent successfully"
+    deactivate app.ts
+deactivate Client
+@enduml
