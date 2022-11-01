@@ -100,6 +100,32 @@ entity MicrosoftUserOverride{
     reportees: \t\t\t string[]
 }
 
+entity PopulateMicrosoftUserOverride{
+    _id: \t\t\t\t\t string
+    ..
+    status: \t\t\t\t string
+    ..
+    mailRequestId: \t\t string
+    ..
+    acknowledgedBy?: \t\t string
+    ..
+    acceptedBy?: \t\t\t string
+    ..
+    rejectedBy?: \t\t\t string
+    ..
+    isActive: \t\t\t\t string
+    ..
+    createdAt: \t\t\t string
+    ..
+    updatedAt: \t\t\t string
+    ..
+    __v?: \t\t\t\t number
+    ..
+  toUser: \t\t\t\t MicrosoftUser;
+  ..
+  reportees: \t\t\t MicrosoftUser[];
+}
+
 entity TeamReport{
   _id: \t\t\t\t\t string
   ..
@@ -166,6 +192,54 @@ entity MicrosoftUser{
   isAdmin?: \t\t Boolean
   ..
   __v: \t\t\t\t number;
+}
+
+entity myStats {
+  myCurrentwrkgHrs: \t\t\t number
+  ..
+  myPreWekWrkngHrs: \t\t string
+}
+
+entity requestedReportees {
+  toUser: \t\t\t MicrosoftUser
+  ..
+  reportees: \t\t MicrosoftUser[]
+}
+
+entity Tag {
+  _id?: \t\t\t string
+  ..
+  userId: \t\t\t string
+  ..
+  tagName: \t\t string
+  ..
+  createdAt: \t\t string
+  ..
+  updatedAt: \t\t string;
+}
+
+entity TeamStats {
+  totalReporters: \t\t\t number
+  ..
+  totalWorkingAta: \t\t\t number
+  ..
+  avgWorkingAta: \t\t\t string
+}
+
+entity TodoStats {
+  interestedDateTodo: \t\t\t Todo[]
+  ..
+  dateIntervalTodos: \t\t\t\t Todo[]
+  ..
+  reportingsInterestedDateTodos: \t Todo[]
+}
+
+entity UserTodoStatistics {
+  teamStatistics: \t\t TeamStat
+  ..
+  myStatistics: \t\t MyStat
+  ..
+  date: \t\t\t string
 }
 
 @enduml
