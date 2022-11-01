@@ -15,7 +15,7 @@ note right of DB: query: \n{\nuserId: userId \n}
 
 DB --> microsoftUser.service.ts: return **MicrosoftUser** and \nstore the response in the variable **currentUser**
 deactivate DB
-microsoftUser.service.ts --> Client: return **currentUser** as **TeamReport**
+microsoftUser.service.ts --> Client: return **currentUser** as **MicrosoftUser**
 deactivate microsoftUser.service.ts
 deactivate Client
 @enduml
