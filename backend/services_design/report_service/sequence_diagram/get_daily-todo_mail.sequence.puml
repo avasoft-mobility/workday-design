@@ -27,7 +27,7 @@ activate Client #D3D3D3
         loop case: loop queryResult and\n name each queryResult as iterator
             reports.controller.ts -> utility.ts : generateDailyReport(iterator.microsoftUserId)
             activate utility.ts #D3D3D3
-                note right of utility.ts : visit generate_daily_report method\n from shared service file
+                note right of utility.ts : visit generate_daily_report method\n from reports service folder
                 reports.controller.ts <-- utility.ts : string
             deactivate  utility.ts
             reports.controller.ts -> reports.controller.ts : get the return response and\n save that in a variable called\n **result**

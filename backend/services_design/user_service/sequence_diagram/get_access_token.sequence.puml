@@ -1,0 +1,23 @@
+@startuml get access token
+participant Client #64D1AF
+participant app.ts
+participant microsoftUser.router.ts
+participant AD
+
+Client -> app.ts : "/users"
+activate Client #D3D3D3
+    activate app.ts #D3D3D3
+    app.ts -> microsoftUser.router.ts : (**get**) "/admin-access-token"
+    activate microsoftUser.router.ts #D3D3D3
+        microsoftUser.router.ts -> microsoftUser.router.ts : create a variable called **params**\n and assign **URLSearchParams**\n object to it.
+        microsoftUser.router.ts -> microsoftUser.router.ts : append the hardcored value of\n **client_id**,**scope**,**client_secret**,\n**grant_type** to **params**
+        microsoftUser.router.ts -> AD : axios.post(\n"https://login.microsoftonline.com/716f83c3-7abd-42a1-86d2-e0207f4aa981/oauth2/v2.0/token",\nparams)
+        activate AD #D3D3D3
+            microsoftUser.router.ts <-- AD : AxiosResponse
+        deactivate AD
+        microsoftUser.router.ts -> microsoftUser.router.ts : get the value and save that in a\n variable called **response**
+        app.ts <-- microsoftUser.router.ts : status: **response.data**
+    deactivate microsoftUser.router.ts
+     Client <-- app.ts : status: **response.data**
+deactivate Client
+@enduml
