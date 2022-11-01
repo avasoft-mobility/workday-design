@@ -1,0 +1,29 @@
+@startuml getWeeklyTodoReasonFor
+participant Client #64D1AF
+participant ReportGenerator.ts
+
+Client -> ReportGenerator.ts : **getWeeklyTodoReasonFor**\n**(todos,attendance)**
+activate ReportGenerator.ts #D3D3D3
+activate Client #D3D3D3
+
+alt if attendance_status includes "Leave" or \n "Comp Off"
+    ReportGenerator.ts --> Client: return **"Leave"**
+end
+
+alt if todos length is equal to 0
+    ReportGenerator.ts --> Client: return **"Not Filled Properly"**
+end
+
+alt if todos length is less than or equal to 2
+    ReportGenerator.ts --> Client: return **"Have less than 2 todos"**
+end
+
+alt if sum of eta of an individual todo is less than or equal to 3 
+    ReportGenerator.ts --> Client: return **"Have less than 3 hours of ETA"**
+end
+
+alt if any of the above conditions not matched 
+    ReportGenerator.ts --> Client: return **"Filled Properly"**
+    deactivate ReportGenerator.ts
+end
+@enduml

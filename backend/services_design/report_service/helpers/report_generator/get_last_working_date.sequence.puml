@@ -1,0 +1,23 @@
+@startuml getLastWorkingDate
+participant Client #64D1AF
+participant ReportGenerator.ts
+
+Client -> ReportGenerator.ts : **getLastWorkingDate(date)**
+activate Client
+activate ReportGenerator.ts #D3D3D3
+    ReportGenerator.ts -> ReportGenerator.ts : declare a variable **currentDate** and \nassign current date to it
+    ReportGenerator.ts -> ReportGenerator.ts : declare a variable **lastWorkingDate** and \nassign current date in time format
+    ReportGenerator.ts -> ReportGenerator.ts : call **isMonday(currentDate)** \n**Refer:** isMonday method in **ReportGenerator** folder
+
+    alt if isMonday method return true
+        ReportGenerator.ts -> ReportGenerator.ts: minus three days to **lastWorkingDate**
+        ReportGenerator.ts --> Client: \nreturn **lastWorkingDate**
+    end
+    
+    alt if isMonday method return false
+        ReportGenerator.ts -> ReportGenerator.ts: minus 1 day to **lastWorkingDate**
+        ReportGenerator.ts --> Client: \nreturn **lastWorkingDate**
+        deactivate ReportGenerator.ts
+    end
+deactivate Client
+@enduml

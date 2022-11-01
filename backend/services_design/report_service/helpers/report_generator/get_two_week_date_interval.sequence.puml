@@ -1,0 +1,20 @@
+@startuml getTwoWeekDateInterval
+participant Client #64D1AF
+participant ReportGenerator.ts
+
+Client -> ReportGenerator.ts : **getTwoWeekDateInterval(date)**
+activate ReportGenerator.ts #D3D3D3
+activate Client
+
+ReportGenerator.ts -> ReportGenerator.ts: create a new variable **previousWeekMonday**
+ReportGenerator.ts -> ReportGenerator.ts: call **getPreviousWeekMonday(current date)** \nIn this method \nwrite a logic to return previous week monday \ndate based on the **current date**
+
+ReportGenerator.ts -> ReportGenerator.ts: create a new variable **startDate** and \nassign **previousWeekMonday.getTime()**
+ReportGenerator.ts -> ReportGenerator.ts: create a new variable **endDate** and \nassign **previousWeekMonday.getTime()**
+
+ReportGenerator.ts -> ReportGenerator.ts: add **7** days to **startDate**
+ReportGenerator.ts -> ReportGenerator.ts: add **18** days to **endDate**
+
+ReportGenerator.ts -> Client: return array of startDate and endDate \nlike **[startDate, endDate]**
+deactivate ReportGenerator.ts
+@enduml

@@ -1,0 +1,36 @@
+@startuml weeklyReport
+participant Client #64D1AF
+participant app.ts
+participant reports.controller.ts
+participant utility.ts
+
+Client -> app.ts : "/reports"
+activate Client #D3D3D3
+activate app.ts #D3D3D3
+
+app.ts -> reports.controller.ts : (**GET**) "/:userId/weekly"
+activate reports.controller.ts #D3D3D3
+
+alt if userId is null from uri params
+    app.ts <-- reports.controller.ts : return response as\n status code: 400, message: "invalid_user_id")
+end
+
+reports.controller.ts -> reports.controller.ts: create a new variable **path** 
+reports.controller.ts -> utility.ts : call **generateWeeklyReport(req.params.userId)**
+note right of utility.ts: **Refer:** generateWeeklyReport method in **report_service** folder
+activate utility.ts #D3D3D3
+utility.ts --> reports.controller.ts: return exported path \nstore the response in variable **path**
+deactivate utility.ts #D3D3D3
+
+reports.controller.ts -> reports.controller.ts: create a new variable **blob** and \nassign **fs.readFileSync(path)** \nimport fs and use the instance to \ncall the function **readFileSync**
+reports.controller.ts -> reports.controller.ts: create a new variable **key** and \nassign **`reports/weekly-todo-report-${Date.now().toString()}.xlsx`**
+reports.controller.ts -> reports.controller.ts: create a new variable **fileUploadParams** and \nassign an object Bucket, Body and key like \n{\nBucket: **Bucket name from amazon s3**, \nBody: blob, \nKey: key\n}
+reports.controller.ts -> reports.controller.ts: upload the **fileUploadParams** to S3
+
+reports.controller.ts --> app.ts: return path to download the weekly report file \nlike **Base url/${key}**
+deactivate reports.controller.ts
+
+app.ts --> Client: return link to download the weekly report file
+deactivate app.ts
+deactivate Client
+@enduml

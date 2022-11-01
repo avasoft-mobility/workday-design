@@ -1,0 +1,46 @@
+@startuml generateDailyReport
+participant Client #64D1AF
+participant utility.ts
+
+Client -> utility.ts : **generateDailyReport(microsoftUserId)**
+activate Client #D3D3D3
+
+activate utility.ts #D3D3D3
+utility.ts -> utility.ts: create a new variable **reportGenerator**
+utility.ts -> ReportGenerator.ts: \ncall ReportGenerator's **constructor(microsoftUserId)**
+note right of ReportGenerator.ts: **Refer:** report_generator_constructor file in helper folder
+activate ReportGenerator.ts #D3D3D3
+ReportGenerator.ts --> utility.ts: return an instance of **ReportGenerator** \nassign the response to variable **reportGenerator**
+deactivate ReportGenerator.ts
+
+utility.ts -> utility.ts: create a new variable **report**
+utility.ts -> ReportGenerator.ts: \ncall **generatePreviousDayReport()** using \nreportGenerator instance
+
+activate ReportGenerator.ts #D3D3D3
+ReportGenerator.ts -> ReportGenerator.ts: create a new variable **lastWorkingDate**
+ReportGenerator.ts -> ReportGenerator.ts: call **getLastWorkingDate()** \n**Refer:** getLastWorkingDate method in **ReportGenerator** folder and \nstore the response in **lastWorkingDate**
+ReportGenerator.ts -> ReportGenerator.ts: create a new variable **report**
+ReportGenerator.ts -> ReportGenerator.ts: call **generateReportFor()** \n**Refer:** generateReportFor method in **ReportGenerator** folder and \nstore the response in **report**
+
+alt if report is null
+    ReportGenerator.ts --> utility.ts: return null
+end
+
+alt if report is not null
+    ReportGenerator.ts --> utility.ts: return report
+end
+deactivate ReportGenerator.ts
+
+alt if report is null
+    utility.ts --> Client: return null
+end
+
+alt if report is not null
+    utility.ts -> utility.ts: create a new variable **exportedPath**
+    utility.ts -> utility.ts: call **convertJsonToExcel(report, "Daily_todo_report")** \n**Refer:** convertJsonToExcel method in **shared_services_design** and \nassign the response to the variable **exportedPath**
+    utility.ts --> Client: return **exportedPath**
+    deactivate utility.ts
+end
+
+deactivate Client
+@enduml

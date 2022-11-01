@@ -1,0 +1,40 @@
+@startuml generateUserTodoReport
+participant Client #64D1AF
+participant ReportGenerator.ts
+
+Client -> ReportGenerator.ts : **generateUserTodoReport**\n**(userId, date)**
+activate Client #D3D3D3
+activate ReportGenerator.ts #D3D3D3
+
+ReportGenerator.ts -> ReportGenerator.ts: declare a variable **user**
+ReportGenerator.ts -> ReportGenerator.ts: call **`base url/users/${userId}`** \napi to get the **user** detail and \nstore the response in variable **user**
+
+ReportGenerator.ts -> ReportGenerator.ts: declare a variable **userAttendance**
+ReportGenerator.ts -> ReportGenerator.ts: get the attendance for given **date** of the user \nby calling **"base url/attendance?date=date & userId=userId** \napi and store the response in variable **userAttendance**
+
+ReportGenerator.ts -> ReportGenerator.ts: declare a variable **result** and \nassign an object \n{\n\tName: user.name,\n\tAttendance: **userAttendance** if exist else **"No Show"**\n\tDomain: user.practice,\n\tReason: ""\n}
+
+ReportGenerator.ts -> ReportGenerator.ts: declare a variable **todos**
+ReportGenerator.ts -> ReportGenerator.ts: get the todos for given **date** of the user \nby calling **"base url/todos?date=date & userId=userId"**\napi and store the response in variable **todos**
+
+alt if todos is null or todos length is equal to 0
+    ReportGenerator.ts -> ReportGenerator.ts: set **result.Reason** as \n**"No work items are added for yesterday"**
+    ReportGenerator.ts --> Client: return **result**
+end
+
+loop todos
+    ReportGenerator.ts -> ReportGenerator.ts: Loop the todos and \ncheck each and every todo's status \nthat contains the below terms \n**"Yet to Start"** \n**"In Progress"** \nif matched then set **result.Reason** as \n**"Some or All work items are under Yet to Start / In Progress State"**
+    ReportGenerator.ts --> Client: return **result**
+end
+
+alt if sum of eta of an individual todo is less than 6 
+    ReportGenerator.ts -> ReportGenerator.ts: set **result.Reason** as \n**"Have less than 3 hours of ETA"**
+    ReportGenerator.ts --> Client: return **result**
+end
+
+alt if any of the above conditions are not matched 
+    ReportGenerator.ts -> ReportGenerator.ts: set **result.Reason** as \n**"Filled TODO without any default"**
+    ReportGenerator.ts --> Client: return **result**
+    deactivate ReportGenerator.ts
+end
+@enduml

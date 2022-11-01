@@ -1,0 +1,41 @@
+@startuml generateUserReportForInterval
+participant Client #64D1AF
+participant ReportGenerator.ts
+
+Client -> ReportGenerator.ts : **generateUserReportForInterval**\n**(userId, fromDate, toDate)**
+activate Client #D3D3D3
+activate ReportGenerator.ts #D3D3D3
+
+ReportGenerator.ts -> ReportGenerator.ts: declare a variable **user**
+ReportGenerator.ts -> ReportGenerator.ts: call **`base url/users/${userId}`** \napi to get the **user** and \nstore the response in variable **user**
+
+ReportGenerator.ts -> ReportGenerator.ts: declare a variable **result** and \nassign an object \n{\n\tName: user.name, \n\tDomain: user.practice,\n\tStatus: "",\n\tMonday_1: "",\n\tTuesday_1: "",\n\tWednesday_1: "",\n\tThursday_1: "",\n\tFriday_1: "",\n\tMonday_2: "",\n\tTuesday_2: "",\n\tWednesday_2: "",\n\tThursday_2: "",\n\tFriday_2: ""\n}
+
+ReportGenerator.ts -> ReportGenerator.ts: declare a variable **keys** and \nassign all the keys of the **result** object
+
+loop fromDate to toDate length
+    ReportGenerator.ts -> ReportGenerator.ts: declare a variable **index** and\nset initially 3
+    ReportGenerator.ts -> ReportGenerator.ts: increase the index value by **1** on every end of the loop
+
+    ReportGenerator.ts -> ReportGenerator.ts: declare a variable **todos**
+    ReportGenerator.ts -> ReportGenerator.ts: get the todos for each and every **date** of the user \nby call **"base url/todos?date=date & userId=userId"**\napi and store the response in variable **todos**
+
+    ReportGenerator.ts -> ReportGenerator.ts: declare a variable **attendance**
+    ReportGenerator.ts -> ReportGenerator.ts: get the attendance for each and every **date** of the user \nby call **"base url/attendance?date=date & userId=userId & object="true"**\napi and store the response in variable **attendance**
+
+    alt if date's day is equal to 5
+        ReportGenerator.ts -> ReportGenerator.ts: then add 2 days to the **date**
+    end
+
+    ReportGenerator.ts -> ReportGenerator.ts: call the **getWeeklyTodoReasonFor(todos, attendance)** \n**Refer:** this method in **report_generator** folder and\nassign the response in the correct key in object result \nby using the **result[keys[index]]** \n**EX:** {Monday_1: monday 1's response}
+end
+
+ReportGenerator.ts -> ReportGenerator.ts: declare a variable **values** and \nstore all the values of the object **result**
+
+loop values
+    ReportGenerator.ts -> ReportGenerator.ts: loop the values then check whether any \nof the value matching the below terms \n**"Have less than 2 todos"**, \n**"Have less than 3 hours of ETA"**, \n**"Not Filled Properly"** \n\nif matched then set **result.status** \nto **"Not Filled Properly"** \nelse set **"Filled Properly"**
+end
+
+ReportGenerator.ts --> Client: return **result**
+deactivate ReportGenerator.ts
+@enduml

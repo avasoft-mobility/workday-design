@@ -1,0 +1,21 @@
+@startuml ReportGenerator
+participant Client #64D1AF
+participant ReportGenerator.ts
+
+ReportGenerator.ts -> ReportGenerator.ts: create a new variable **targetId**
+ReportGenerator.ts -> ReportGenerator.ts: create a new variable **LESS_THAN_2_TODOS** and\n assign a value \n"Have less than 2 todos"
+ReportGenerator.ts -> ReportGenerator.ts: create a new variable **NOT_FILLED** and\n assign a value \n"Not Filled Properly"
+ReportGenerator.ts -> ReportGenerator.ts: create a new variable **LESS_THAN_3_HOURS_ETA** and\n assign a value \n"Have less than 3 hours of ETA"
+ReportGenerator.ts -> ReportGenerator.ts: create a new variable **FILLED_PROPERLY** and\n assign a value \n"Filled Properly"
+ReportGenerator.ts -> ReportGenerator.ts: create a new variable **LEAVE** and\n assign a value \n"Leave"
+
+Client -> ReportGenerator.ts : "/ReportGenerator(targetId)"
+activate Client #D3D3D3
+activate ReportGenerator.ts #D3D3D3
+
+ReportGenerator.ts -> ReportGenerator.ts: **constructor(targetId)** \n"Assign the parameter **targetId value** to \nvariable **targetId in ReportGenerator**"
+ReportGenerator.ts --> Client: return instance of **ReportGenerator** \nwith targetId
+
+deactivate ReportGenerator.ts
+deactivate Client
+@enduml

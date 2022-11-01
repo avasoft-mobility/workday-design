@@ -1,0 +1,18 @@
+@startuml isMonday
+participant Client #64D1AF
+participant ReportGenerator.ts
+
+Client -> ReportGenerator.ts : **isMonday(date)**
+activate ReportGenerator.ts #D3D3D3
+activate Client #D3D3D3
+    alt if given date's day is \nequal to **MONDAY**
+        ReportGenerator.ts --> Client: return **true**
+    end
+
+    alt if given date's day is not \nequal to **MONDAY**
+        ReportGenerator.ts --> Client: return **false**
+        deactivate ReportGenerator.ts
+    end
+deactivate ReportGenerator.ts
+deactivate Client
+@enduml
