@@ -1,0 +1,17 @@
+@startuml DashboardCard
+participant Client
+participant DashboardCard
+
+Client -> DashboardCard : call the component in any page with **<DashboardCard {...props} />**
+activate Client #D3D3D3
+activate DashboardCard #D3D3D3
+
+note left of DashboardCard : props: {\n\tprimaryText?: \tstring;\n\tsecondaryText: \tstring | React.ReactNode;\n\tprimaryTextColor: string;\n\tsecondaryTextColor: string;\n\tbackgroundColor: string;\n\tcircleColor: \tstring;\n\tboxShadow: \tstring;\n\tcardIcon: \t\tReact.ReactNode;\n\tdate?: \t\tstring\n}
+
+DashboardCard -> DashboardCard : Bind the **primaryText   , secondaryText and cardIcon**
+Client <-- DashboardCard : User Receives the expected view
+
+deactivate DashboardCard
+deactivate Client
+
+@enduml
