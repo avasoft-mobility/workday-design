@@ -1,0 +1,249 @@
+@startuml Models
+
+entity User {
+  userId \t\t:\tstring
+  ..
+  name \t\t:\tstring
+  ..
+  role \t\t\t:\tstring
+  ..
+  practice \t\t:\tstring
+  ..
+  mail \t\t\t:\tstring
+  ..
+  employeeId \t:\tstring
+  ..
+  reportings \t:\tstring[]
+  ..
+  managerId \t:\tstring
+  ..
+  last_access \t:\tstring
+  ..
+  __v? \t\t:\tnumber
+  ..
+  isAdmin? \t\t:\tboolean
+}
+
+entity TodoItem {
+  key? \t\t:\tstring
+  ..
+  _id \t\t\t:\tstring
+  ..
+  userId \t\t:\tstring
+  ..
+  title \t\t\t:\tstring
+  ..
+  comments \t:\tstring
+  ..
+  status \t\t:\tstring
+  ..
+  type \t\t\t:\tstring
+  ..
+  eta \t\t\t:\tnumber
+  ..
+  ata \t\t\t:\tnumber
+  ..
+  day \t\t\t:\tnumber
+  ..
+  month \t\t:\tnumber
+  ..
+  year \t\t:\tnumber
+  ..
+  date \t\t:\tDate
+  ..
+  recurringDates :\tstring[]
+  ..
+  tags? \t\t:\tstring[]
+  ..
+  microsoftUserId :\tstring
+  ..
+  __v? \t\t:\tnumber
+}
+
+entity AttendanceItem {
+  id \t\t\t:\tstring
+  ..
+  date \t\t:\tDate
+  ..
+  userId \t\t:\tstring
+  ..
+  attendance_status :\tstring
+  ..
+  v \t\t\t:\tnumber
+  ..
+  createdAt \t:\tDate
+  ..
+  updatedAt \t:\tDate
+}
+
+entity TagType {
+  _id \t\t\t:\tstring
+  ..
+  tagName \t\t:\tstring
+  ..
+  microsoftUserId :\tstring
+  ..
+  type? \t\t:\tstring
+  ..
+  createdAt \t:\tDate
+  ..
+  updatedAt \t:\tDate
+  ..
+  __v \t\t\t:\tnumber
+}
+
+entity Tag {
+  _id \t\t\t:\tstring
+  ..
+  userId \t\t:\tstring
+  ..
+  tagName \t\t:\tstring
+  ..
+  createdAt \t:\tstring
+  ..
+  updatedAt \t:\tstring
+}
+
+entity TagAnalysType {
+  tag \t\t:\tTagType
+  ..
+  totalTodos :\tnumber
+  ..
+  totalAta \t:\tnumber
+  ..
+  totalEta \t:\tnumber
+  ..
+  todos \t:\tTodoItem[]
+}
+
+entity MultipleTagAnalysType {
+  tags \t\t:\tTagAnalysType[]
+  ..
+  totalTodos :\tnumber
+  ..
+  totalAta \t:\tnumber
+  ..
+  totalEta \t:\tnumber
+}
+
+entity BreadCrumbTypes {
+  name \t:\tstring
+  ..
+  route? \t:\tstring
+  ..
+  link? \t:\tstring
+}
+
+entity NotificationBO {
+  id \t\t:\tnumber
+  ..
+  title \t\t:\tstring
+  ..
+  message :\tstring
+  ..
+  route \t:\tstring
+  ..
+  state \t\t{\n\t\t\t\tstate {\n\t\t\t\t\tid string,\n\t\t\t\t},\n\t\t\t}
+  ..
+  sub_title \t:\tstring | null
+  ..
+  by \t\t:\tstring
+}
+
+entity Migration {
+  _id \t\t\t:\tstring
+  ..
+  toUser \t\t:\tUser
+  ..
+  reportees \t:\tUser[]
+  ..
+  status \t\t:\tstring
+  ..
+  acknowledgedBy? :\tstring
+  ..
+  acceptedBy? \t:\tstring
+  ..
+  rejectedBy? \t:\tstring
+  ..
+  isActive \t\t:\tboolean
+  ..
+  __v \t\t\t:\tnumber
+}
+
+entity GraphTodo {
+  _id \t\t\t:\tstring
+  ..
+  microsoftUserId :\tstring
+  ..
+  title \t\t\t:\tstring
+  ..
+  comments \t:\tstring
+  ..
+  status \t\t:\tstring
+  ..
+  type \t\t\t:\tstring
+  ..
+  eta \t\t\t:\tnumber
+  ..
+  ata \t\t\t:\tnumber
+  ..
+  date \t\t:\tstring
+  ..
+  tags \t\t\t:\tGraphTag[]
+  ..
+  __v \t\t\t:\tnumber
+}
+
+entity GraphViewUser {
+  _id \t\t\t:\tstring
+  ..
+  userId \t\t:\tstring
+  ..
+  name \t\t:\tstring
+  ..
+  role \t\t\t:\tstring
+  ..
+  practice \t\t:\tstring
+  ..
+  mail \t\t\t:\tstring
+  ..
+  reportings \t:\tstring[]
+  ..
+  reportingDetails? :\tGraphViewUser[]
+  ..
+  managerId \t:\tstring
+  ..
+  order? \t\t:\tnumber
+  ..
+  last_access \t:\tstring
+  ..
+  todos? \t\t:\tGraphTodo[]
+  ..
+  attendance? \t:\tAttendanceItem
+  ..
+  __v \t\t\t:\tnumber
+}
+
+entity GraphTag {
+  _id \t\t\t:\tstring
+  ..
+  tagName \t\t:\tstring
+  ..
+  updatedAt \t:\tDate
+}
+
+entity reporteeMigration {
+  toUser \t\t:\tUser
+  ..
+  reportees \t:\tUser[]
+}
+
+entity AttendaceUpdateRequest {
+  userId \t\t\t:\tstring
+  ..
+  attendaceStatus \t:\tstring
+  ..
+  date \t\t\t:\tany
+}
+
+@enduml

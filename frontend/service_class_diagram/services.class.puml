@@ -1,0 +1,88 @@
+@startuml Services
+
+class attendanceService {
+    updateAttendance(string,string,any) \t\t:\tattendanceItem[]
+    ..
+    getAttendance(string,Date)   \t\t\t\t:\tstring
+    ..
+    getAttendanceRange(string, Date, Date) \t:\tattendanceItem[]
+    ..
+    getAttendanceStatsForDate(Date,string) \t:\tPromise<AxiosResponse<attendanceItem[], any>>
+    ..
+    getAttendanceForDate(Date,attendanceItem[]) :\tattendanceItem[]
+}
+
+class usersService {
+    getUserById(string)   \t\t\t\t\t\t\t:\tPromise<AxiosResponse<User, any>>
+    ..
+    getAllUsers() \t\t\t\t\t\t\t\t\t:\tPromise<AxiosResponse<User[], any>>
+    ..
+    getAllDomains() \t\t\t\t\t\t\t\t:\tPromise<AxiosResponse<string[], any>>
+    ..
+    sendReporteeMigrationRequest(reporteeMigration,string) :\tPromise<AxiosResponse<string, any>>
+    ..
+    getGraphReportings(string, string, string)   \t\t\t:\tPromise<AxiosResponse<GraphViewUser[], any>>
+    ..
+    fetchStatistics(string) \t\t\t\t\t\t\t:\tany
+    ..
+    getMyTeamReports(string) \t\t\t\t\t\t:\tany
+    ..
+    getUserPhoto(string,string) \t\t\t\t\t\t:\tstring
+    ..
+    getAdminAccessToken() \t\t\t\t\t\t\t:\tPromise<any>
+    ..
+    getMigrationDetails(string,string) \t\t\t\t\t:\tPromise<AxiosResponse<Migration, any>>
+    ..
+    updateMigration(string, string, string)   \t\t\t\t:\tPromise<AxiosResponse<any, any>>    
+}
+
+
+class userServices {
+    getTags(string) \t\t\t\t\t:\tPromise<AxiosResponse<any, any>>
+    ..
+    addTag(string,string,string) \t\t\t:\tPromise<TagType[]>
+    ..
+    editTag(string,string,string) \t\t\t:\tPromise<TagType[]>
+    ..
+    deleteTag(string,string) \t\t\t\t:\tPromise<TagType[]>
+    ..
+    getTagAnalytic(string[],Date,Date,string) :\tPromise<MultipleTagAnalysType>
+    ..
+    getMyTeamReports(string) \t\t\t:\tPromise<any>
+    ..
+    getUsersImage(string,string) \t\t\t:\tstring
+    ..
+    fetchStatistics(string)  \t\t\t\t:\tPromise<any>
+    ..
+    fetchNotifications(string)  \t\t\t:\tPromise<Notification>
+}
+
+class todoServices {
+    getTodosForDate(Moment,TodoItem[])  \t\t:\tTodoItem[]
+    ..
+    addTodo(string,TodoItem,string) \t\t\t:\tPromise<AxiosResponse<TodoItem, any>>
+    ..
+    editTodoById(string,TodoItem,boolean) \t\t:\tPromise<AxiosResponse<TodoItem, any>>
+    ..
+    getTodoForUserByMonth(string,number,number) :\tPromise<AxiosResponse<TodoItem[], any>>
+    ..
+    deleteTodoById(string,string)  \t\t\t\t:\tPromise<AxiosResponse<any, any>>
+    ..
+    deleteTodoByDate(string,string)  \t\t\t:\tPromise<AxiosResponse<any, any>>
+}
+
+class reportService {
+    downloadLastDayTodoReport(string)  \t\t:\tPromise<string>
+    ..
+    downloadLastTwoWeekTodoReport(string) \t:\tPromise<string>
+    ..
+    downloadLastDayAttendanceReport(string)  \t:\tPromise<string>
+}
+
+class hiveService {
+    fetchEvaluation()  \t\t\t:\tPromise<number[]>
+    ..
+    fetchPanelMember(string) \t:\tPromise<any[]>
+}
+
+@enduml
