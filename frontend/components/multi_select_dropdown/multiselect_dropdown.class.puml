@@ -1,0 +1,15 @@
+@startuml MultiselectDropdown
+
+class MultiselectDropdown {
+  populateOptions(TagType[])  \t:\tvoid()
+  ..
+  handleChange(string[]) \t\t:\tvoid()
+  ..
+  renderTag(any)  \t\t\t:\tJSX.element
+  ..
+  defaultTags  \t\t\t\t:\tstring[]
+  ..
+  options \t\t\t\t\t:\tReact.ReactNode[]
+}
+
+@enduml

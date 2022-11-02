@@ -1,0 +1,63 @@
+@startuml MultiSelectDropdown
+
+participant Client 
+participant MultiSelectDropdown
+
+Client -> MultiSelectDropdown : call the component with **<MultiSelectDropdown {...props} />**
+activate Client #D3D3D3
+activate MultiSelectDropdown #D3D3D3
+    note left of MultiSelectDropdown : props: {\n\tuserId?: string;\n\ttodoTag?: string[];\n\tonChange?: Function;\n\tallTags?: TagType[] | undefined;\n\tisDisabled: boolean;\n}
+
+    MultiSelectDropdown -> MultiSelectDropdown : Update the **defaultTags state** with **props.todoTags** and whenever the **props.todoTags changes**
+    MultiSelectDropdown -> MultiSelectDropdown : When component **mounting or updating** with **props.allTags** changes, \nso that it **sort the allTags** in order of defaulttags, teamTags and user specified tags \nand call an method **populateOptions with sortedTags** 
+    activate MultiSelectDropdown #D16578
+        MultiSelectDropdown -> MultiSelectDropdown : Declare a variable **children** as **React.ReactNode[]** with value as empty []
+        loop \tallTags as tag
+            alt \ttag.type is default
+                MultiSelectDropdown -> MultiSelectDropdown : Push an option of **tag.tagname** with chip of text "Dafalut" to **children**
+            else tag.type is team
+                MultiSelectDropdown -> MultiSelectDropdown : Push an option of **tag.tagname** with chip of text "Team" to **children**
+            else 
+                MultiSelectDropdown -> MultiSelectDropdown : Push an option of **tag.tagname** without any chip  to **children**
+            end
+        end
+        MultiSelectDropdown -> MultiSelectDropdown : Update the **options state** variable with **children**
+    deactivate MultiSelectDropdown 
+
+    alt case: props.todoTag is undefined 
+        MultiSelectDropdown -> MultiSelectDropdown : Return an select dropdown component with placeHolder text
+        Client <-- MultiSelectDropdown : User Receives the expected select view with placeholder text
+    else
+        MultiSelectDropdown -> MultiSelectDropdown : Bind the tags value in the select field using renderTag method
+        activate MultiSelectDropdown #D16578
+            MultiSelectDropdown -> MultiSelectDropdown : Iterate the props.todoTag and \nfind the tag name form the props.allTags\nand return each name as a dismisable pill as HTML element\nthen bind the pill in the select compnent's default values
+        deactivate MultiSelectDropdown
+        Client <-- MultiSelectDropdown : User Receives the expected select view with default values
+    end
+deactivate Client
+deactivate MultiSelectDropdown
+
+... ...
+... ...
+...~~**Click functionalities**~~... 
+... ...
+Client -> MultiSelectDropdown : On click on the MultiSelectDropdown component
+activate Client #D3D3D3
+activate MultiSelectDropdown #D3D3D3
+    MultiSelectDropdown -> MultiSelectDropdown : It enables the list of options to select
+    Client <-- MultiSelectDropdown : User can select options of tags from dropdown
+deactivate Client
+deactivate MultiSelectDropdown
+
+... ...
+Client -> MultiSelectDropdown : On click any option from dropdown
+activate Client #D3D3D3
+activate MultiSelectDropdown #D3D3D3
+    MultiSelectDropdown -> MultiSelectDropdown : Triggers an **onChange event** with updated selected values of string[] and \nupdate the **defaultTags state** with the string[] 
+    MultiSelectDropdown -> MultiSelectDropdown : It trigger an event **props.onChange(string[])** 
+    MultiSelectDropdown -> MultiSelectDropdown : The component get **updated**
+    Client <-- MultiSelectDropdown : User can view the selected value 
+deactivate Client
+deactivate MultiSelectDropdown
+
+@enduml
