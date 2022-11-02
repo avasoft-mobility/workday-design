@@ -1,0 +1,9 @@
+@startuml UnAuthorizedUserPanel
+
+class UnAuthorizedUserPanel {
+    nav: \t\t\t\t navigation
+    ..
+    gotoDashboard(): \t void
+    ..
+}
+@enduml

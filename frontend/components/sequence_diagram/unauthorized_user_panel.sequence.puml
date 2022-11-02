@@ -1,0 +1,31 @@
+@startuml UnAuthorizedUserPanel
+participant Client
+participant DashboardCard
+
+Client -> DashboardCard : call the component **<UnAuthorizedUserPanel />**
+activate Client #D3D3D3
+activate DashboardCard #D3D3D3
+
+DashboardCard -> DashboardCard : Bind **Warning** text
+DashboardCard -> DashboardCard : Bind **You are not Authorized to view this.** text
+DashboardCard -> DashboardCard : Bind **Go to Dashboard** Button \n**Refer:** Button **onClick function** below
+
+Client <-- DashboardCard : \treturn the **view**
+deactivate DashboardCard
+deactivate Client
+
+... ...
+... ...
+note over Client: Click function
+... ...
+
+Client -> DashboardCard: **Go to Dashboard** Button \n**onClick()** function pressed
+activate Client #D3D3D3
+activate DashboardCard #D3D3D3
+DashboardCard -> DashboardCard : Navigate the user to **Dashboard** page
+Client <-- DashboardCard : \treturn the **User** to the Dashboard page
+deactivate DashboardCard
+
+deactivate Client
+
+@enduml

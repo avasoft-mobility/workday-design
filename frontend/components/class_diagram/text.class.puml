@@ -1,0 +1,9 @@
+@startuml TextComponent
+
+class TextComponent {
+    textStyle: \t\t React.CSSProperties
+    ..
+    setStyle(): \t React.CSSProperties
+    ..
+}
+@enduml
