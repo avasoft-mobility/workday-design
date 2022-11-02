@@ -1,0 +1,258 @@
+@startuml manage tags panel
+participant Client
+participant ManageTagsPanel
+participant usersService.ts
+participant Backend
+
+Client -> ManageTagsPanel : call the component in any component with **<ManageTagsPanel {...props} />**
+activate Client #D3D3D3
+    activate ManageTagsPanel #D3D3D3
+        note left of ManageTagsPanel : props: {\nonClose: Function;\nvisible: boolean;\nuserId: string;\nonTagMode: boolean;\nonViewCalender: (dates: string[], todoIds: string[]) => void;\nisViewingTeamTODO: boolean;\n}
+        ManageTagsPanel -> ManageTagsPanel : When the component gets mounted call the **initialize()** method
+        ManageTagsPanel -> ManageTagsPanel : **initialize()** (refer initialize\n method from below common methods)
+        ManageTagsPanel -> ManageTagsPanel : when the component gets updated or mounted\n or when the **[props.onClose]** gets updated,\n perform below if condition.
+        alt case: selectedTags.length is equals to 0
+            ManageTagsPanel -> ManageTagsPanel : update the **tagVisible** value as **true**
+            ManageTagsPanel -> ManageTagsPanel : update the **error** value as **undefined**  
+            ManageTagsPanel -> ManageTagsPanel : return
+        end
+        ManageTagsPanel -> ManageTagsPanel :  when the component gets updated or mounted\n or when the **[props.visible]** gets updated,\n update the **tagId** value as **undefined**\n update the **input** value as "empty string".
+        ManageTagsPanel -> ManageTagsPanel :  when the component gets updated or mounted\n or when the **[props.onTagMode]** gets updated,\n update the **tagVisible** value as **!props.onTagMode**
+        Client <-- ManageTagsPanel : component will be displayed to the user
+    deactivate ManageTagsPanel
+deactivate Client
+
+... ...
+... ...
+...~~**Common methods**~~ ...
+... ...
+... ...
+
+Client -> ManageTagsPanel : **Validate()**
+activate Client #D3D3D3
+    activate ManageTagsPanel #D3D3D3
+        ManageTagsPanel -> ManageTagsPanel : **Validate()**
+        alt case : input.trim() === ""
+            ManageTagsPanel -> ManageTagsPanel : return **false**
+        end
+        ManageTagsPanel -> ManageTagsPanel : return true
+        Client <-- ManageTagsPanel : Boolean
+    deactivate ManageTagsPanel
+deactivate Client
+
+... ...
+
+Client -> ManageTagsPanel : **initialize()**
+activate Client #D3D3D3
+    activate ManageTagsPanel #D3D3D3
+        ManageTagsPanel -> ManageTagsPanel : **initialize()**
+        ManageTagsPanel -> usersService.ts : getTags(props.userId)
+        activate usersService.ts #D3D3D3
+            usersService.ts ->  Backend : `/tags`
+            activate Backend #D3D3D3
+                usersService.ts <-- Backend : AxiosResponse
+                usersService.ts -> usersService.ts : get the return response and\n save that in a variable called\n **tags**
+                ManageTagsPanel <-- usersService.ts : **TagType[]**
+            deactivate Backend
+        deactivate usersService.ts
+        ManageTagsPanel -> ManageTagsPanel : get the return response and\n save that in a variable called\n **tags**
+        alt case : tags.length === 0
+            ManageTagsPanel -> ManageTagsPanel : update the **tag** value as **empty []**
+            ManageTagsPanel -> ManageTagsPanel : update the **tagVisible** value as **true**
+            ManageTagsPanel -> ManageTagsPanel : return
+        end
+        ManageTagsPanel -> ManageTagsPanel : filter **tags** and get the tags which doesn't have\n microsoftUserId and save the tags in a\n variable called **defaultTags**
+        ManageTagsPanel -> ManageTagsPanel : sort the **defaultTags** and save that in a\n variable called **sortedDefaultTags**
+        ManageTagsPanel -> ManageTagsPanel : filter **tags** and get the tags which have\n type as **team** and save the tags in a\n variable called **teamTags**
+        ManageTagsPanel -> ManageTagsPanel : sort the **teamTags** and save that in a\n variable called **sortedTeamTags**
+        ManageTagsPanel -> ManageTagsPanel : filter **tags** and get the tags which doesn't have\n type as **team** but it should have the microsoftUserId\n and save the tags in a variable called **personalTags**
+        ManageTagsPanel -> ManageTagsPanel  : update the **tags** value as **...sortedDefaultTags, ...sortedTeamTags, ...sortedPersonalTags**
+        Client <-- ManageTagsPanel : get the tags from Backend and sort that\n and assign the tags to **tags** useState.
+    deactivate ManageTagsPanel
+deactivate Client
+
+... ...
+
+Client -> ManageTagsPanel : **updateTag(tagId: string)**
+activate Client #D3D3D3
+    activate ManageTagsPanel #D3D3D3
+        loop case : map the tags
+            ManageTagsPanel -> ManageTagsPanel : loop all the tags and check\n whether each tag id\n matches with the tagID and\n change the matched tagId's tagName\n and store all the tags including the\n changed tagName tags to a new variable\n called **newTags**
+        end
+        ManageTagsPanel -> ManageTagsPanel : update the **tags** value as **newTags**
+        ManageTagsPanel -> ManageTagsPanel : update the **input** value as **empty string**
+        ManageTagsPanel -> ManageTagsPanel : update the **tagId** value as **undefined**
+        ManageTagsPanel -> usersService.ts : editTag(\ntagId,\ninput.trimEnd().trimStart(),\nprops.userId)
+        activate usersService.ts #D3D3D3
+            usersService.ts -> Backend : put(`/tags/${tagId}?userId=${userId}`, {\ntagname: tagName.trimStart().trimEnd(),})
+            activate Backend #D3D3D3
+                usersService.ts <-- Backend : AxiosResponse
+            deactivate Backend
+            ManageTagsPanel <-- usersService.ts : Tag
+        deactivate usersService.ts 
+        ManageTagsPanel -> ManageTagsPanel : get the return response and save\n that in a variable called **updatedTag**.
+        alt case: updatedTag is defined
+            ManageTagsPanel -> ManageTagsPanel : call the **initialize()** method (refer initialize() method from above sequence diagrams)
+            ManageTagsPanel -> ManageTagsPanel : update the **input** value as **empty string**
+            ManageTagsPanel -> ManageTagsPanel : update the **tagId** value as **empty string**
+        end
+        Client <-- ManageTagsPanel : tag will be updated to the DateBase.
+    deactivate ManageTagsPanel
+deactivate Client
+
+... ...
+... ...
+...~~**OnClick Functionalities**~~ ...
+... ...
+... ...
+
+Client -> ManageTagsPanel : User onClicks **Tag Analytics Button**
+activate Client #D3D3D3
+    activate ManageTagsPanel #D3D3D3
+        ManageTagsPanel -> ManageTagsPanel : onTagAnalytics(tags: TagType[])
+        ManageTagsPanel -> ManageTagsPanel : update the **tagVisible** value as **false**
+        ManageTagsPanel -> ManageTagsPanel : update the **tagAnalyticPanel** value as \n<TagsAnalyticPanel\nonPrevious={() => {\n  setTagsVisible(true);\n}}\n tags={tags}\nonTapViewCalender={props.onViewCalender(dates, tagIds)}\n userId={props.userId}/>
+        ManageTagsPanel -> ManageTagsPanel : update the **selectedTags** value as **empty []**
+        ManageTagsPanel -> ManageTagsPanel : update the **selectedTagIds** value as **empty []**
+        Client <-- ManageTagsPanel : component will render and\n tag analytics view is shown in the side bar
+    deactivate ManageTagsPanel
+deactivate Client
+
+... ...
+
+Client -> ManageTagsPanel : User onClicks **onEditTag(tag: TagType)**
+activate Client #D3D3D3
+    activate ManageTagsPanel #D3D3D3
+        ManageTagsPanel -> ManageTagsPanel : onEditTag(tag: TagType)
+        alt case: tagsPanelRef.current is defined
+            ManageTagsPanel -> ManageTagsPanel : tagsPanelRef.current.scrollIntoView(true)
+        end
+        ManageTagsPanel -> ManageTagsPanel : update the **tagId** value as **tag._id**
+        ManageTagsPanel -> ManageTagsPanel : update the **input** value as **tag.tagName**
+        ManageTagsPanel -> ManageTagsPanel : update the **error** value as **undefined**
+        Client <-- ManageTagsPanel : clicked text will be shown in the input field\n and user can able to edit the value
+    deactivate ManageTagsPanel
+deactivate Client
+
+... ...
+
+Client -> ManageTagsPanel : User onClicks **delete button** in manage tags panel
+activate Client #D3D3D3
+    activate ManageTagsPanel #D3D3D3
+        ManageTagsPanel -> ManageTagsPanel : onDelteTag(deletedTag: TagType)
+        ManageTagsPanel -> ManageTagsPanel : loop the **tags** and check whether the tag._id is\n equals to the deletedTag._id and remove the\n particular tag from the **tags** variable
+        ManageTagsPanel -> ManageTagsPanel : update the **input** value as **empty string**
+        ManageTagsPanel -> ManageTagsPanel : update the **tagId** value as **empty string**
+        ManageTagsPanel -> usersService.ts : deleteTag(deletedTag._id, props.userId)
+        activate usersService.ts #D3D3D3
+            usersService.ts -> Backend : (DELETE) `/tags/${tagId}?userId=${userId}`
+            activate Backend #D3D3D3
+                usersService.ts <-- Backend : AxiosResponse
+            deactivate Backend
+            usersService.ts -> usersService.ts : get the return response\n and save that in a variable\n called **deletedTag**
+            ManageTagsPanel <-- usersService.ts : Tag
+        deactivate usersService.ts
+        ManageTagsPanel -> ManageTagsPanel : ge the return response and\n save that in a variable called **tag**
+        alt case: tag is defined
+            ManageTagsPanel -> ManageTagsPanel : call **initialize()** method\n refer the above **initialize()** method.
+        end
+        Client <-- ManageTagsPanel : User clicked tag will be deleted\n and remaining tags will be shown to the user.
+    deactivate ManageTagsPanel
+deactivate Client
+
+... ...
+
+Client -> ManageTagsPanel : User onClicks **Add Team Tag** || **Update Tag** || **+ Add Tag** button
+activate Client #D3D3D3
+    activate ManageTagsPanel #D3D3D3
+        ManageTagsPanel -> ManageTagsPanel : onSubmit(type?: string)
+        ManageTagsPanel -> ManageTagsPanel : validate(input)  (refer validate method\n from above common methods)
+        alt case: validate(input) returns false
+            ManageTagsPanel -> ManageTagsPanel : update the **error** value as **"error"**
+            ManageTagsPanel -> ManageTagsPanel : return
+        end
+        alt case : tagId is undefined
+            ManageTagsPanel -> ManageTagsPanel : loop the tags and find\n whether the newly entered\n tag name matches with the already\n existing tag name and save the\n matched tag name in a variable called **existingTag**
+            alt case: existingTag is defined
+                ManageTagsPanel -> ManageTagsPanel : update the **input** value as **"empty string"**
+                ManageTagsPanel -> ManageTagsPanel :  update the **tagId** value as **"undefined"**
+                ManageTagsPanel -> ManageTagsPanel : notify the user with\n message:**Could not add new tag**\n descrption: **Tag with this name was already present**\n
+                ManageTagsPanel -> ManageTagsPanel : return
+            end
+            ManageTagsPanel -> ManageTagsPanel : update the **spin** value as **"true"** (it will made the spin loader\n to start loading)
+            ManageTagsPanel -> usersService.ts :  addTag(props.userId, input, type)
+            activate usersService.ts #D3D3D3
+                usersService.ts -> Backend : (POST)`/tags?userId=${userId}`, {\ntagname: tagName.trimStart().trimEnd(),\ntype: type,\n}
+                activate Backend #D3D3D3
+                    usersService.ts <-- Backend : AxiosResponse                    
+                deactivate Backend
+                usersService.ts -> usersService.ts : get the return response and\n save that in a variable called **createTag**
+                ManageTagsPanel <-- usersService.ts : Tag
+            deactivate usersService.ts
+            ManageTagsPanel -> ManageTagsPanel : update the **spin** value as **"false"** (it will made the spin loader\n to stop loading and disable it)
+            ManageTagsPanel -> ManageTagsPanel : update the **input** value as **empty string**
+            ManageTagsPanel -> ManageTagsPanel : call **initialize()** method,\n refer the above **initialize()** method.
+            ManageTagsPanel -> ManageTagsPanel : return
+        end
+        ManageTagsPanel -> ManageTagsPanel : loop the tags and find\n whether the newly entered\n tag name matches with the already\n existing tag name and save the\n matched tag name in a variable called **existingTag**
+        alt case: existingTag is defined
+            ManageTagsPanel -> ManageTagsPanel : update the **input** value as **empty string**
+            ManageTagsPanel -> ManageTagsPanel : update the **tagId** value as **undefined**
+            ManageTagsPanel -> ManageTagsPanel : notify the user with\n message:**Could not update the tag**\n descrption: **Tag with this name was already present**\n
+            ManageTagsPanel -> ManageTagsPanel : return
+        end
+        ManageTagsPanel -> ManageTagsPanel : updateTag(tagId) ( refer the above **updateTag(tagId: string)** method.)
+        Client <-- ManageTagsPanel : Add || update the tag and the tag is shown in the manage tags panel
+    deactivate ManageTagsPanel
+deactivate Client
+
+... ...
+
+Client -> ManageTagsPanel : User onClicks || onSelect Table rows in manage tags panel
+activate Client #D3D3D3
+    activate ManageTagsPanel #D3D3D3
+        ManageTagsPanel -> ManageTagsPanel : onChange in table occurs
+        activate ManageTagsPanel #D16587
+            ManageTagsPanel ->  ManageTagsPanel : update the **selectedTagIds** value as **selectedRowKeys**, which is nothing but selectedTagIds
+            ManageTagsPanel ->  ManageTagsPanel :  update the **selectedTags** value as the selectedRows,\n we can get the selectedRows values from ant-d table
+        deactivate ManageTagsPanel
+        Client <-- ManageTagsPanel : selected tags will be highlighted and saved to the particular useState
+    deactivate ManageTagsPanel
+deactivate Client
+
+... ...
+
+Client -> ManageTagsPanel : User onClicks outside of sideBar for closing the sideBar
+activate Client #D3D3D3
+    activate ManageTagsPanel #D3D3D3
+        ManageTagsPanel -> ManageTagsPanel : onClose in Drawer triggers
+        activate ManageTagsPanel #D16587
+            ManageTagsPanel ->  ManageTagsPanel : call props.onClose()
+            ManageTagsPanel ->  ManageTagsPanel : update the **tagId** value as **undefined**
+            ManageTagsPanel ->  ManageTagsPanel : update the **error** value as **undefined**
+        deactivate ManageTagsPanel
+        Client <-- ManageTagsPanel : manage tags panel will be closed
+    deactivate ManageTagsPanel
+deactivate Client
+
+... ...
+... ...
+...~~**OnChange Functionalities**~~ ...
+... ...
+... ...
+
+Client -> ManageTagsPanel : User onChange values in input text field on manage tags panel
+activate Client #D3D3D3
+    activate ManageTagsPanel #D3D3D3
+        ManageTagsPanel -> ManageTagsPanel : onInputChange(text: string)
+        ManageTagsPanel -> ManageTagsPanel : update the **input** value as **text**
+        ManageTagsPanel -> ManageTagsPanel : validate(text) (refer validate method\n from above common methods)
+        alt case : validate(text) returns true
+            ManageTagsPanel -> ManageTagsPanel : update the **error** value as **undefined**
+            ManageTagsPanel -> ManageTagsPanel : return
+        end
+        Client <-- ManageTagsPanel : User onChanges value\n will be displayed to the user
+    deactivate ManageTagsPanel
+deactivate Client
+
+@enduml

@@ -1,0 +1,43 @@
+@startuml user service class diagram
+
+class ManageTagsPanel {
+  initialize() : \t\t\t\t\t\t\t\t\t void
+  ..
+  onSubmit(type?: string) : \t\t\t\t\t\t\t void
+  ..
+  validate(text: string) : \t\t\t\t\t\t\t boolean
+  ..
+  updateTag(tagId: string) : \t\t\t\t\t\t void
+  ..
+  onDelteTag(deletedTag: TagType) : \t\t\t\t void
+  ..
+  onEditTag(tag: TagType) : \t\t\t\t\t\t void
+  ..
+  columns() : \t\t\t\t\t\t\t\t\t JSX.element
+  ..
+  onInputChange(text: string) : \t\t\t\t\t\t void
+  ..
+  onTagAnalytics(tags: TagType[]) : \t\t\t\t\t void
+  ..
+  viewCalender(dates: string[], tagIds: string[]) : \t\t void
+  ..
+  tags : \t\t\t\t\t\t\t\t\t\t TagType[]
+  ..
+  input : \t\t\t\t\t\t\t\t\t\t string
+  ..
+  tagId : \t\t\t\t\t\t\t\t\t\t string
+  ..
+  error : \t\t\t\t\t\t\t\t\t\t "error" | "warning" | undefined
+  ..
+  tagsVisible : \t\t\t\t\t\t\t\t\t boolean
+  ..
+  isSpin : \t\t\t\t\t\t\t\t\t\t boolean
+  ..
+  tagAnalyticPanel : \t\t\t\t\t\t\t\t React.ReactNode
+  ..
+  selectedTags : \t\t\t\t\t\t\t\t TagType[]
+  ..
+  selectedTagIds : \t\t\t\t\t\t\t\t React.Key[]
+}
+
+@enduml
