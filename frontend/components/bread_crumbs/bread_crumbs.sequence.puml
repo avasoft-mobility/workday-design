@@ -1,0 +1,24 @@
+@startuml bread crumbs
+participant Client
+participant BreadCrumbs
+
+Client -> BreadCrumbs : call the component in any component with **<BreadCrumbs {...props} />**
+activate Client #D3D3D3
+    activate BreadCrumbs #D3D3D3
+        note left of BreadCrumbs : props: {\n breadcrumbs: BreadCrumbTypes[] \n}
+        BreadCrumbs -> BreadCrumbs : loop the **props.breadcrumbs** and\n check whether the breadcrumb has\n route || link || nothing attached to it
+        alt case : breadcrumbs has routes
+            BreadCrumbs -> BreadCrumbs : create a link and the link name\n should be **breadcrumbs.name**
+            BreadCrumbs -> BreadCrumbs : if user **onClicks breadcrumbs**,\n then it should be redirected || routed\n to the particular route.
+        end
+        alt case : breadcrumbs has link
+            BreadCrumbs -> BreadCrumbs : create a link and the link name\n should be **breadcrumbs.name**
+            BreadCrumbs -> BreadCrumbs : if user **onClicks breadcrumbs**,\n then assign that particular link\n to window.location.href,\n If so it will navigated to the particular link.
+        end
+        alt case : breadcrumbs didn't have any route\n and didn't have any link
+            BreadCrumbs -> BreadCrumbs : Create a Text and text name should be **breadcrumbs.name**
+        end
+        Client <-- BreadCrumbs : User Receives the expected view
+    deactivate BreadCrumbs
+deactivate Client
+@enduml

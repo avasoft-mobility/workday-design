@@ -1,0 +1,7 @@
+@startuml breadcrumbs class diagram
+
+class BreadCrumbs {
+  breadcrumbs: \t\t JSX.Element[][]
+}
+
+@enduml
