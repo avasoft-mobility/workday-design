@@ -1,0 +1,32 @@
+@startuml leads action
+participant Client
+participant LeadsAction
+
+Client -> LeadsAction : call the component in any component with **<LeadsAction {...props} />**
+activate Client #D3D3D3
+    activate LeadsAction #D3D3D3
+        note left of LeadsAction : props: {\n userRole: "Team Member" | "Manager" | "HR Manager"; \n}
+        LeadsAction -> LeadsAction : bind the **BasicPopover** values\n (refer BasicPopover from BasicPopover sequence diagram from )
+        alt case : userRole is "Manager"
+            LeadsAction -> LeadsAction : set button name as **Teams ToDo**
+        else case : userRole is other than "Manager"
+            LeadsAction -> LeadsAction : set button name as **Organization ToDo**
+        end
+        Client <-- LeadsAction : user receives the expected view
+    deactivate LeadsAction
+deactivate Client
+
+... ...
+...~~**onClick functionalities**~~ ...
+... ...
+
+Client -> LeadsAction : when user onClicks the **Teams ToDo** ||**Organization ToDo** Button
+activate Client #D3D3D3
+    activate LeadsAction #D3D3D3
+        LeadsAction -> LeadsAction : **onClickTeamsToDo()**
+        LeadsAction -> LeadsAction : navigate to the **reportings page**
+        Client <-- LeadsAction : user will be navigated to their reportings page.
+    deactivate LeadsAction
+deactivate Client
+
+@enduml

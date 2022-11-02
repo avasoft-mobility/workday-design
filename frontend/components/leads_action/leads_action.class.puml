@@ -1,0 +1,7 @@
+@startuml LeadsAction class diagram
+
+class LeadsAction {
+  onClickTeamsToDo: \t void
+}
+
+@enduml
