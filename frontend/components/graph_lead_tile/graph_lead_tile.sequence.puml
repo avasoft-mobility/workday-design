@@ -1,0 +1,29 @@
+@startuml GraphLeadTile
+
+participant Client 
+participant GraphLeadTile
+... ...
+Client -> GraphLeadTile : call the component in any page with **<GraphLeadTile {...props} />**
+activate Client #D3D3D3
+activate GraphLeadTile #D3D3D3
+    note left of GraphLeadTile : props: {\n\tuserId: string;\n\tname: string;\n\tposition: string;\n\tonClick: () => void\n}
+    GraphLeadTile -> GraphLeadTile : Bind the **props.name ,props.position** in text fields
+    GraphLeadTile -> GraphLeadTile : using the **<ImageAvatar userId: props.userId />** append the JSX.element of profile picture.
+    Client <-- GraphLeadTile : User Receives the expected view of clickable card
+deactivate GraphLeadTile
+deactivate Client
+
+... ...
+...~~**Click Functionalities**~~...
+... ...
+
+Client -> GraphLeadTile : User click on th GraphLeadTile
+activate Client #D3D3D3
+activate GraphLeadTile #D3D3D3
+    GraphLeadTile -> GraphLeadTile : It trigger an onClick event and call props.onClick()
+    Client <-- GraphLeadTile : Can perform operations when it clicked 
+deactivate GraphLeadTile
+deactivate Client
+
+
+@enduml
