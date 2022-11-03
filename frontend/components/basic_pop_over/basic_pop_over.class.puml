@@ -1,0 +1,19 @@
+@startuml BasicPopOver class diagram
+
+class LeadsAction {
+  handleClick(event: React.MouseEvent<HTMLButtonElement>)\t\t\t: \t\t void
+  ..
+  handleClose() \t\t\t\t\t\t\t\t\t\t\t\t\t: \t\t void
+  ..
+  downloadDailyTodoReport() \t\t\t\t\t\t\t\t\t\t: \t\t void
+  ..
+  downloadPreviousWeeklyReport() \t\t\t\t\t\t\t\t\t: \t\t void
+  ..
+  downloadDailyAttendanceReport() \t\t\t\t\t\t\t\t\t: \t\t void
+  ..
+  anchorEl \t\t\t\t\t\t\t\t\t\t\t\t\t\t: \t\t HTMLButtonElement | null
+  ..
+  isLoading \t\t\t\t\t\t\t\t\t\t\t\t\t: \t\t Boolean
+}
+
+@enduml

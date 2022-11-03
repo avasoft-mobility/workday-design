@@ -1,0 +1,112 @@
+@startuml basic pop over
+participant Client
+participant BasicPopover
+participant reportService.ts
+participant Backend
+
+Client -> BasicPopover : call the component in any component with **<BasicPopover {...props} />**
+activate Client #D3D3D3
+    activate BasicPopover #D3D3D3
+        BasicPopover -> BasicPopover : Implement **Button** from materialUi
+        BasicPopover -> BasicPopover : Implement **Popover** from materialUi
+        BasicPopover -> BasicPopover : create a variable called **open**\n and assign the boolean of anchorEl\n values to **open**
+        BasicPopover -> BasicPopover : The popover appears when the **open** is true.
+        BasicPopover -> BasicPopover : create a variable called **id**,\n if **open** is true, then assign **"simple-popover"** string value to **id**\n else assign **undefined** values to **id**.
+        Client <-- BasicPopover : user reveives the expected view
+    deactivate BasicPopover 
+deactivate Client
+
+... ...
+...~~**onClick functionalities**~~ ...
+... ...
+
+Client -> BasicPopover : when user onClicks the **Export to Excel** Button
+activate Client #D3D3D3
+    activate BasicPopover #D3D3D3
+        BasicPopover -> BasicPopover : triggers the **handleClick(event: React.MouseEvent<HTMLButtonElement>)** method
+        BasicPopover -> BasicPopover : update **event.currentTarget** to the **anchorEl** variable
+        Client <-- BasicPopover : Popover will be shown to the user
+    deactivate BasicPopover
+deactivate Client
+
+... ...
+
+Client -> BasicPopover : when user closes the Popover
+activate Client #D3D3D3
+    activate BasicPopover #D3D3D3
+        BasicPopover -> BasicPopover : triggers **onClose** in BasicPopover\n and this onclose triggers the **handleClose** method
+        BasicPopover -> BasicPopover :  update **null** to the **anchorEl** variable
+        Client <-- BasicPopover : Popover will be closed
+    deactivate BasicPopover
+deactivate Client
+
+... ...
+
+Client -> BasicPopover : when user onClicks **Export Yesterday's To-Do** button in the popover
+activate Client #D3D3D3
+    activate BasicPopover #D3D3D3
+        BasicPopover -> BasicPopover : triggers **downloadDailyTodoReport** method
+        BasicPopover -> BasicPopover : update **true** to the **isLoading** variable
+        BasicPopover -> reportService.ts : downloadLastDayTodoReport(\naccounts[0].localAccountId)
+        activate reportService.ts #D3D3D3
+            reportService.ts -> Backend : (GET) `/reports/${userId}/daily`
+            activate Backend #D3D3D3
+                reportService.ts <-- Backend :AxiosResponse
+            deactivate Backend
+            reportService.ts -> reportService.ts : get the return response and\n save that in a variable called **response**
+            BasicPopover <-- reportService.ts : response
+        deactivate reportService.ts
+        BasicPopover -> BasicPopover : get the return response and\n save that in a variable called **response**
+        BasicPopover -> BasicPopover : update **false** to the **isLoading** variable
+        BasicPopover -> BasicPopover : navigate the path which is from the **response**(response.path)
+        Client <-- BasicPopover : Past day's Todo report will be downloaded.
+    deactivate BasicPopover
+deactivate Client
+
+... ...
+
+Client -> BasicPopover : when user onClicks **Export Weekly To-Do** button in the popover
+activate Client #D3D3D3
+    activate BasicPopover #D3D3D3
+        BasicPopover -> BasicPopover : triggers **downloadPreviousWeeklyReport** method
+        BasicPopover -> BasicPopover : update **true** to the **isLoading** variable
+        BasicPopover -> reportService.ts : downloadLastTwoWeekTodoReport(\naccounts[0].localAccountId)
+        activate reportService.ts #D3D3D3
+            reportService.ts -> Backend : (GET) `/reports/${userId}/weekly`
+            activate Backend #D3D3D3
+                reportService.ts <-- Backend :AxiosResponse
+            deactivate Backend
+            reportService.ts -> reportService.ts : get the return response and\n save that in a variable called **response**
+            BasicPopover <-- reportService.ts : response
+        deactivate reportService.ts
+        BasicPopover -> BasicPopover : get the return response and\n save that in a variable called **response**
+        BasicPopover -> BasicPopover : update **false** to the **isLoading** variable
+        BasicPopover -> BasicPopover : navigate the path which is from the **response**(response.path)
+        Client <-- BasicPopover : past week's Todo report will be downloaded.
+    deactivate BasicPopover
+deactivate Client
+
+... ...
+
+Client -> BasicPopover : when user onClicks **Export Attendance** button in the popover
+activate Client #D3D3D3
+    activate BasicPopover #D3D3D3
+        BasicPopover -> BasicPopover : triggers **downloadDailyAttendanceReport** method
+        BasicPopover -> BasicPopover : update **true** to the **isLoading** variable
+        BasicPopover -> reportService.ts : downloadLastDayAttendanceReport(\naccounts[0].localAccountId)
+        activate reportService.ts #D3D3D3
+            reportService.ts -> Backend : (GET) `/reports/${userId}/attendance`
+            activate Backend #D3D3D3
+                reportService.ts <-- Backend :AxiosResponse
+            deactivate Backend
+            reportService.ts -> reportService.ts : get the return response and\n save that in a variable called **response**
+            BasicPopover <-- reportService.ts : response
+        deactivate reportService.ts
+        BasicPopover -> BasicPopover : get the return response and\n save that in a variable called **response**
+        BasicPopover -> BasicPopover : update **false** to the **isLoading** variable
+        BasicPopover -> BasicPopover : navigate the path which is from the **response**(response.path)
+        Client <-- BasicPopover : past day's Attendance report will be downloaded.
+    deactivate BasicPopover
+deactivate Client
+
+@enduml
