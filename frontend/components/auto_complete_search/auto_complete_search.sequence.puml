@@ -1,0 +1,33 @@
+@startuml autoComplete
+participant Client
+participant AutoCompleteSearch
+
+Client -> AutoCompleteSearch : call the component in any component with **<AutoCompleteSearch {...props} />**
+activate Client #D3D3D3
+    activate AutoCompleteSearch #D3D3D3
+        note left of AutoCompleteSearch : props: {\ndata: TeamReport[];\nisOpen: boolean;\nonItemClick: Function;\nisNoMatches: boolean; \n}
+        alt case: props.isNoMatches is true
+            AutoCompleteSearch -> AutoCompleteSearch : show the user that\n **We didn't found any matches**
+        end
+        loop case: loop the props.data
+            AutoCompleteSearch -> AutoCompleteSearch : while looping the props.data each and every\n data is known to be userInformation,\n so bind the user name with user role in a div
+        end
+        Client <-- AutoCompleteSearch : user receives the expected view.
+    deactivate AutoCompleteSearch
+deactivate Client
+... ...
+...~~**onClick functionalities**~~ ...
+... ...
+
+Client -> AutoCompleteSearch : when user onClicks the **user in auto search dropdown** Button
+activate Client #D3D3D3
+    activate AutoCompleteSearch #D3D3D3
+        alt case : selected user has the reportings which is greater than 1
+            AutoCompleteSearch -> AutoCompleteSearch : triggers **onItemClick()** method in parent\n with props of **userId**
+        end
+        AutoCompleteSearch -> AutoCompleteSearch : triggers **onItemClick()** method in parent\n with props of **selected user managerId**
+        Client <--  AutoCompleteSearch : **onItemClick()** method in the parent gets triggered.
+    deactivate AutoCompleteSearch
+deactivate Client
+
+@enduml
