@@ -1,0 +1,21 @@
+@startuml basic Chip
+participant Client
+participant BasicChip
+
+Client -> BasicChip : call the component in any component with **<BasicChip {...props} />**
+activate Client #D3D3D3
+    activate BasicChip #D3D3D3
+        note left of BasicChip : props: {\n label: string;\nstyle?: React.CSSProperties;\n}
+        BasicChip -> BasicChip : Implement the Chip from materialUI
+        BasicChip -> BasicChip : assign the prop's label value to the chip's label
+        BasicChip -> BasicChip : style the chip using prop's style value
+        BasicChip -> BasicChip : call the **setChipStyle(statusValue: string)**
+        BasicChip -> BasicChip : **setChipStyle(statusValue: string)**
+        activate BasicChip #D16587
+            BasicChip -> BasicChip : according to the statusValue,\n this method will return the chip color\n and chip backgroundColor
+        deactivate BasicChip
+        BasicChip -> BasicChip : bind the return ReactCss properties in Chip.
+        Client <-- BasicChip : user will recive the expected view
+    deactivate BasicChip
+deactivate Client
+@enduml

@@ -1,0 +1,7 @@
+@startuml BasicChip class diagram
+
+class BreadCrumbs {
+  setChipStyle: \t\t {color: string;background: string;}
+}
+
+@enduml
