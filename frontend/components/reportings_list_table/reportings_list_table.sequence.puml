@@ -1,0 +1,87 @@
+@startuml ReportingsListTable Component Sequence
+
+participant Client
+participant ReportingsListTable
+
+... ...
+
+Client -> ReportingsListTable : call the component **<ReportingsListTable {...props} />**
+activate Client #D3D3D3
+activate ReportingsListTable #D3D3D3
+
+    note left of ReportingsListTable : props: {\n\tdata: TeamReport[];\n\torder: "asc" | "desc";\n\torderBy: "name" | "attendanceStatus" | "practice" | "reporter_name" | "";\n\thandleSortChange: Function;\n\troleBasedVisibilty: boolean;\n\tisLoading: boolean;\n}
+
+    alt case: props.isLoading 
+        Client <-- ReportingsListTable : return an empty view, which **user cannot see any view**
+    end
+
+    alt case: props.data.length > 0 
+        ReportingsListTable -> ReportingsListTable : Crate a table with headers or columns as "Team Members Name", "Reports to", "Status" and "Actions"
+        ReportingsListTable -> ReportingsListTable : When **roleBasedVisibility** is **true** there is column "Practice" after "Reports to"
+
+        loop props.data as data
+            ReportingsListTable -> ReportingsListTable : in each iteration append the table data
+            activate ReportingsListTable #D16578
+                ReportingsListTable -> ReportingsListTable : Append the **<ProfileCard ...{props} />** component to the **Team Members Name** column
+                activate ReportingsListTable #D3D3D3
+                    note right of ReportingsListTable : Refer profile_card sequence diagram
+                    ReportingsListTable -> ReportingsListTable : return a card view of userImage with name and role
+                deactivate ReportingsListTable
+                ReportingsListTable -> ReportingsListTable :Append an Text of **data.reporter_name** in "Reports to" column
+                ReportingsListTable -> ReportingsListTable :Append an Text of **data.practice** in "Practice" column
+
+                ReportingsListTable -> ReportingsListTable : Append the **<BasicChip ...{props} />** component to the **Status** column
+                activate ReportingsListTable #D3D3D3
+                    note right of ReportingsListTable : Refer basic_chip sequence diagram
+                    ReportingsListTable -> ReportingsListTable : return a capsule view of attendance status
+                deactivate ReportingsListTable
+
+                ReportingsListTable -> ReportingsListTable :Append a clickable text of "View"
+                ReportingsListTable -> ReportingsListTable :Appends each table row in table body
+            deactivate ReportingsListTable
+        end
+        Client <-- ReportingsListTable : User Receives the expected view
+    else #0000001a
+        Client <-- ReportingsListTable : User Receives an view of which "No records found" text or image
+    end
+deactivate ReportingsListTable
+deactivate Client
+
+... ...
+... ...
+... ~~**Click Functionality**~~ ...
+... ...
+
+Client -> ReportingsListTable : onClick of any headers in table
+
+activate Client #D3D3D3
+activate ReportingsListTable #D3D3D3
+    alt case: Team Members Name column
+        ReportingsListTable -> ReportingsListTable : it triggers the **props.handleSortChange()** with "name"
+        Client <-- ReportingsListTable : Call the handleSortChange() of parent
+    else case: Reports to column
+        ReportingsListTable -> ReportingsListTable : it triggers the **props.handleSortChange()** with "reporter_name"
+        Client <-- ReportingsListTable : Call the handleSortChange() of parent
+    else case: Practice column
+        ReportingsListTable -> ReportingsListTable : it triggers the **props.handleSortChange()** with "practice"
+        Client <-- ReportingsListTable : Call the handleSortChange() of parent
+    else case: Status column
+        ReportingsListTable -> ReportingsListTable : it triggers the **props.handleSortChange()** with "attendanceStatus"
+        Client <-- ReportingsListTable : Call the handleSortChange() of parent
+    end
+deactivate ReportingsListTable
+deactivate Client
+
+... ...
+... ...
+
+Client -> ReportingsListTable : onClick of "view" text in "actions" column
+activate Client #D3D3D3
+activate ReportingsListTable #D3D3D3
+    ReportingsListTable -> ReportingsListTable : using the NavigateFunction, navigate to clicked reporting's Home page
+    Client <-- ReportingsListTable : user can navigate to **reporting's Home page**
+deactivate ReportingsListTable
+deactivate Client
+... ...
+
+@enduml
