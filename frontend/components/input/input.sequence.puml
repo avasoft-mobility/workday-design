@@ -1,0 +1,55 @@
+@startuml Input Component Sequence
+
+participant Client 
+participant Input 
+... ...
+Client -> Input : call the component in any page with **<Input {...props} />**
+activate Client #D3D3D3
+activate Input #D3D3D3
+    note right of Input : props: {\n\tonChange \t\t:  React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> | undefined;\n\tplaceholderStyle?\t: React.CSSProperties;\n\tinputTextStyle?\t\t: React.CSSProperties;\n\tplaceHolderText?\t: string;\n\tnumberOfLines?\t\t: number;\n\tvalue?\t\t\t: string;\n\tonBlur?\t\t\t: React.FocusEventHandler<HTMLInputElement | HTMLTextAreaElement>;\n\ttype?\t\t\t: "outlined" | "normal";\n\tstyle?\t\t\t: React.CSSProperties;\n\terrorText?\t\t\t: string;\n\tmultiline?\t\t\t: boolean;\n\tonFocus?\t\t\t: React.FocusEventHandler<HTMLInputElement | HTMLTextAreaElement>;\n}
+    Input -> Input : if the props.multiline is true then user can able to type multiline text
+    Input -> Input : Can able to enter **{props.numberOfLines}** number of lines
+    Input -> Input : Bind the **props.value** as value
+    alt case: props.type === "outlined"
+        Input -> Input : return an input element with border
+        Client <-- Input : User Receives the expected input field with outlined Input field
+    end
+    Input -> Input : retun a input element without border
+    Client <-- Input : User Receives the expected input field 
+deactivate Client
+deactivate Input
+
+... ...
+... ...
+...~~**Click functionalities**~~...
+... ...
+Client -> Input : On click on the input component
+activate Client #D3D3D3
+activate Input #D3D3D3
+    Input -> Input : It triggers an onFocus event
+    Client <-- Input : User can edit the field 
+deactivate Client
+deactivate Input
+
+... ...
+... ...
+...~~**Change functionalities**~~...
+... ...
+Client -> Input : On click on the input component
+activate Client #D3D3D3
+activate Input #D3D3D3
+    Input -> Input : It triggers an onChange event, and call the onChange function from props
+    Client <-- Input : User can see the change changes in field
+deactivate Client
+deactivate Input
+
+... ...
+Client -> Input : Leave from the input component
+activate Client #D3D3D3
+activate Input #D3D3D3
+    Input -> Input : It triggers an onBlur event, and call the onBlur function from props
+    Client <-- Input : User can see the change changes in field
+deactivate Client
+deactivate Input
+
+@enduml

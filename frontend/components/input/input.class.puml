@@ -1,0 +1,7 @@
+@startuml Input Component Class 
+
+class Input {
+    outlinedInputTextField()   \t:\tJSX.element
+}
+
+@enduml
