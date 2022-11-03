@@ -1,0 +1,55 @@
+@startuml Search
+participant Client
+participant Search
+
+Client -> Search : call the component in any component with **<Search {...props} />**\t\t\t\t\t\t
+activate Client #D3D3D3
+    activate Search #D3D3D3
+        note left of Search : props: {\n input: Function;\nonFocus?: Function;\nvalue?: string;\nonBlur?: React.FocusEventHandler<HTMLInputElement | HTMLTextAreaElement>; \n}
+        Search -> Search : bind the **input** component\n(refer input from input sequence diagram )
+        Search -> Search : bind **searchIcon** before the input component
+        Client <-- Search : user receives the expected view.
+    deactivate Search
+deactivate Client
+
+... ...
+...~~**onChange functionalities**~~ ...
+... ...
+
+Client -> Search : when user onChanges the value in input text field
+activate Client #D3D3D3
+    activate Search #D3D3D3
+        Search -> Search: onChange(text: string)
+        Search -> Search : call **props.input(text)**
+        Client <-- Search : input method in the parent will be triggered\n and onChange text is sent to the particular method
+    deactivate Search
+deactivate Client
+
+... ...
+...~~**onFocus functionalities**~~ ...
+... ...
+
+Client -> Search : when user Focuses the input text field in search component
+activate Client #D3D3D3
+    activate Search #D3D3D3
+        Search -> Search : onFocusInput(event: React.FocusEvent<HTMLInputElement>)
+        alt case: props.onFocus is not undefined
+            Search -> Search : call **props.onFocus(event)**
+        end
+        Client <-- Search :onFocus method in the parent will be triggered\n and onFocus event is sent to the particular method.
+    deactivate Search
+deactivate Client
+
+... ...
+...~~**onBlur functionalities**~~ ...
+... ...
+
+Client -> Search : when user clicks outside from input component
+activate Client #D3D3D3
+    activate Search #D3D3D3
+        Search -> Search: **onBlur** in input component triggers 
+        Search -> Search : call **props.onBlur**
+        Client <-- Search : onBlur method in the parent will be trigerred.
+deactivate Client
+
+@enduml
