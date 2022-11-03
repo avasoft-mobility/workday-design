@@ -1,0 +1,31 @@
+@startuml image avatar
+participant Client
+participant ImageAvatar
+participant usersService.ts
+participant ActiveDirectory
+
+Client -> ImageAvatar : call the component in any component with **<ImageAvatar />**
+activate Client #D3D3D3
+    activate ImageAvatar #D3D3D3
+        ImageAvatar -> usersService.ts : getUserPhoto(userId, adminInfo.accessToken)
+        activate usersService.ts #D3D3D3
+            usersService.ts -> ActiveDirectory : request users profile image from AD
+            activate ActiveDirectory #D3D3D3
+                usersService.ts <-- ActiveDirectory : imageUrl
+            deactivate ActiveDirectory
+            usersService.ts -> usersService.ts : get the return response and\n save the value in a variable called\n **response**
+            usersService.ts -> usersService.ts : create a Url with response.date and\n save the Url in a variable called **blobUrl**
+            usersService.ts -> usersService.ts : return **blobUrl**
+            ImageAvatar <-- usersService.ts : Url
+        deactivate usersService.ts
+        ImageAvatar -> ImageAvatar : get the return response and\n save that in a variable called **imageQuery**
+        alt case: imageQuery.isLoading
+            Client <-- ImageAvatar : avatar Icon will be returned
+        end
+        alt case: !imageQuery.isLoading && !imageQuery.data
+            Client <-- ImageAvatar : avatar Icon will be returned with borderRadius of 50%
+        end
+        Client <-- ImageAvatar : return the user's Image
+    deactivate ImageAvatar
+deactivate Client
+@enduml
