@@ -1,0 +1,21 @@
+@startuml EditTodoPanel Class Diagram
+
+class EditTodoPanel {
+    onFinish() \t\t\t:\tvoid
+    ..
+    onTagSelected() \t\t:\tvoid
+    ..
+    tagRender() \t\t\t:\tJSX.element
+    ..
+    tag   \t\t\t\t:\tstring[]
+    ..
+    todoType \t\t\t:\tstring
+    ..
+    todoStatus \t\t\t:\tstring
+    ..
+    selectedTagNames \t\t:\tstring[]
+    ..
+    selectedTagIds \t\t:\tstring[]
+}
+
+@enduml

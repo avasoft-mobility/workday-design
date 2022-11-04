@@ -1,0 +1,180 @@
+@startuml EditTodoPanel Sequence
+
+participant Client 
+participant EditTodoPanel
+
+Client -> EditTodoPanel : Call the component **<EditTodoPanel ...{props} />**
+activate Client #D3D3D3
+activate EditTodoPanel #D3D3D3
+    note right of EditTodoPanel : props {\n\ttodo?: \t\tTodoItem;\n\tsubmittingChanges: boolean;\n\tsubmitChanges: \t(TodoItem,boolean) => void;\n\ttags: \t\tTagType[] | undefined;\n\tisEditable: \tboolean;\n}
+    EditTodoPanel -> EditTodoPanel : When component mounting and props.todo and props.tag changes
+    activate EditTodoPanel #D16587
+        alt props.todo.tags is empty []
+            EditTodoPanel -> EditTodoPanel : update the **selectedTagNames** with empty [] value
+        else 
+            EditTodoPanel -> EditTodoPanel : Declare two empty array **selectedTags** and **selectedTagIds**
+            EditTodoPanel -> EditTodoPanel : Iterate the props.todo.tags and\ncompare each tag which is include in props.tags and is present, then\npush the tagname and tagId to selectedTags and selectedTagIds arrays respectively
+            EditTodoPanel -> EditTodoPanel : Update the **selectedTagNames** with selectedTags array,\n**selectedTagIds** with selectedTagIds array,\nand **tag** with props.todo.tags
+        end
+    deactivate EditTodoPanel
+    alt props.editable is true
+        EditTodoPanel -> EditTodoPanel : Bind a form with some input fields of **Title**, **Actual effort**,\n**Additional Notes** and select fields of **Tags**, **Status**, **Todo type** as editable \nand **Estimated effort** field as non editable
+        EditTodoPanel -> EditTodoPanel : Bind a select dropdown using **<MultiSelectDropdown {...props} />**
+        note right of EditTodoPanel : props: {\n\ttodoTag: **selectedTagIds**;\n\tonChange: {onTagSelected()};\n\tallTags: props.tags;\n\tisDisabled: props.isEditable;\n}
+        activate EditTodoPanel #D16587
+            note right of EditTodoPanel : Refer the multiselect_dropdown component sequence
+            Client <-- EditTodoPanel : User can receive a form to edit their todo and button to save the changes
+        deactivate EditTodoPanel
+    else 
+        EditTodoPanel -> EditTodoPanel : Bind a non editable form with values Title, Estimated effort, Actual effort,\nAdditional Notes , Tags, Status, Todo type of the props.todo
+        activate EditTodoPanel #D16587
+            Client <-- EditTodoPanel : User can view their task details
+        deactivate EditTodoPanel
+    end 
+deactivate Client
+deactivate EditTodoPanel
+
+... ...
+... ...
+...~~**Click Functionalities**~~...
+... ...
+
+Client -> EditTodoPanel : Click on the **Title**, **Actual effort**, **Additional Notes** input fields
+activate Client #D3D3D3
+activate EditTodoPanel #D3D3D3
+    Client <-- EditTodoPanel : User can Enter value on the field
+deactivate Client 
+deactivate EditTodoPanel
+
+... ...
+
+Client -> EditTodoPanel : Click on the **Tags** field
+activate Client #D3D3D3
+activate EditTodoPanel #D3D3D3
+    Client <-- EditTodoPanel : User can select the tags from the select dropdown
+deactivate Client 
+deactivate EditTodoPanel
+
+... ...
+
+Client -> EditTodoPanel : Select any tag from dropdwon
+activate Client #D3D3D3
+activate EditTodoPanel #D3D3D3
+    EditTodoPanel -> EditTodoPanel : If the option is already selected, then remove the selected value from field
+    EditTodoPanel -> EditTodoPanel : Validate the changed value
+    activate EditTodoPanel #D16587
+        alt After the selection the value is empty
+            Client <-- EditTodoPanel : User can view updated field with error text below
+        else \t\tnot includes any default tags
+            Client <-- EditTodoPanel : User can view updated field with error text below
+        else \t\tincludes morethan one default tags
+            Client <-- EditTodoPanel : User can view updated field with error text below
+        else 
+            Client <-- EditTodoPanel : User can view updated field without error text
+            deactivate EditTodoPanel
+        end
+deactivate Client 
+deactivate EditTodoPanel
+
+... ...
+
+Client -> EditTodoPanel : Select any option from **Status**.
+activate Client #D3D3D3
+activate EditTodoPanel #D3D3D3
+    EditTodoPanel -> EditTodoPanel : Update the **todoStatus** with the selected status
+    Client <-- EditTodoPanel : User can view the updated field
+deactivate Client 
+deactivate EditTodoPanel
+
+... ...
+
+Client -> EditTodoPanel : Select any option from **Type**.
+activate Client #D3D3D3
+activate EditTodoPanel #D3D3D3
+    EditTodoPanel -> EditTodoPanel : Update the **todoType** with the selected status
+    Client <-- EditTodoPanel : User can view the updated field
+deactivate Client 
+deactivate EditTodoPanel
+
+... ...
+
+Client -> EditTodoPanel : Click on the Update Task button.
+activate Client #D3D3D3
+activate EditTodoPanel #D3D3D3
+    EditTodoPanel -> EditTodoPanel : Call onFinish() method 
+    activate EditTodoPanel #D16587
+        EditTodoPanel -> EditTodoPanel : Update the props.todo with todoSatus, todoType, tag and updated field values\nsend the updated props.todo value to the parent by triggering submitChanges method in props
+        Client <-- EditTodoPanel : It share the updated todo details to the parent
+    deactivate EditTodoPanel
+deactivate Client 
+deactivate EditTodoPanel
+
+... ...
+... ...
+...~~**Change Functionalities**~~...
+... ...
+
+Client -> EditTodoPanel : Entering values to **Title** field
+activate Client #D3D3D3
+activate EditTodoPanel #D3D3D3
+    EditTodoPanel -> EditTodoPanel : Validate the input value
+    alt length of the string is less than 3
+         Client <-- EditTodoPanel : User can view updated field with error text below
+    else string doesnot contains any alphabets
+        Client <-- EditTodoPanel : User can view updated field with error text below
+    else 
+        Client <-- EditTodoPanel : User can view updated field without error text
+    end
+deactivate Client 
+deactivate EditTodoPanel
+
+... ...
+
+Client -> EditTodoPanel : Entering values to **Actual effort** field
+activate Client #D3D3D3
+activate EditTodoPanel #D3D3D3
+    EditTodoPanel -> EditTodoPanel : Validate the input value
+    alt value is not a number
+         Client <-- EditTodoPanel : User can view updated field with error text below
+    else todoStatus is "In Progess", "Yet to Start", "On Hold"
+        Client <-- EditTodoPanel : User can view updated field without error text
+    else value is 0 or lessthan 0
+        Client <-- EditTodoPanel : User can view updated field with error text below
+    else value is not divisible by 0.25
+        Client <-- EditTodoPanel : User can view updated field with error text below
+    else todoStatus is "Yet to Start" and value greater than 0
+        Client <-- EditTodoPanel : User can view updated field with error text of suggestion to change **Status** below
+    end
+deactivate Client 
+deactivate EditTodoPanel
+
+... ...
+
+Client -> EditTodoPanel : Entering values to **Additional Notes** field
+activate Client #D3D3D3
+activate EditTodoPanel #D3D3D3
+    EditTodoPanel -> EditTodoPanel : Validate the input value
+    alt value is not defined
+        alt todoStatus is "Completed"
+            Client <-- EditTodoPanel : User can view updated field with error text below
+        else 
+            Client <-- EditTodoPanel : User can view updated field without error text
+        end
+    else value doesnot contain any alphabets
+        Client <-- EditTodoPanel : User can view updated field with error text below
+    else
+        Client <-- EditTodoPanel : User can view updated field without error text
+    end
+deactivate Client 
+deactivate EditTodoPanel
+
+... ...
+
+Client -> EditTodoPanel : **Searching the tags** in Tags field
+activate Client #D3D3D3
+activate EditTodoPanel #D3D3D3
+    EditTodoPanel -> EditTodoPanel : Filter the matching tag with the input text and populate option
+    Client <-- EditTodoPanel : User can view and select tags from filtered options
+deactivate Client 
+deactivate EditTodoPanel
+@enduml 
