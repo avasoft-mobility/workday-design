@@ -1,0 +1,127 @@
+@startuml todo view panel
+participant Client
+participant TodoViewPanel
+
+Client -> TodoViewPanel : call the component in any component with **<TodoViewPanel {...props} />**
+activate Client #D3D3D3
+    activate TodoViewPanel #D3D3D3
+        note left of TodoViewPanel : props: {\ntodos?: TodoItem[];\nisLoading: boolean;\nquickEdit: (todo: TodoItem, move: boolean) => void;\ndeleteTodo: (todo: TodoItem) => void;\neditTodo: (todo: TodoItem) => void;\nviewTodo: (todo: TodoItem) => void;\nhighlightedTaskIds: string[];\nisEditable: boolean;\n}
+        TodoViewPanel -> TodoViewPanel : when the component gets updated or mounted\n or when the **[props.highlightedTaskIds]** gets updated,\n perform below conditions.
+        activate TodoViewPanel #D16587
+            alt case : props.highlightedTaskIds is undefined and\n props.highlightedTaskIds length is not equals to 0
+                TodoViewPanel -> TodoViewPanel : update **props.highlightedTaskIds** values to\n **selectedRowKeys** variable
+            else
+                 TodoViewPanel -> TodoViewPanel : update **[ ]** values to **selectedRowKeys** variable
+            end
+        deactivate TodoViewPanel
+        TodoViewPanel -> TodoViewPanel : when the component gets updated or mounted\n or when the **[props.todos]** gets updated,\n perform below conditions.
+        activate TodoViewPanel #D16587
+            TodoViewPanel -> TodoViewPanel : update **[]** value to **todoDatas** variable.
+            loop case: loop props.todos
+                TodoViewPanel -> TodoViewPanel : assign **todo.id** value to **todo.key**
+            end
+            TodoViewPanel -> TodoViewPanel : create a variable called **array** with data type as **TodoItem[]** and\n assign **empty[ ]** value to it.
+            TodoViewPanel -> TodoViewPanel : filter the **props.todos** where todos was in the status of **"In Progress"**\n and concat the filtered values to **array** varialble.
+            TodoViewPanel -> TodoViewPanel : filter the **props.todos** where todos was in the status of **"Yet to Start"**\n and concat the filtered values to **array** varialble.
+            TodoViewPanel -> TodoViewPanel : filter the **props.todos** where todos was in the status of **"Completed"**\n and concat the filtered values to **array** varialble.
+            TodoViewPanel -> TodoViewPanel : filter the **props.todos** where todos was in the status of **"On Hold"**\n and concat the filtered values to **array** varialble.
+            TodoViewPanel -> TodoViewPanel : update **array** value to **todoDatas** variable.
+        deactivate TodoViewPanel
+        TodoViewPanel -> TodoViewPanel : implement a Table with headers as\n **Title**, **Status**,**Estimate**,**Actuals**,**Action**
+        TodoViewPanel -> TodoViewPanel : bind the **Todo title** below the **Title** header
+        TodoViewPanel -> TodoViewPanel : bind the **Todo status** below the **Status** header
+        TodoViewPanel -> TodoViewPanel : bind the **Todo ETA** below the **Estimate** header
+        TodoViewPanel -> TodoViewPanel : bind the **Todo ATA** below the **Actuals** header
+        TodoViewPanel -> TodoViewPanel : bind the **move_to_next_date**, **move_to_previous_date**\n **edit** and **delete** buttons below the **Action** header
+        TodoViewPanel -> TodoViewPanel : The **Todo status** needs to show in particular colour according to the status choosed.\n To get the particular color respective to status call the **decideTagForStatus** method
+        TodoViewPanel -> TodoViewPanel : **decideTagForStatus**\n (refer the **decideTagForStatus** method below the common methods header)
+        activate TodoViewPanel #D16587
+            TodoViewPanel -> TodoViewPanel : return the color respective to status
+        deactivate TodoViewPanel
+        Client <-- TodoViewPanel : user receives the expected view
+    deactivate TodoViewPanel
+deactivate Client
+
+... ...
+... ...
+...~~**Common methods**~~ ...
+... ...
+... ...
+
+Client -> TodoViewPanel : **decideTagForStatus(status: string)**
+activate Client #D3D3D3
+    activate TodoViewPanel #D3D3D3
+        TodoViewPanel -> TodoViewPanel : **decideTagForStatus(status: string)**
+        TodoViewPanel -> TodoViewPanel : switch and compare the status with the color and\n return the particular color
+        Client <-- TodoViewPanel : return the corresponding color according to the status
+    deactivate TodoViewPanel
+deactivate Client
+
+... ...
+... ...
+...~~**onClick functionalities**~~ ...
+... ...
+... ...
+
+Client -> TodoViewPanel : User onClicks **eye outlined** button\n to view the todo which was in the status\n of completed or the todos which were in the past
+activate Client #D3D3D3
+    activate TodoViewPanel #D3D3D3
+        TodoViewPanel -> TodoViewPanel : **viewTodo(todo: TodoItem)** method was triggered
+        TodoViewPanel -> TodoViewPanel : call the **viewTodo** method in the parent(props.viewTodo).
+        Client <-- TodoViewPanel : **viewTodo** method in the parent was triggered.
+    deactivate TodoViewPanel
+deactivate Client
+
+... ...
+... ...
+
+Client -> TodoViewPanel : User onClicks **edit outlined** button to edit the todo
+activate Client #D3D3D3
+    activate TodoViewPanel #D3D3D3
+        TodoViewPanel -> TodoViewPanel : **editTodo(todo: TodoItem)** method was triggered
+        TodoViewPanel -> TodoViewPanel : call the **editTodo** method in the parent(props.editTodo).
+        Client <-- TodoViewPanel : **editTodo** method in the parent was triggered.
+    deactivate TodoViewPanel
+deactivate Client
+
+... ...
+... ...
+
+Client -> TodoViewPanel : User onClicks **SwapLeftOutlined** button\n to edit the todo
+activate Client #D3D3D3
+    activate TodoViewPanel #D3D3D3
+        TodoViewPanel -> TodoViewPanel : moveTodoToFuture(todo, -1)
+        TodoViewPanel -> TodoViewPanel : get the todo date and save the date in a variable called **newDate**.
+        alt case : direction === 1
+            TodoViewPanel -> TodoViewPanel : get the **newDate** and add + 1 to it and\n again save the added Date in **newDate** variable.
+            alt case : newDate is saturday
+                  TodoViewPanel -> TodoViewPanel : get the **newDate** and add + 2 to it and\n again save the added next monday Date in **newDate** variable.
+            end
+        end
+
+        alt case : direction === -1
+            TodoViewPanel -> TodoViewPanel : get the **newDate** and add - 1 to it and\n again save the added Date in **newDate** variable.
+            alt case : newDate is sunday
+                  TodoViewPanel -> TodoViewPanel : get the **newDate** and add - 2 to it and\n again save the added previous friday Date in **newDate** variable.
+            end
+        end
+        TodoViewPanel -> TodoViewPanel : assign **newDate.getDate()** value to **todo.day** variable
+        TodoViewPanel -> TodoViewPanel : assign **newDate.getMonth()** value to **todo.month** variable
+        TodoViewPanel -> TodoViewPanel : assign **newDate.getFullYear()** value to **todo.year** variable
+        TodoViewPanel -> TodoViewPanel : call the **quickEdit** method in the parent.
+        Client <-- TodoViewPanel : **quickEdit** method in the parent will be triggered\n with the props as (todo, true)
+    deactivate TodoViewPanel
+deactivate Client
+
+... ...
+... ...
+
+Client -> TodoViewPanel : User onClicks **delete outlined** button to delete the todo
+activate Client #D3D3D3
+    activate TodoViewPanel #D3D3D3
+        TodoViewPanel -> TodoViewPanel : call the **delete** method in the parent(props.deleteTodo).
+        Client <-- TodoViewPanel : **editTodo** method in the parent was triggered.
+    deactivate TodoViewPanel
+deactivate Client
+
+@enduml

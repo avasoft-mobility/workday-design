@@ -1,0 +1,15 @@
+@startuml todo view panel class diagram
+
+class todoViewPanel {
+  moveTodoToFuture(todo: TodoItem, direction: number)\t\t\t: \t\t void
+  ..
+  editTodo(todo: TodoItem)\t\t\t\t\t\t\t\t: \t\t void
+  ..
+  viewTodo(todo: TodoItem)\t\t\t\t\t\t\t\t: \t\t void
+  ..
+  selectedRowKeys \t\t\t\t\t\t\t\t\t\t: \t\t React.Key[]
+  ..
+  todoDatas \t\t\t\t\t\t\t\t\t\t\t: \t\t TodoItem[]
+}
+
+@enduml

@@ -23,9 +23,9 @@ Client -> AutoCompleteSearch : when user onClicks the **user in auto search drop
 activate Client #D3D3D3
     activate AutoCompleteSearch #D3D3D3
         alt case : selected user has the reportings which is greater than 1
-            AutoCompleteSearch -> AutoCompleteSearch : triggers **onItemClick()** method in parent\n with props of **userId**
+            AutoCompleteSearch -> AutoCompleteSearch : triggers **onItemClick()** method in parent\n with props of **selected user's userId**
         end
-        AutoCompleteSearch -> AutoCompleteSearch : triggers **onItemClick()** method in parent\n with props of **selected user managerId**
+        AutoCompleteSearch -> AutoCompleteSearch : triggers **onItemClick()** method in parent\n with props of **selected user's managerId**
         Client <--  AutoCompleteSearch : **onItemClick()** method in the parent gets triggered.
     deactivate AutoCompleteSearch
 deactivate Client
