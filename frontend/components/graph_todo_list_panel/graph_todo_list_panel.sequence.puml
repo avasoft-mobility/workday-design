@@ -1,0 +1,56 @@
+@startuml GraphTodoListPanel
+participant Client
+participant GraphTodoListPanel
+
+Client -> GraphTodoListPanel : call the component **<GraphTodoListPanel {props}/>**
+activate Client #D3D3D3
+activate GraphTodoListPanel #D3D3D3
+
+note right of Client:**Props:** \n\ttodo: GraphTodo
+
+GraphTodoListPanel -> GraphTodoListPanel : Bind **Todo title**
+GraphTodoListPanel -> GraphTodoListPanel : Bind **Common Tag** by using the\n**getTagsETAComponent** method \nwhen the tag's length is equal to 1 and \nset the appropriate **background** color \nfor the tag by using the \n**getTagChipColor** method \n**Note:** Refer the methods below 
+
+Client <-- GraphTodoListPanel : \treturn the appropriate **view**
+deactivate GraphTodoListPanel
+deactivate Client
+
+... ...
+... ...
+note over Client: Click function
+... ...
+
+Client -> GraphTodoListPanel: call **getTagsETAComponent**
+activate Client #D3D3D3
+activate GraphTodoListPanel #D3D3D3
+
+GraphTodoListPanel -> GraphTodoListPanel : Bind **Common Tag** when the tag's \nlength is not equal to 0 and set \nthe appropriate **background** color \nfor the tag by using the \n**getTagChipColor** method and \nbind empty value if tag's length is 0 \n**Note:** Refer the method below 
+GraphTodoListPanel --> Client: return appropriate view
+deactivate GraphTodoListPanel
+deactivate Client
+... ...
+
+Client -> GraphTodoListPanel: call **getTagChipColor**
+activate Client #D3D3D3
+activate GraphTodoListPanel #D3D3D3
+
+alt if todo's status \nis equal to "Yet to Start"
+    GraphTodoListPanel --> Client : return **Light blue color**
+end
+
+alt if todo's status \nis equal to "In Progress"
+    GraphTodoListPanel --> Client : return **Light orange color**
+end
+
+alt if todo's status \nis equal to "On Hold"
+    GraphTodoListPanel --> Client : return **Cosmic blue color**
+end
+
+alt if todo's status \nis equal to "Completed"
+    GraphTodoListPanel --> Client : return **Green Color**
+    deactivate GraphTodoListPanel
+end
+
+deactivate Client
+
+@enduml
