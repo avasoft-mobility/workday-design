@@ -1,4 +1,4 @@
-@startuml Utilities
+@startuml getTodosByMultipleDates
 participant Client #64D1AF
 participant todos.service.ts
 participant Utilities.ts
