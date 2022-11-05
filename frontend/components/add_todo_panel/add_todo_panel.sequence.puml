@@ -1,0 +1,197 @@
+@startuml AddTodoPanel
+participant Client
+participant AddTodoPanel
+
+Client -> AddTodoPanel : call the component **<AddTodoPanel {props}/>**
+activate Client #D3D3D3
+activate AddTodoPanel #D3D3D3
+
+note right of Client:**Props:** \n\tsubmittingChanges: boolean, \n\tuserId: string, \n\tsubmitChanges: void, \n\ttags: TagType[] | undefined
+
+AddTodoPanel -> AddTodoPanel : Bind **Text fields** to add title and \nestimated effort of the task.
+AddTodoPanel -> AddTodoPanel : Bind **Text area** to add the comments \nof the task
+AddTodoPanel -> AddTodoPanel : Bind **Dropdown** to choose the tags \nof the task
+AddTodoPanel -> AddTodoPanel : Bind **Radio button** to choose the type \nof the task
+AddTodoPanel -> AddTodoPanel : Bind **Checkbox** so that the user \ncan add recurring tasks \n**Note:** Refer checkbox **onChange** \nfunctionality below
+AddTodoPanel -> AddTodoPanel : When the user checked the **"repeat the task"** \ncheckbox, Show **Multiple date picker** \ndropdown to add recurring task
+AddTodoPanel -> AddTodoPanel : Bind **Add Task Button** to add the task
+AddTodoPanel -> AddTodoPanel : Bind **Add Task & Continue Button** to \nadd task and to continue with the next \ntask
+
+Client <-- AddTodoPanel : \treturn the appropriate **view**
+deactivate AddTodoPanel
+deactivate Client
+
+... ...
+
+... ...
+
+Client -> AddTodoPanel : title field .i.e. **onChange()**
+activate Client #D3D3D3
+activate AddTodoPanel #D3D3D3
+
+alt If the entered title is empty
+    AddTodoPanel -> Client : return updated field with throw an \nerror message **"Please enter a title!"** 
+end
+
+alt If the entered title's length \nis less than 3
+    AddTodoPanel -> Client : reurn updated field with throw an \nerror message **"Title should not** \n**be less than 3 characters."** 
+end
+
+alt if the title is not matched \nwith the following /[a-zA-Z]/ \nregex condition
+    AddTodoPanel -> Client : return updated field with throw an \nerror message **"Title should have** \n**atleast one alphabetic character."** 
+end
+
+deactivate AddTodoPanel
+deactivate Client
+
+... ...
+
+... ...
+
+Client -> AddTodoPanel : estimated effort field .i.e. **onChange()**
+activate Client #D3D3D3
+activate AddTodoPanel #D3D3D3
+
+alt If the entered estimated effort is empty
+    AddTodoPanel -> Client : return updated field with throw an \nerror message **"Please enter the** \n**Estimated Effort of this work!"** 
+end
+
+alt If the entered estimated effort is not a number
+    AddTodoPanel -> Client : reurn updated field with throw an \nerror message **"Enter a valid** \n**effort (should be a number)"** 
+end
+
+alt If the entered estimated effort is greater than 8
+    AddTodoPanel -> Client : return updated field with throw an \nerror message **"Please split your** \n**works into Subtasks!"** 
+end
+
+alt If the entered estimated effort is lesser than 0 
+    AddTodoPanel -> Client : return updated field with throw an error \nmessage **"Please enter valid Estimated** \n**Effort for this task!"** 
+end
+deactivate AddTodoPanel
+deactivate Client
+
+... ...
+
+... ...
+
+Client -> AddTodoPanel : addtional notes field .i.e. **onChange()**
+activate Client #D3D3D3
+activate AddTodoPanel #D3D3D3
+
+alt if the comments is not matched \nwith the following /[a-zA-Z]/ \nregex condition
+    AddTodoPanel -> Client : return updated field with throw an \nerror message **"Title should have** \n**atleast one alphabetic character."** 
+end
+
+deactivate AddTodoPanel
+deactivate Client
+
+... ...
+
+... ...
+
+Client -> AddTodoPanel : when the user has choosed any tag .i.e. **onClick()**
+activate Client #D3D3D3
+activate AddTodoPanel #D3D3D3
+
+AddTodoPanel -> AddTodoPanel: trigger the **onTagSelected** method
+
+alt If the user has not choosed \nany one of the default tag
+    AddTodoPanel -> Client : throw an error message \n**"Please choose atleast one default tag"** 
+end
+
+alt If the user has choosed more than one \ndefault tag
+    AddTodoPanel -> Client : throw an error message \n**"Please select only one default tag"** 
+end
+
+deactivate AddTodoPanel
+deactivate Client
+
+... ...
+
+... ...
+
+Client -> AddTodoPanel : **onTagSelected(value)** triggered
+activate Client #D3D3D3
+activate AddTodoPanel #D3D3D3
+
+AddTodoPanel -> AddTodoPanel : set the selected value to the \nvariable **tag** to update the \ntag dropdown with the selected \nvalue
+AddTodoPanel --> Client: return void
+
+deactivate AddTodoPanel
+deactivate Client
+
+... ...
+
+... ...
+
+Client -> AddTodoPanel : when the user has choosed \nany **task type** .i.e. **onChange()**
+activate Client #D3D3D3
+activate AddTodoPanel #D3D3D3
+
+AddTodoPanel -> AddTodoPanel : set the selected todo type to the \nvariable **todoType** to update the \nselected value radio button
+AddTodoPanel --> Client: return void
+
+deactivate AddTodoPanel
+deactivate Client
+
+... ...
+
+... ...
+
+Client -> AddTodoPanel : when the user has clicked the repeat \nthis task **checkbox** .i.e. **onChange()** \ntrigger **handleCheckBox** method
+activate Client #D3D3D3
+activate AddTodoPanel #D3D3D3
+
+alt If the user has checked the checkbox
+    AddTodoPanel --> Client : set **true** to variable **datePickerVisibility** \nto display the multiple date picker \ndropdown to the user and return void
+end
+
+alt If the user has un checked the checkbox
+    AddTodoPanel --> Client : set **false** to variable **datePickerVisibility** \nto hide the multiple date picker \nand return void
+end
+
+deactivate AddTodoPanel
+deactivate Client
+
+... ...
+
+... ...
+
+Client -> AddTodoPanel : when the user has selected multiple \ndates .i.e. **onChange()**
+activate Client #D3D3D3
+activate AddTodoPanel #D3D3D3
+
+AddTodoPanel -> AddTodoPanel : set the selected dates to the \nvariable **dates** to update the \nmultiple date picker dropdown
+AddTodoPanel --> Client: return void
+
+deactivate AddTodoPanel
+deactivate Client
+
+... ...
+
+... ...
+
+Client -> AddTodoPanel : when the user has clicked the \n**Add Task** button .i.e. **onClick()**
+activate Client #D3D3D3
+activate AddTodoPanel #D3D3D3
+
+AddTodoPanel -> AddTodoPanel : set the variable **formActionType** to \n"add" and submit the form by triggering \nthe method **onFinish** after satisfying \nall the above validations
+AddTodoPanel --> Client: return void
+
+deactivate AddTodoPanel
+deactivate Client
+
+... ...
+
+... ...
+
+Client -> AddTodoPanel : when the user has clicked the \n**Add Task & Continue** button \n.i.e. **onClick()**
+activate Client #D3D3D3
+activate AddTodoPanel #D3D3D3
+
+AddTodoPanel -> AddTodoPanel : set the variable **formActionType** to \n"add_and_continue" and submit the \nform by triggering the method **onFinish** \nafter satisfying all the above validations \nand clear all the fields. Setting the variable \n"add_and_continue" will never close the \n**Add Todo Panel** drawer so the user can \nanother task
+AddTodoPanel --> Client: return void
+
+deactivate AddTodoPanel
+deactivate Client
+@enduml
