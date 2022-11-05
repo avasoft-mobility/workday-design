@@ -1,0 +1,50 @@
+@startuml DayViewPanel
+
+class DayViewPanel {
+    days: \t\t\t\t\t string[]
+    ..
+    accounts: \t\t\t\t useMsal instance
+    ..
+    isLoading: \t\t\t\t boolean
+    ..
+    submittingChanges: \t\t boolean
+    ..
+    childrenDrawerMode: \t\t string
+    ..
+    currentFocusingTodo: \t\t TodoItem
+    ..
+    highlightedTaskIds: \t\t\t string[]
+    ..
+    attendanceStatus: \t\t\t string
+    ..
+    nav: \t\t\t\t\t\t useNavigate instance
+    ..
+    getDayAttendance(): \t\t void
+    ..
+    onClose(): \t\t\t\t void
+    ..
+    showChildrenDrawer(): \t\t void
+    ..
+    onChildrenDrawerClose(): \t void
+    ..
+    getDayNameFromDate(): \t string
+    ..
+    addNewTodo(): \t\t\t void
+    ..
+    deleteTodo(): \t\t\t\t void
+    ..
+    editTodo(): \t\t\t\t void
+    ..
+    viewTodo(): \t\t\t\t void
+    ..
+    editExistingTodo(): \t\t\t void
+    ..
+    getWorkHours(): \t\t\t { etaHours: number, ataHours: number }
+    ..
+    antIcon: \t\t\t\t\t component
+    ..
+    showAddNewTaskPanel(): \t void
+    ..
+    getComponent(): \t\t\t AddTodoPanel or EditTodoPanel component or null
+}
+@enduml
