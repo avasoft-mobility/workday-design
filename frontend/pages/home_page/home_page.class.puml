@@ -1,0 +1,37 @@
+@startuml homePage class diagram
+
+class LeadsAction {
+  checkUrl() \t\t\t\t\t\t : \t\t void
+  ..
+  initialize() \t\t\t\t\t\t\t : \t\t void
+  ..
+  setUserRoleWithReporting() \t\t\t : \t\t Void
+  ..
+  getTeamReports() \t\t\t\t\t : \t\t Void
+  ..
+  onTapTags() \t\t\t\t\t\t : \t\t Void
+  ..
+  onClose() \t\t\t\t\t\t : \t\t Void
+  ..
+  fetchUserDetails()  \t\t\t\t\t : \t\t Void
+  ..
+  onViewCalender() \t\t\t\t\t : \t\t Void
+  ..
+  onViewLeadsAction() \t\t\t\t : \t\t Void
+  ..
+  isVisibleTagForm \t\t\t\t\t : \t\t Boolean
+  ..
+  dates \t\t\t\t\t\t\t : \t\t string[]
+  ..
+  todoIds \t\t\t\t\t\t\t : \t\t string[]
+  ..
+  authorized \t\t\t\t\t\t : \t\t string[]
+  ..
+  isLoading \t\t\t\t\t\t : \t\t string[]
+  ..
+  onTagMode \t\t\t\t\t\t : \t\t false
+  ..
+  todoUser \t\t\t\t\t\t\t : \t\t any
+}
+
+@enduml

@@ -1,0 +1,197 @@
+@startuml home page sequence diagram
+participant Client
+participant HomePage
+participant usersService.ts
+participant Backend
+
+Client -> HomePage : when the user gets navigated to this route\n "/:userId/myTODO" ||\n "/:userId/teamTODO"
+activate Client #D3D3D3
+    activate HomePage #D3D3D3
+        HomePage -> HomePage : get the loggedIn userId from the url\n and save that in a variable called **userId**.
+        HomePage -> HomePage : when the page gets mounted or updated\nbelow api call will trigger
+        alt case: currentUserInfo.accessToken is defined
+            HomePage -> usersService.ts : getUserById(currentUserInfo.userId)
+            activate usersService.ts #D3D3D3
+                usersService.ts -> Backend :(GET) `/users/${userId}`
+                activate Backend #D3D3D3
+                    usersService.ts <-- Backend : AxiosResponse
+                deactivate Backend
+                usersService.ts -> usersService.ts : get the return response\n and save that in a variable\n called **result**.
+                HomePage <-- usersService.ts : **result**
+            deactivate usersService.ts
+        end
+        HomePage -> HomePage : get the return response and\n save that in a variable called **response**.
+        HomePage -> HomePage : save the return response promise in a variable\n called **getCurrentUserCall**.
+        alt case : when the response is failure
+            HomePage -> HomePage : navigate to `/not-on-reportings`
+        end
+        alt case : when the response is success
+            alt case: response.data.reportings has userId
+                HomePage -> HomePage : call **setUserRoleWithReporting(userInfo)** \n(refer this method in below common methods)
+                HomePage -> HomePage : Update user's employeeId in **global state** variable.
+                HomePage -> HomePage : save user info in **hiveSessionHandler**.
+                HomePage -> HomePage : update **authorized** state variable to **true**.
+            else
+                HomePage -> HomePage : update **authorized** state variable to **false**.
+            end
+        end
+        HomePage -> HomePage : When the page gets mounted,\n call the **checkUrl()** method
+        HomePage -> HomePage : **checkUrl()**
+        activate HomePage #D16587
+            alt case: the userId in the global state is equals to the userId from the params\n the web page Url should have "myTODO" 
+                HomePage -> HomePage : navigate to **currentUserInfo.userId}/myTODO**
+            end
+        deactivate HomePage
+        HomePage -> HomePage : when the page gets mounted or updated or\n when **getCurrentUserCall** is in **isFetching** condition\n follow the below steps
+        activate HomePage #D16587
+            HomePage -> HomePage : Update **loading** variable value to **getCurrentUserCall.isFetching**.
+        deactivate HomePage
+        HomePage -> HomePage : when the page gets mounted or updated or\n when **userId** in the **global state** variable changes\n call the **initialize()** method.
+        HomePage -> HomePage : **initialize()**
+        activate HomePage #D16587
+            HomePage -> HomePage : call the **fetchUserDetails()** method.
+        deactivate HomePage
+        HomePage -> HomePage : **fetchUserDetails()**
+        activate HomePage #D16587
+            alt case: userId from the params is defined
+                HomePage -> usersService.ts : getUserById(currentUserInfo.userId)
+                activate usersService.ts #D3D3D3
+                    usersService.ts -> Backend :(GET) `/users/${userId}`
+                    activate Backend #D3D3D3
+                        usersService.ts <-- Backend : AxiosResponse
+                    deactivate Backend
+                    usersService.ts -> usersService.ts : get the return response\n and save that in a variable\n called **result**.
+                    HomePage <-- usersService.ts : **result**
+                deactivate usersService.ts
+                HomePage -> HomePage : get the return response\n and save that in a variable\n called **result**.
+                HomePage -> HomePage : Update **todoUser** variable with values of **result.data**
+                alt case : result.data has the reportings greater than 1
+                    HomePage -> HomePage : call the **getTeamReports()**\n (refer getTeamReports() method in commom methods )
+                end
+            end
+        deactivate HomePage
+        HomePage -> HomePage : Bind **ManageTagsPanel** component\n (refer manage_tags_panel component)
+        HomePage -> HomePage : Bind **BreadCrumbs** component\n (refer bread_crumbs component)
+        HomePage -> HomePage : call **onViewLeadsAction()** method
+        HomePage -> HomePage : **onViewLeadsAction()**
+        activate HomePage #D16587
+            alt case: user role is equals to Team Member ||\n global state saved userId is not equals to userId
+                HomePage -> HomePage : return
+            end
+            HomePage -> HomePage : Bind the **LeadsAction** Component\n (refer leads_action component)
+        deactivate HomePage
+        HomePage -> HomePage : Bind **UserCalanderPage** component\n (refer user_calender_page component)
+        Client <-- HomePage : User receives the expected view.
+    deactivate HomePage
+deactivate Client
+
+... ...
+... ...
+...~~**Common methods**~~ ...
+... ...
+... ...
+
+Client -> HomePage : **setUserRoleWithReporting(userInfo)**
+activate Client #D3D3D3
+    activate HomePage #D3D3D3
+        alt case: userInfo.practice === "Human Resource" ||\n userInfo.reportings.length > 1
+            HomePage -> HomePage : Update **"HR Manager"** as a **user Role** in **global state** variable.
+        end
+        alt case : userInfo.reportings.length > 1
+            HomePage -> HomePage : Update **"Manager"** as a **user Role** in **global state** variable.
+        end
+        HomePage -> HomePage : Update **"Team Member"** as a **user Role** in **global state** variable.
+        Client <-- HomePage : Values are updated to the global state variable.
+    deactivate HomePage
+deactivate Client
+
+... ...
+... ...
+
+Client -> HomePage : **getTeamReports()**
+activate Client #D3D3D3
+    activate HomePage #D3D3D3
+        HomePage -> usersService.ts : getMyTeamReports(currentUserInfo.userId)
+        activate usersService.ts #D3D3D3
+            usersService.ts -> Backend :(GET) `/users/${userId}/my-team`
+            activate Backend #D3D3D3
+                usersService.ts <-- Backend : AxiosResponse
+            deactivate Backend
+            usersService.ts -> usersService.ts : get the return response\n and save that in a variable\n called **myTeamReports**.
+            HomePage <-- usersService.ts : **myTeamReports.data**
+        deactivate usersService.ts
+        HomePage -> HomePage : get the return response and\n save that in a variable called **teamReports**.
+        HomePage -> HomePage : sort the **teamReports** and save the\n sorted value in a variable called **sortedTeamReports**.
+        HomePage -> HomePage : 
+        HomePage -> HomePage : save the **sortedTeamReports** value in  **global state** variable.
+        Client <-- HomePage : Values are updated to the global state variable.
+    deactivate HomePage
+deactivate Client
+
+... ...
+... ...
+...~~**Onclick functionalities**~~ ...
+... ...
+... ...
+
+Client -> HomePage : when the user tries to close the manage tags panel
+activate Client #D3D3D3
+    activate HomePage #D3D3D3
+        HomePage -> HomePage : **onClose()** method will trigger.
+        HomePage -> HomePage : Update **isVisibleTagForm** variable to **false**
+        Client <-- HomePage : ManageTagsPanel will be closed
+    deactivate HomePage
+deactivate Client
+
+... ...
+... ...
+
+Client -> HomePage :  While Tag analysis, when the user clicks **View in Calender** Button.
+activate Client #D3D3D3
+    activate HomePage #D3D3D3
+        HomePage -> HomePage : **onViewCalender(dates: string[], todoIds: string[])** \nmethod will trigger.
+        HomePage -> HomePage : Update the **dates** variable values to **dates**\n which receives from parameter.
+        HomePage -> HomePage : Update the **todoIds** variable values to **todoIds**\n which receives from parameter.
+        HomePage -> HomePage : Update the **isVisibleTagForm** variable values to **false**.
+        HomePage -> HomePage : Update the **onTagMode** variable values to **false**.
+        Client <-- HomePage : Values are updated to the state variable.
+    deactivate HomePage
+deactivate Client
+
+... ...
+... ...
+
+Client -> HomePage :  When user onClicks **Manage Reporting** button.
+activate Client #D3D3D3
+    activate HomePage #D3D3D3
+        HomePage -> HomePage : navigate to `/add-reportees` page
+        Client <-- HomePage : user will be navigated to the add-reortees page.
+    deactivate HomePage
+deactivate Client
+
+... ...
+... ...
+
+Client -> HomePage :  When user onClicks **Clear Filter** || **Manage Tags** button.
+activate Client #D3D3D3
+    activate HomePage #D3D3D3
+        alt case: todoIds.length is equals to 0
+            HomePage -> HomePage : update **isVisibleTagForm** variable to **true**.
+        end 
+        HomePage -> HomePage : update **todoIds** variable values to **empty[]**
+        HomePage -> HomePage : call **onTapTags()** methods
+        HomePage -> HomePage : **onTapTags()**
+        activate HomePage #D16587
+            alt case: todoIds.length not equals to 0
+                HomePage -> HomePage : update **dates** variable values to **empty[]**.
+                HomePage -> HomePage : update **todoIds** variable values to **empty[]**.
+                HomePage -> HomePage : update **isVisibleTagForm** variable values to **false**.
+                HomePage -> HomePage : update **onTagMode** variable values to **false**.
+            end
+            HomePage -> HomePage :  update **isVisibleTagForm** variable values to **true**.
+        deactivate HomePage
+        Client <-- HomePage : ManageTagsPanel will open || Filter will clear
+    deactivate HomePage
+deactivate Client
+
+@enduml
