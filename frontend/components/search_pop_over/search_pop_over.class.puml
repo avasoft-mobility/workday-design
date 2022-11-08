@@ -1,6 +1,6 @@
 @startuml search pop_over class diagram
 
-class BreadCrumbs {
+class SearchPopOver {
   onChangeSearchInput() \t\t\t\t\t : \t\t Void
   ..
   onFocusSearchInput() \t\t\t\t\t : \t\t Void

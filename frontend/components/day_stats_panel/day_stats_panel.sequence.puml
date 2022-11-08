@@ -1,0 +1,141 @@
+@startuml Day stats panel
+participant Client
+participant DayStatsPanel
+participant attendanceService.ts
+participant Backend
+
+Client -> DayStatsPanel : call the component in any component with **<DayStatsPanel {...props}/>**
+activate Client #D3D3D3
+    activate DayStatsPanel #D3D3D3
+        note left of DayStatsPanel : props: {\n   refreshHandler: () => void;\ndaysTasks?: TodoItem[];\nselectedDate?: Moment;\nuserId?: string;\ncurrentPracticeId?: string;\nattendenceStatus?: string;\nisEditable: boolean; \n}
+        DayStatsPanel -> DayStatsPanel : when the component gets mounted below usequery api call will trigger
+        DayStatsPanel -> attendanceService.ts : getAttendance(props.userId!,\nnew Date(props.selectedDate?.toDate().setHours(0, 0, 0, 0)!))
+        activate attendanceService.ts #D3D3D3
+            attendanceService.ts -> attendanceService.ts : change the props date format to **"YYYY-MM-DD"**\n and save that in a variable called **parsedDate**.
+            attendanceService.ts -> Backend : GET (`/attendance?userId=${userId}&date=${parsedDate}`)
+            activate Backend #D3D3D3
+                attendanceService.ts <-- Backend : AxiosResponse
+            deactivate Backend
+            attendanceService.ts -> attendanceService.ts : get the return response and\n save that in a variable called\n **attendance**.
+            DayStatsPanel <-- attendanceService.ts : attendance
+        deactivate attendanceService.ts
+        DayStatsPanel -> DayStatsPanel : get the return response and\n save that in a variable called **data**.
+        DayStatsPanel -> DayStatsPanel : Update the return promise in a variable called **getAttendanceQuery**.
+        alt case: return response is success
+            DayStatsPanel -> DayStatsPanel : Update the **workingStatus** variable values to **data** 
+        end
+        DayStatsPanel -> DayStatsPanel : create a variable called **workingStatusArray**\n and mention the status which should be shown\n for present day with key.
+        DayStatsPanel -> DayStatsPanel : create a variable called **nextDayWorkingStatusArray**\n and mention the status which should be shown\n for future days with key.
+        DayStatsPanel -> DayStatsPanel : Implement the **Dropdown** from the antD and\n call the **menu** method for dataSource.
+        alt case: props.attendenceStatus is equals to "No Show"
+            DayStatsPanel -> DayStatsPanel : Show **"Not Filled"** status
+        else
+            DayStatsPanel -> DayStatsPanel : show **props.attendenceStatus** status
+        end
+        alt case: **updateAttendanceStatus** is in **isLoading**
+            DayStatsPanel -> DayStatsPanel : implement **Spin** loader from antd
+        end
+        DayStatsPanel -> DayStatsPanel : show the **workingStatus** variable data to show\n the attendance status.
+        DayStatsPanel -> DayStatsPanel : Implement **Card** from antd to show the dayTasks.
+        DayStatsPanel -> DayStatsPanel : To show the **planned Todos** length\n call the **getTodosByTypes("Planned", props.daysTasks)** method\n and bind the return todos length as a card value.\n (refer **getTodosByTypes()** method in below common methods)
+        DayStatsPanel -> DayStatsPanel : To show the **On-demand Todos** length\n call the **getTodosByTypes("On Demand", props.daysTasks)** method\n and bind the return todos length as a card value.\n (refer **getTodosByTypes()** method in below common methods)
+        DayStatsPanel -> DayStatsPanel : To show the **Completed Todos** length\n call the **getTodosByStatus("Completed", props.daysTasks)** method\n and bind the return todos length as a card value.\n (refer **getTodosByTypes()** method in below common methods)
+        Client <-- DayStatsPanel : User will receive the expected view.
+    deactivate DayStatsPanel
+deactivate Client
+
+... ...
+... ...
+...~~**common methods**~~ ...
+... ...
+... ...
+
+Client -> DayStatsPanel : **updateAttendanceStatus** use mutation api call
+activate Client #D3D3D3
+    activate DayStatsPanel #D3D3D3
+        DayStatsPanel -> attendanceService.ts : updateAttendance(request.userId, request.attendaceStatus, request.date)
+        activate attendanceService.ts #D3D3D3
+            attendanceService.ts -> Backend : (POST)\n(`/attendance?userId=${userId}&date=${date}`, {\nattendanceStatus: status,\n})
+            activate Backend #D3D3D3
+                attendanceService.ts  <-- Backend : AxiosResponse
+            deactivate Backend 
+            DayStatsPanel <-- attendanceService.ts : AxiosResponse
+        deactivate attendanceService.ts
+        alt case: if the return response is success
+            DayStatsPanel -> DayStatsPanel : call the **refreshHandler()** method in the parent class.
+        end
+        Client <-- DayStatsPanel : **refreshHandler()** in the parent will trigger.
+    deactivate DayStatsPanel
+deactivate Client
+
+... ...
+... ...
+
+Client -> DayStatsPanel : **menu** method
+activate Client #D3D3D3
+    activate DayStatsPanel #D3D3D3
+        DayStatsPanel -> DayStatsPanel : implement the **Menu** in antD and\n if the props.selectedDate?.toDate() is presentDay\n pass the **workingStatusArray** to items ||\n pass the **nextDayWorkingStatusArray** to items.
+        Client <-- DayStatsPanel : returns the **Menu** with applied conditions.  
+    deactivate DayStatsPanel
+deactivate Client
+
+... ...
+... ...
+
+Client -> DayStatsPanel : **getTodosByTypes()** method
+activate Client #D3D3D3
+    activate DayStatsPanel #D3D3D3
+        DayStatsPanel -> DayStatsPanel : getTodosByTypes(\ntargetType?: string,\ntodos?: TodoItem[],\nday?: Number) method will trigger.
+        alt case: todos === null ||\ntodos === undefined ||\ntargetType === null ||\ntargetType === undefined
+            DayStatsPanel -> DayStatsPanel : return **empty[]**
+        end
+        alt case : day === null || day === undefined
+            DayStatsPanel -> DayStatsPanel : filter the todos and get the todos\n which has the type is equals to targetType
+        end
+        DayStatsPanel -> DayStatsPanel : filter the todos and get the todos\n which has the type is equals to targetType and\n todos day is equals to props.day
+        Client <-- DayStatsPanel : return the **todos** based on the props received
+    deactivate DayStatsPanel
+deactivate Client
+
+... ...
+... ...
+
+Client -> DayStatsPanel : **getTodosByStatus()** method
+activate Client #D3D3D3
+    activate DayStatsPanel #D3D3D3
+        DayStatsPanel -> DayStatsPanel : getTodosByStatus(\ntargetStatus?: string,\ntodos?: TodoItem[],\ndate?: Date \n) method will trigger.
+        alt case: todos === null ||\ntodos === undefined ||\targetStatus === null ||\targetStatus === undefined
+            DayStatsPanel -> DayStatsPanel : return **empty[]**
+        end
+        alt case : date === null || date === undefined
+            DayStatsPanel -> DayStatsPanel : filter the todos and get the todos\n which has the status is equals to targetStatus
+        else 
+            DayStatsPanel -> DayStatsPanel : filter the todos and get the todos\n which has the status is equals to targetType and\n todos date is equals to props.date\n (note add +1 to the method props.date to get the todos)
+        end
+        Client <-- DayStatsPanel : return the **todos** based on the props received
+    deactivate DayStatsPanel
+deactivate Client
+
+
+... ...
+... ...
+...~~**onClick Functionalities**~~ ...
+... ...
+... ...
+
+Client -> DayStatsPanel : When the user onclicks any attendance status in the **menu**
+activate Client #D3D3D3
+    activate DayStatsPanel #D3D3D3
+        DayStatsPanel -> DayStatsPanel : **onMenuSelect(test: string)** method will trigger.
+        DayStatsPanel -> DayStatsPanel : filter the **workingStatusArray()** and get the working status\n which has the key is equals to method **prop's test**.\n then update the working status in the **workingStatus** variable.
+        DayStatsPanel -> DayStatsPanel : filter the **workingStatusArray()** and get the working status\n which has the key is equals to method **prop's test**.\n and call the **updateWorkingStatus()** method with props as filtered working status.
+        DayStatsPanel -> DayStatsPanel : **updateWorkingStatus()**
+        activate DayStatsPanel #D16587
+            DayStatsPanel -> DayStatsPanel : create a variable called **updateRequest** in the Data type of **AttendaceUpdateRequest**\n and assign the values of **userId** as **props.userId**, **attendaceStatus** as method prop's**workingStatus**\n and **date** as **props.selectedDate**
+            DayStatsPanel -> DayStatsPanel : call the **updateAttendanceStatus()** useMutation with props as **updateRequest**. 
+        deactivate DayStatsPanel
+        Client <-- DayStatsPanel : selected working status will be updated.
+    deactivate DayStatsPanel
+deactivate Client
+
+@enduml

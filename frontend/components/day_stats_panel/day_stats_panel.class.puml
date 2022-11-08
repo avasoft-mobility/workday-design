@@ -1,0 +1,17 @@
+@startuml DayStatsPanel class diagram
+
+class DayStatsPanel {
+  menu() \t\t\t\t\t\t\t : \t\t JSX.Element
+  ..
+  onMenuSelect() \t\t\t\t\t : \t\t Void
+  ..
+  updateWorkingStatus() \t\t\t\t : \t\t Void
+  ..
+  getTodosByTypes() \t\t\t\t : \t\t TodoItem[]
+  ..
+  getTodosByStatus() \t\t\t\t : \t\t TodoItem[]
+  ..
+  workingStatus \t\t\t\t\t\t : \t\t string
+}
+
+@enduml
