@@ -1,0 +1,105 @@
+@startuml MultipleDatePicker Class Diagram 
+
+participant Client 
+participant MultipleDatePicker
+
+Client -> MultipleDatePicker : Call component **<MultipleDatePicker ...{props} />**
+activate Client #D3D3D3
+activate MultipleDatePicker #D3D3D3
+    note left of MultipleDatePicker : props: {\n\tonChange: Function;\n\tvalue: Moment[];\n\tformat?: string;\n}
+    MultipleDatePicker -> MultipleDatePicker : Update the **arrValues** with **props.value**
+    MultipleDatePicker -> MultipleDatePicker : Declare a variable **isPanelChanged** as false
+    MultipleDatePicker -> MultipleDatePicker : Bind a Select input with option as Calender
+    MultipleDatePicker -> MultipleDatePicker : iterate the **arrValues** of Moment[] and \nBind the each value in a Chip,\nand Bind the chip in selecet field using the **renderTag()**
+    MultipleDatePicker -> MultipleDatePicker : Change the Calendar date cells with date value only using **customRenderDate**\nand for current date change the background color
+    Client <-- MultipleDatePicker : User recieves a expected view of Date selecter 
+deactivate MultipleDatePicker
+deactivate Client
+
+... ... 
+... ...
+...~~**Click Functionalities**~~...
+... ...
+
+Client -> MultipleDatePicker : Click on the Component
+activate Client #D3D3D3
+activate MultipleDatePicker #D3D3D3
+    Client <-- MultipleDatePicker : User recieves a popup of Calender to choose date 
+deactivate MultipleDatePicker
+deactivate Client
+
+... ...
+
+Client -> MultipleDatePicker : Click on the date in Calendar
+activate Client  #D3D3D3
+activate MultipleDatePicker #D3D3D3
+    MultipleDatePicker -> MultipleDatePicker : **_onChange(selected date value)**
+    activate MultipleDatePicker #D16587
+        alt isPanelChanged is false 
+            alt Date already selected
+                MultipleDatePicker -> MultipleDatePicker : Remove the date from **arrValues**
+            else 
+                MultipleDatePicker -> MultipleDatePicker : Add the date to **arrValues**
+            end
+            MultipleDatePicker -> MultipleDatePicker : Call the onChange of parent and update the **arrValues** with the added date
+        else 
+            MultipleDatePicker -> MultipleDatePicker : Change the **isPanelChanged** as false 
+        end
+    deactivate MultipleDatePicker
+    MultipleDatePicker -> MultipleDatePicker : It re-render the select component an retain it with Calender open 
+    Client <-- MultipleDatePicker : User recieves a popup of Calender to choose date \nand view the selected date in field
+deactivate MultipleDatePicker
+deactivate Client
+
+... ...
+
+Client -> MultipleDatePicker : Click on the Year in Calendar's panel
+activate Client  #D3D3D3
+activate MultipleDatePicker #D3D3D3
+    Client <-- MultipleDatePicker : User recieves a dropfown to select year 
+deactivate MultipleDatePicker
+deactivate Client
+
+... ...
+
+Client -> MultipleDatePicker : Click on the month in Calendar's panel
+activate Client  #D3D3D3
+activate MultipleDatePicker #D3D3D3
+    Client <-- MultipleDatePicker : User recieves a dropfown to select month
+deactivate MultipleDatePicker
+deactivate Client
+
+... ...
+
+Client -> MultipleDatePicker : Click on the close of date chips in select field \nor erase the dates in select field
+activate Client  #D3D3D3
+activate MultipleDatePicker #D3D3D3
+    MultipleDatePicker -> MultipleDatePicker : **onDeselect(deleted date)**
+    activate MultipleDatePicker #D16587
+        MultipleDatePicker -> MultipleDatePicker : Filter and Remove deleted date from **arrrValues** and \ncall props.onClose with the filtered **arrValues**
+    deactivate MultipleDatePicker 
+    Client <-- MultipleDatePicker : User can view the changes in input field
+deactivate MultipleDatePicker
+deactivate Client
+
+... ...
+
+Client -> MultipleDatePicker : Select any Year from dropdown
+activate Client  #D3D3D3
+activate MultipleDatePicker #D3D3D3
+    MultipleDatePicker -> MultipleDatePicker : Change the **isPanelChanged** as true
+    Client <-- MultipleDatePicker : User receives the calender for the selected year 
+deactivate MultipleDatePicker
+deactivate Client
+
+... ...
+
+Client -> MultipleDatePicker : Select any month from dropdown
+activate Client  #D3D3D3
+activate MultipleDatePicker #D3D3D3
+    MultipleDatePicker -> MultipleDatePicker : Change the **isPanelChanged** as true
+    Client <-- MultipleDatePicker : User receives the calender for the selected month
+deactivate MultipleDatePicker
+deactivate Client
+
+@enduml

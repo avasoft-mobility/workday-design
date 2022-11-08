@@ -1,0 +1,15 @@
+@startuml MultipleDatePicker Class Diagram 
+
+class MultipleDatePicker {
+    customRenderDate(Moment) \t\t:\tReact.ReactNode
+    ..
+    _onChange(Moment) \t\t\t:\tvoid
+    ..
+    onDeselect(any) \t\t\t\t:\tvoid
+    ..
+    renderTag() \t\t\t\t\t:\tJSX.element
+    ..
+    arrValues \t\t\t\t\t:\tMoment[]
+}
+
+@enduml
