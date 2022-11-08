@@ -1,0 +1,53 @@
+@startuml HowDoIMenuPanel
+participant Client
+participant HowDoIMenuPanel
+
+Client -> HowDoIMenuPanel : call the component in any component with **<HowDoIMenuPanel {...props}/>**
+activate Client #D3D3D3
+    activate HowDoIMenuPanel #D3D3D3
+        note left of HowDoIMenuPanel : props: {\n anchorEl: HTMLElement | null;\nisShowMenu: boolean;\nonClose: Function;\nuserRole: "HR Manager" | "Manager" | "Team Member";\nuserId: string; \n}
+        HowDoIMenuPanel -> HowDoIMenuPanel : Implement Menu from antd and\n pass the **props.anchorEl** to anchorEl.
+        HowDoIMenuPanel -> HowDoIMenuPanel : Implement menuItem for menu as static and\n for each menu item mention the onClick functionalities.
+        Client <-- HowDoIMenuPanel : User will receive the expected view.
+    deactivate HowDoIMenuPanel
+deactivate Client
+
+... ...
+... ...
+...~~**onClick Functionalities**~~ ...
+... ...
+... ...
+
+Client -> HowDoIMenuPanel : When the user tries to close the menu 
+activate Client #D3D3D3
+    activate HowDoIMenuPanel #D3D3D3
+        HowDoIMenuPanel -> HowDoIMenuPanel : trigger **onClose()** method in the parent.
+        Client <-- HowDoIMenuPanel : **onClose()** method in the parent will trigger
+    deactivate HowDoIMenuPanel
+deactivate Client
+
+... ...
+... ...
+
+
+Client -> HowDoIMenuPanel : When the user onClicks the menuItem in the menu 
+activate Client #D3D3D3
+    activate HowDoIMenuPanel #D3D3D3
+        alt case: When user onClicks the **Leave Request** menuItem
+            HowDoIMenuPanel -> HowDoIMenuPanel : user will be navigated\n to `https://hivenp.avasoft.com/leaveform`
+        else case : When user onClicks the **WFH Request** menuItem
+            HowDoIMenuPanel -> HowDoIMenuPanel : user will be navigated\n to `https://hivenp.avasoft.com/wfhform`
+        else case : When user onClicks the **Raise a Concern** menuItem
+            HowDoIMenuPanel -> HowDoIMenuPanel : user will be navigated\n to `https://hivenp.avasoft.com/concernForm`
+        else case : When user onClicks the **Holiday List** menuItem
+            HowDoIMenuPanel -> HowDoIMenuPanel : user will be navigated\n to `https://hivenp.avasoft.com/HolidayList`
+        else case : When user onClicks the **FAQ's** menuItem
+            HowDoIMenuPanel -> HowDoIMenuPanel : user will be navigated\n to `https://hivenp.avasoft.com/FAQ`
+        else case : When user onClicks the **Policy** menuItem
+            HowDoIMenuPanel -> HowDoIMenuPanel : user will be navigated\n to `https://hivenp.avasoft.com/policy`
+        end
+        Client <-- HowDoIMenuPanel : user will be redirected to the particular route
+    deactivate HowDoIMenuPanel
+deactivate Client
+
+@enduml
