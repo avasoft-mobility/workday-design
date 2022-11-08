@@ -1,0 +1,136 @@
+@startuml NavigationBarPanel Sequence Diagram
+
+participant Client 
+participant NavigationBarPanel
+... ...
+Client -> NavigationBarPanel : call component **<NavigationBarPanel />**
+activate Client #D3D3D3
+activate NavigationBarPanel #D3D3D3
+    NavigationBarPanel -> NavigationBarPanel : Create a Appbar with app logo,\nmultiple menus , notification icon and profile icon
+    NavigationBarPanel -> NavigationBarPanel : Whenever a new notification comes up for the loggined user \nis detect using **NotifictaionView** global state \nthe notification bell icon changes
+    NavigationBarPanel -> userServices.ts : Request for loggined user deails 
+    activate userServices.ts #D3D3D3
+        userServices.ts -> Backend : Request for user details
+        activate Backend #D3D3D3
+            userServices.ts <-- Backend : return User
+        deactivate Backend
+        NavigationBarPanel <-- userServices.ts : return **User**
+    deactivate userServices.ts 
+    alt user details call successfull
+        NavigationBarPanel -> NavigationBarPanel : Change profile icon with user's image using currentUserInfo state value
+    else 
+        NavigationBarPanel -> NavigationBarPanel : cannot change the rofile icon
+    end
+    
+    alt loggined user is "Hr Manager"
+        NavigationBarPanel -> Client : User can receive expected App Bar with all menues
+    else loggined user is "Manager"
+        NavigationBarPanel -> Client : User can receive expected App Bar without **Admin** and **Recruitment** menu
+    else loggined user is "Manager" and "Panel Member"
+        NavigationBarPanel -> Client : User can receive expected App Bar without **Admin** menu
+    else loggined user is "Team Member"
+        NavigationBarPanel -> NavigationBarPanel : Change the **Team Memnber** menu with **My Performance**
+        NavigationBarPanel -> Client : User can receive expected App Bar without **Admin** and **Recruitment** menu 
+    end
+deactivate Client
+deactivate NavigationBarPanel
+
+... ...
+... ...
+...~~**Click Functionalities**~~...
+... ...
+Client -> NavigationBarPanel : User Click on the **Admin** menu
+activate Client #D3D3D3
+activate NavigationBarPanel #D3D3D3
+    NavigationBarPanel -> NavigationBarPanel : Redirect to the **Hive application**
+    Client <-- NavigationBarPanel : User can view the admin module form **Hive Application**
+deactivate Client
+deactivate NavigationBarPanel
+
+... ...
+Client -> NavigationBarPanel : User Click on the **Dashboard** menu
+activate Client #D3D3D3
+activate NavigationBarPanel #D3D3D3
+    NavigationBarPanel -> NavigationBarPanel : Redirect to the **Hive application**
+    Client <-- NavigationBarPanel : User can view their dashboard on **Hive Application**
+deactivate Client
+deactivate NavigationBarPanel
+
+... ...
+Client -> NavigationBarPanel : User Click on the **Leave** menu
+activate Client #D3D3D3
+activate NavigationBarPanel #D3D3D3
+    NavigationBarPanel -> NavigationBarPanel : Redirect to the **Hive application**
+    Client <-- NavigationBarPanel : User can view their leave requests on **Hive Application**
+deactivate Client
+deactivate NavigationBarPanel
+
+... ...
+Client -> NavigationBarPanel : User Click or Hover on the **Recruitment** menu
+activate Client #D3D3D3
+activate NavigationBarPanel #D3D3D3
+    NavigationBarPanel -> NavigationBarPanel : call **recruitmentMenuOpen()** and it opens the **Recruitemnt** menu \nand close all the other menu popups
+    Client <-- NavigationBarPanel : User can view and select the options from **Recruitment** menu
+deactivate Client
+deactivate NavigationBarPanel
+
+... ...
+Client -> NavigationBarPanel : User Click or Hover on the **Team Member** or **My Performance** menu
+activate Client #D3D3D3
+activate NavigationBarPanel #D3D3D3
+    NavigationBarPanel -> NavigationBarPanel : call **handleEmployeeMenuOpen()** and it opens the **Team Member** menu \nand close all the other menu popups
+    Client <-- NavigationBarPanel : User can view and select the options from **Team Member** menu
+deactivate Client
+deactivate NavigationBarPanel
+
+... ... 
+Client -> NavigationBarPanel : User Click or Hover on the **How Do I?** menu
+activate Client #D3D3D3
+activate NavigationBarPanel #D3D3D3
+    NavigationBarPanel -> NavigationBarPanel : call **handleHowDoIMenuOpen()** and it opens the **How Do I?** menu \nand close all the other menu popups
+    Client <-- NavigationBarPanel : User can view and select the options from **How Do I?** menu
+deactivate Client
+deactivate NavigationBarPanel
+
+... ... 
+Client -> NavigationBarPanel : User Click or Hover on the **Profile Icon** menu
+activate Client #D3D3D3
+activate NavigationBarPanel #D3D3D3
+    NavigationBarPanel -> NavigationBarPanel : call **handleProfileMenuOpen()** and it opens the **Profile** menu \nand close all the other menu popups
+    Client <-- NavigationBarPanel : User can view and select the options from the menu
+deactivate Client
+deactivate NavigationBarPanel
+
+... ... 
+Client -> NavigationBarPanel : User Click on the **Notification Bell Icon** menu
+activate Client #D3D3D3
+activate NavigationBarPanel #D3D3D3
+    NavigationBarPanel -> NavigationBarPanel : call **handleNotificationMenuOpen()** and it Open the notiification menu with a loader by \nBy updating **isNotificationLoading** as true
+    NavigationBarPanel -> userServices.ts : **fetchNotifications(userid)**
+    activate userServices.ts #D3D3D3
+        userServices.ts -> Backend : Request notifications details for the user
+        activate Backend #D3D3D3
+            userServices.ts <-- Backend : return NotificationBO[]
+        deactivate Backend 
+        NavigationBarPanel <-- userServices.ts : return **NotificationBO[]**
+    deactivate userServices.ts 
+    NavigationBarPanel -> NavigationBarPanel : Update **isNotificationLoading** as false
+    alt response NotificationBO[] is empty
+        Client <-- NavigationBarPanel : User can view a popover with an indication text of that is empty
+    else 
+        Client <-- NavigationBarPanel : User can view the notifications for itself
+    end
+deactivate Client
+deactivate NavigationBarPanel
+
+... ...
+Client -> NavigationBarPanel : User Click on the any of the options from the menu
+activate Client #D3D3D3
+activate NavigationBarPanel #D3D3D3
+    NavigationBarPanel -> NavigationBarPanel : Redirect to the **Hive application**
+    Client <-- NavigationBarPanel : User can view the respective page form **Hive Application**
+deactivate Client
+deactivate NavigationBarPanel
+
+
+@enduml

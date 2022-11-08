@@ -1,0 +1,43 @@
+@startuml NavigationBarPanel Class Diagram
+
+class NavigationBarPanel {
+    handleNotificationMenuOpen(event) \t:\tvoid
+    ..
+    handleNotificationMenuClose()  \t\t:\tvoid
+    ..
+    handleEmployeeMenuOpen(event) \t:\tvoid
+    ..
+    handleHowEmployeeMenuClose() \t\t:\tvoid
+    ..
+    handleHowDoIMenuOpen(event) \t\t:\tvoid
+    ..
+    handleHowDoIMenuClose() \t\t\t:\tvoid
+    ..
+    recruitmentMenuOpen(event) \t\t\t:\tvoid
+    ..
+    recruitmentMenuClose() \t\t\t\t:\tvoid
+    ..
+    handleProfileMenuOpen(event) \t\t:\tvoid
+    ..
+    handleProfileMenuClose() \t\t\t:\tvoid
+    ..
+    imageUrl \t\t\t\t\t\t\t:\tstring
+    ..
+    notifications \t\t\t\t\t\t:\tNotIficationBO[]
+    ..
+    notificationView \t\t\t\t\t:\t{ hasNewNotification: boolean }
+    ..
+    notificationMenu \t\t\t\t\t:\tnull | HTMLElement
+    ..
+    howDoIMenu \t\t\t\t\t\t:\tnull | HTMLElement
+    ..
+    employeeMenu \t\t\t\t\t:\tnull | HTMLElement
+    ..
+    recruitmentMenu \t\t\t\t\t:\tnull | HTMLElement
+    ..
+    profileMenu \t\t\t\t\t\t:\tnull | HTMLElement
+    ..
+    isNotificationLoading \t\t\t\t:\tboolean
+}
+
+@enduml
