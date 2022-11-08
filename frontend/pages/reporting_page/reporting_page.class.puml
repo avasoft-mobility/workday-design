@@ -1,0 +1,41 @@
+@startuml ReportingPage Class Diagram
+ 
+class ReportingPage {
+    checkUrl() \t\t\t\t:\tvoid
+    ..
+    initialise() \t\t\t\t:\tvoid
+    ..
+    getCurrentUserRole() \t\t:\tvoid
+    ..
+    getTeamReports() \t\t\t:\tvoid
+    ..
+    getStatistics() \t\t\t\t:\tvoid
+    ..
+    handleSort(string,string) \t\t:\tvoid
+    ..
+    handleSortChange(string) \t:\tvoid
+    ..
+    handleSearch(string) \t\t:\tvoid
+    ..
+    onGridIconClicked() \t\t:\tvoid
+    ..
+    onGraphIconClicked()   \t\t:\tvoid
+    ..
+    teamReport \t\t\t\t:\tTeamReport[]
+    ..
+    filteredTeamReport  \t\t:\tTeamReport[]
+    ..
+    isLoading   \t\t\t\t:\tboolean
+    ..
+    order \t\t\t\t\t:\t"asc" | "desc"
+    ..
+    orderBy \t\t:\t"name" | "attendanceStatus" | "practice" | "reporter_name" | ""
+    ..
+    roleBasedVisibilty \t\t\t:\tboolean
+    ..
+    activeTab \t\t\t:\t{ isGridActive: boolean, isGraphActive: boolean }
+    ..
+    statistics \t\t\t\t\t:\tany
+}
+
+@enduml

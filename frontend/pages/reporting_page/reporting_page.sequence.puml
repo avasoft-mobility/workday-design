@@ -1,0 +1,157 @@
+@startuml ReportingPage Sequence
+participant Client 
+participant ReportingPage
+
+Client -> ReportingPage : Route hit like **"/reportings?mode=< list | graph >"**
+
+activate Client #D3D3D3
+activate ReportingPage #D3D3D3
+    ReportingPage -> ReportingPage : When Component mounting
+    ReportingPage -> ReportingPage : Declare a variable **currentUserInfo** and assign a Global state,\nvalues which holds user details
+    activate ReportingPage #D16587
+        ReportingPage -> ReportingPage : Update the **isLoading** as true
+        ReportingPage -> ReportingPage : Call checkUrl() method
+        activate ReportingPage #D5D5D5
+            alt route query's mode value is "graph"
+                ReportingPage -> ReportingPage : Update the **activeTab** with **isGridActive** as false and **isGraphActive** as true
+            else route query's mode value is "list"
+                ReportingPage -> ReportingPage : Update the **activeTab** with **isGridActive** as true and **isGraphActive** as false
+            end
+        deactivate ReportingPage
+        ReportingPage -> ReportingPage : Call initialize() method
+        activate ReportingPage #D5D5D5
+            ReportingPage -> ReportingPage : Call **getTeamReports()** method
+            activate ReportingPage 
+                ReportingPage -> usersService.ts : getMyTeamReports(currentUserInfo.userId)
+                activate usersService.ts #D3D3D3
+                    usersService.ts -> Backend : Request for the reporings of user "/users/:userId/my-team"
+                    activate Backend #D3D3D3
+                    usersService.ts <-- Backend : return AxiosResponse<any,any>
+                    deactivate Backend
+                    ReportingPage <-- usersService.ts : return any[]
+                deactivate usersService.ts
+                ReportingPage -> ReportingPage : Update the **teamReport** and **filteredTeamReport** with the returned response
+            deactivate ReportingPage
+            ReportingPage -> ReportingPage : Call **getStatistics()** method
+            activate ReportingPage 
+                ReportingPage -> usersService.ts : fetchStatistics(currentUserInfo.userId)
+                activate usersService.ts #D3D3D3
+                    usersService.ts -> Backend : Request for the stattics of team for user "/users/:userId/statistics"
+                    activate Backend #D3D3D3
+                    usersService.ts <-- Backend : return AxiosResponse<any,any>
+                    deactivate Backend
+                    ReportingPage <-- usersService.ts : return any[]
+                deactivate usersService.ts
+                ReportingPage -> ReportingPage : Update the **statitics** with the returned response
+            deactivate ReportingPage
+            ReportingPage -> ReportingPage : call **getCurrentUserRole()** method and \nupdate the **roleBasedVisibilty** as true when loggined user's role is "Hr Manager"
+            ReportingPage -> ReportingPage : Update the **isLoading** as false
+            ReportingPage -> ReportingPage : Return void()
+        deactivate ReportingPage
+    deactivate ReportingPage
+    ReportingPage -> ReportingPage : Bind BreadCrumbs component in top left of the page
+    note right of ReportingPage : Refer the **<BreadCrumbs ...{props} />** in bread_crumbs
+    ReportingPage -> ReportingPage : Bind three DashboardCard component below the breadcrumbs
+    note right of ReportingPage : Refer the **<DashboardCard ...{props} />** in dashboard_card
+    ReportingPage -> ReportingPage : Bind a Search Component if activeTab.isGraphActive is false
+    note right of ReportingPage : Refer the **<Search ...{props} />** in search
+    ReportingPage -> ReportingPage : Bind Grid Icon, Graph Icon as toggle
+    alt activeTab.isGridActive is true and filteredTeamReport is not empty
+        ReportingPage -> ReportingPage : Bind ReportingsListTable component
+        note right of ReportingPage : Refer the **<ReportingsListTable ...{props} />** in reportings_list_table
+        Client <-- ReportingPage : User receives respective view of the stats, list reportings details in table
+    else \t\tactiveTab.isGraphActive is true and filteredTeamReport is not empty
+        ReportingPage -> ReportingPage : Bind GraphReportings component
+        note right of ReportingPage : Refer the **<GraphReportings ...{props} />** in graph_reportings
+        Client <-- ReportingPage : User receives respective view of the stats, tree structure of reportings
+    end
+deactivate Client
+deactivate ReportingPage
+
+... ...
+... ...
+...~~**Click Functionalities**~~...
+... ...
+
+Client -> ReportingPage : Click on the **breadcrumbs**
+activate Client #D3D3D3
+activate ReportingPage #D3D3D3
+    ReportingPage -> ReportingPage : It navigate to respective pages
+    Client <-- ReportingPage : User can view the respective pages
+deactivate Client
+deactivate ReportingPage
+
+... ...
+
+Client -> ReportingPage : Click on the **search component**
+activate Client #D3D3D3
+activate ReportingPage #D3D3D3
+    Client <-- ReportingPage : User can able to search in field
+deactivate Client
+deactivate ReportingPage
+
+... ...
+
+Client -> ReportingPage : Click on the **Graph icon**
+activate Client #D3D3D3
+activate ReportingPage #D3D3D3
+    ReportingPage -> ReportingPage : Call **onGraphIconClicked()**
+    activate ReportingPage #D16587
+        ReportingPage -> ReportingPage : Change the mode in route query as "graph" or \nnavigate to '/reportings?mode=<graph>'
+    deactivate ReportingPage
+    Client <-- ReportingPage : User can view respective card view of their reportings\nas per the organisation structure
+deactivate Client
+deactivate ReportingPage
+
+... ...
+
+Client -> ReportingPage : Click on the **Grid icon**
+activate Client #D3D3D3
+activate ReportingPage #D3D3D3
+    ReportingPage -> ReportingPage : Call **onGridIconClicked()**
+    activate ReportingPage #D16587
+        ReportingPage -> ReportingPage : Change the mode in route query as "list" or \nnavigate to '/reportings?mode=<list>'
+    deactivate ReportingPage
+    Client <-- ReportingPage : User can view their reportings details in a table view
+deactivate Client
+deactivate ReportingPage
+
+... ...
+
+Client -> ReportingPage : Click on columns in table header \nfilter columns are name , practice, attendance status, "reporter name"
+activate Client #D3D3D3
+activate ReportingPage #D3D3D3
+    ReportingPage -> ReportingPage : The **ReportingsListTable** component omit an event and it trigger **handleSortChange()** method with the column name
+    activate ReportingPage
+        ReportingPage -> ReportingPage : Update the **order** and **orderBy** variable with clicked column and sort order respectively
+        ReportingPage -> ReportingPage : Call the **handleSort(order, orderBy)** method
+        activate ReportingPage 
+            ReportingPage -> ReportingPage : Sort the **teamReport** array in orderBy \nwith the teamReport's respective field. \nUpdate the **filteredTeamReport** with sorted value
+        deactivate ReportingPage 
+    deactivate ReportingPage
+    ReportingPage -> ReportingPage : UI get updated when the **filteredTeamReport** changes
+    Client <-- ReportingPage : User can view the sorted table
+deactivate Client
+deactivate ReportingPage
+
+... ...
+... ...
+...~~**Change Functionalities**~~...
+... ...
+
+Client -> ReportingPage : Searching on the **Search component**
+activate Client #D3D3D3
+activate ReportingPage #D3D3D3
+    ReportingPage -> ReportingPage : The search component omit an event to page with serach input \nand call **handleSearch(seach text)** 
+    activate ReportingPage 
+            ReportingPage -> ReportingPage : Filter the **teamReport** with search text is like or include in **TeamReport.name**
+            ReportingPage -> ReportingPage : Update the **filteredTeamReport** with filtered value
+    deactivate ReportingPage
+    ReportingPage -> ReportingPage : UI get updated when the **filteredTeamReport** changes
+    Client <-- ReportingPage : User can view the filted table
+deactivate Client
+deactivate ReportingPage
+
+... ...
+
+@enduml
