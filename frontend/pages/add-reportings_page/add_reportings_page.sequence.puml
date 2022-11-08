@@ -1,0 +1,332 @@
+@startuml AddReportingsPage Sequence Diagram 
+
+participant Client 
+participant AddReportingsPage
+
+Client -> AddReportingsPage : route like **'/add-reportees'** or **'/migration/:migrationId'**
+activate Client #D3D3D3
+activate AddReportingsPage #D3D3D3
+    AddReportingsPage -> AddReportingsPage : On component mounting
+    activate AddReportingsPage #D16587
+        AddReportingsPage -> usersService.ts : **getAllUsers()**
+        activate usersService.ts #D3D3D3
+            usersService.ts -> Backend : "/users" in GET methd
+            activate Backend #D3D3D3
+                usersService.ts <-- Backend : return **User[]**
+            deactivate Backend
+            AddReportingsPage <-- usersService.ts : return **User[]**
+        deactivate usersService.ts
+        alt Api response is success 
+            AddReportingsPage -> AddReportingsPage : Sort the returned User[] with the name and\nUpdate the **allUsers** and **allEmployees** with the sorted User[]
+        else \t\tApi response is faiiled
+            AddReportingsPage -> AddReportingsPage : App **navigate to '/not_on_repoting'** page
+            Client <-- AddReportingsPage : User can view a blank page with some text
+        end
+        AddReportingsPage -> usersService.ts : **getAllDomains()**
+        activate usersService.ts #D3D3D3
+            usersService.ts -> Backend : "/users/domains" in GET methd
+            activate Backend #D3D3D3
+                usersService.ts <-- Backend : return **string[]**
+            deactivate Backend
+            AddReportingsPage <-- usersService.ts : return **string[]**
+        deactivate usersService.ts
+        alt Api response is success 
+            AddReportingsPage -> AddReportingsPage : Update the **allDomains** with the response
+        else \t\tApi response is faiiled
+            AddReportingsPage -> AddReportingsPage : App navigate to **'/not_on_repoting'** page
+            Client <-- AddReportingsPage : User can view a blank page with some text
+        end
+        AddReportingsPage -> usersService.ts : **getMyTeamReports(logginedUser's Id)**
+        activate usersService.ts #D3D3D3
+            usersService.ts -> Backend : "/users/:userId/my-team" in GET methd
+            activate Backend #D3D3D3
+                usersService.ts <-- Backend : return **User[]**
+            deactivate Backend
+            AddReportingsPage <-- usersService.ts : return **User[]**
+        deactivate usersService.ts
+        alt Api response is success 
+            AddReportingsPage -> AddReportingsPage : Sort the returned User[] with the name and\nUpdate the **selectedEmployees** with the sorted User[]
+            AddReportingsPage -> AddReportingsPage : Update the **currentUserinfo.reportings** Global state
+        else \t\tApi response is faiiled
+            AddReportingsPage -> AddReportingsPage : App navigate to **'/not_on_repoting'** page
+            Client <-- AddReportingsPage : User can view a blank page with some text
+        end
+    deactivate AddReportingsPage
+    alt \tgetMyTeamReports Api call is loading
+        AddReportingsPage -> AddReportingsPage : Bind a **skeleton loader** instead of UserDetails card and reporting count card
+    else getMyTeamReports Api call completed
+        AddReportingsPage -> AddReportingsPage : Bind a **card of user details**, which have profile picture, name, role
+    end 
+    AddReportingsPage -> AddReportingsPage : Bind **3 Cards which shows the time** of different places
+    AddReportingsPage -> AddReportingsPage : Bind a **Search** component 
+    note right of AddReportingsPage : Refer search in components for **<Search ...{props} />**
+    alt route string having "migration" string
+        AddReportingsPage -> AddReportingsPage : Bind **MigrationAcknowledgePanel** component
+        note right of AddReportingsPage : Refer migration_acknowledge_panel for **<MigrationAcknowledgePanel />**
+        Client <-- AddReportingsPage : User can able to **view their migration details** and do action against the migration request
+    else 
+        AddReportingsPage -> AddReportingsPage : Bind a **left arrow Icon** as clickable
+        AddReportingsPage -> AddReportingsPage : Belew, Bind a select field to select Domain, which have options as **allDomins**
+        AddReportingsPage -> AddReportingsPage : After, Bind a select field to select User, which have options as **allUsers**
+        AddReportingsPage -> AddReportingsPage : After, Bind two buttons as "+ Team member" and "Reset"
+        AddReportingsPage -> AddReportingsPage : Below, Bind three radio button to choose option for adding users \n those are for **add only user**, **add user's reportings** and **add user and user's reportings**. \nInitially **'add user'** is **enabled** other two are **disabled**
+        alt \tgetMyTeamReports Api call is loading 
+            AddReportingsPage -> AddReportingsPage : Bind a **loader** 
+        else getMyTeamReports Api call completed
+            alt filteredEmployees length is 0
+                AddReportingsPage -> AddReportingsPage : Bind a Empty indicator or text of which there is no data
+            else 
+                AddReportingsPage -> AddReportingsPage : Iterate the **filteredEmployees** and Bind a card of user's image, name and practice in each Iteration.
+                AddReportingsPage -> AddReportingsPage : Bind a **delete icon** in card which is display only when **hover** the card
+            end
+        end 
+        AddReportingsPage -> AddReportingsPage : Bind two buttons for submit and cancel the Migration request
+        Client <-- AddReportingsPage : User can able to see the expected view and can **able to rise a migration request**
+    end 
+deactivate AddReportingsPage
+deactivate Client
+
+
+... ...
+... ...
+...~~**Click Functionalities**~~...
+... ...
+
+Client -> AddReportingsPage : Click on the **left arrow icon**
+activate Client #D3D3D3
+activate AddReportingsPage #D3D3D3
+    AddReportingsPage -> AddReportingsPage : App navigate to Home page
+    Client <-- AddReportingsPage : User can view their home page
+deactivate AddReportingsPage
+deactivate Client
+
+... ...
+
+Client -> AddReportingsPage : Click on the **Domain** Select 
+activate Client #D3D3D3
+activate AddReportingsPage #D3D3D3
+    Client <-- AddReportingsPage : User can view and select the domain options as dropdown
+deactivate AddReportingsPage
+deactivate Client
+
+... ...
+
+Client -> AddReportingsPage : Select any options from the **Domain** dropdown 
+activate Client #D3D3D3
+activate AddReportingsPage #D3D3D3
+    AddReportingsPage -> AddReportingsPage : Call **onDomainClicked()**
+    activate AddReportingsPage #D16587
+        AddReportingsPage -> AddReportingsPage : Filter the **allEmployees** of User[], which is same as the user.practice is selected domain \nand Update the **allUsers** with the filtered **allEmployees** and \nthis will **re-render the User select** option according to the selected domains
+    deactivate AddReportingsPage
+    Client <-- AddReportingsPage : User can view the selected Domain in field
+deactivate AddReportingsPage
+deactivate Client
+
+... ...
+
+Client -> AddReportingsPage : Click on the **Users** Select 
+activate Client #D3D3D3
+activate AddReportingsPage #D3D3D3
+    Client <-- AddReportingsPage : User can view and select the user options as dropdown
+deactivate AddReportingsPage
+deactivate Client
+
+... ...
+
+Client -> AddReportingsPage : Select any options from the **Users** dropdown
+activate Client #D3D3D3
+activate AddReportingsPage #D3D3D3
+    AddReportingsPage -> AddReportingsPage : Call **handleOnChange()**
+    activate AddReportingsPage #D16587
+        AddReportingsPage -> AddReportingsPage : Update the selected User as **resourceList** 
+        AddReportingsPage -> AddReportingsPage : If the selected user have reportings then **add user's reportings** and **add user and user's reportings** \nradio button options are enabled
+    deactivate AddReportingsPage
+    Client <-- AddReportingsPage : User can view the selected User in field and able to select updated radio button options
+deactivate AddReportingsPage
+deactivate Client
+
+... ...
+
+Client -> AddReportingsPage : Click on the **Search** field 
+activate Client #D3D3D3
+activate AddReportingsPage #D3D3D3
+    Client <-- AddReportingsPage : User can search reportees from the reportees grid
+deactivate AddReportingsPage
+deactivate Client
+
+... ...
+
+Client -> AddReportingsPage : Click on the **delete icon** in reportees card 
+activate Client #D3D3D3
+activate AddReportingsPage #D3D3D3
+    AddReportingsPage -> AddReportingsPage : Call **RemoveClicked()**
+    activate AddReportingsPage #D16587
+        AddReportingsPage -> AddReportingsPage : Remove the reportee from the **selectedEmployees** and update the **selectedEmployees** 
+    deactivate AddReportingsPage
+    Client <-- AddReportingsPage : User can search reportees from the reportees grid
+deactivate AddReportingsPage
+deactivate Client
+
+... ...
+
+Client -> AddReportingsPage : Click on any **radio button**
+activate Client #D3D3D3
+activate AddReportingsPage #D3D3D3
+    AddReportingsPage -> AddReportingsPage : Call **OnTeamSelected()**
+    activate AddReportingsPage #D16587
+        alt if selected is Select Team member
+            AddReportingsPage -> AddReportingsPage : Update the **selectedTeam** as "Add Employee"
+        else Select Team (Excluding Lead) 
+            AddReportingsPage -> AddReportingsPage : Update the **selectedTeam** as "Add Employee's Team"
+        else Select Team (Including Lead)
+            AddReportingsPage -> AddReportingsPage : Update the **selectedTeam** as "Add Employee and Team"
+        end
+    deactivate AddReportingsPage
+    Client <-- AddReportingsPage : User can view the selected option
+deactivate AddReportingsPage
+deactivate Client
+
+... ...
+
+Client -> AddReportingsPage : Click on the **Reset button**
+activate Client #D3D3D3
+activate AddReportingsPage #D3D3D3
+    AddReportingsPage -> AddReportingsPage : Update the **resourceList** with emptyUser which have no value\nand Update the **selectedDomain** as []
+    Client <-- AddReportingsPage : User can view the **placeHolders** in **Domain** and **User** selection
+deactivate AddReportingsPage
+deactivate Client
+
+... ...
+
+Client -> AddReportingsPage : **getReporteesDetails(string[])**
+activate Client #D3D3D3
+activate AddReportingsPage #D3D3D3
+    AddReportingsPage -> AddReportingsPage : Find the Users of string[] from **allUsers** and return 
+    Client <-- AddReportingsPage : return User[]
+deactivate AddReportingsPage
+deactivate Client
+
+... ...
+
+Client -> AddReportingsPage : Click on the **+ Team Member** button
+activate Client #D3D3D3
+activate AddReportingsPage #D3D3D3
+    alt Radio button is not checked
+        Client <-- AddReportingsPage : User can get a dismissible snack bar which indicates to select option.
+    end
+    alt selectedTeam is "Add Employee"
+        alt resourceList is already present in the selectedEmployees and \ncurrent user is not resourceList
+            Client <-- AddReportingsPage : User can get a dismissible snack bar which indicates like "user already in".
+        else resourceList is not present in the selectedEmployees and \ncurrent user is not resourceList
+            AddReportingsPage -> AddReportingsPage : Add the **resouseLIst** to the **selectedEmployees**
+            Client <-- AddReportingsPage : User can get a dismissible snack bar which indicates as success
+        else resourceList is a current user
+            Client <-- AddReportingsPage : User can get a dismissible snack bar which indicates like "you cannot add you"
+        end
+        AddReportingsPage -> AddReportingsPage : Filter the **selectedEmployees** and remove the duplicates and Update **selectedEmployees** with filtered
+    else selectedTeam is "Add Employee's Team"
+        AddReportingsPage -> AddReportingsPage : Filter the **resourceList.reportings**, remove if resourceList.userId and current userId is present 
+        AddReportingsPage -> AddReportingsPage : Declare a variable **employees** and call **getReporteesDetails with resourceList.reportings** and assign the value
+        AddReportingsPage -> AddReportingsPage : Concatinate the **selectedEmployees and employees** and remove duplicates and update it in **selectedEmployees**
+        Client <-- AddReportingsPage : User can get a dismissible snack bar which indicates a success message
+    else selectedTeam is "Add Employee and Team"
+        AddReportingsPage -> AddReportingsPage : Filter the **resourceList.reportings**, remove if current userId is present 
+        AddReportingsPage -> AddReportingsPage : Declare a variable **employees** and call **getReporteesDetails with resourceList.reportings** and assign the value
+        AddReportingsPage -> AddReportingsPage : Concatinate the **selectedEmployees and employees** and remove duplicates and update it in **selectedEmployees**
+        Client <-- AddReportingsPage : User can get a dismissible snack bar which indicates a success message
+    end
+    AddReportingsPage -> AddReportingsPage : Update the **resourceList** with emptyUser which have no value\nand Update the **selectedDomain** as []
+    Client <-- AddReportingsPage : User can view the selected users in grid
+deactivate AddReportingsPage
+deactivate Client
+
+
+... ...
+
+Client -> AddReportingsPage : Click on **Cancel** Button
+activate Client #D3D3D3
+activate AddReportingsPage #D3D3D3
+    AddReportingsPage -> AddReportingsPage : Call **cancelMigration()**
+    activate AddReportingsPage #D16587
+        AddReportingsPage -> AddReportingsPage : Sort the data which we are previously fetched for the loggined users reporting\n Update the **selectedEmployees** with sorted User[]
+    deactivate AddReportingsPage
+    Client <-- AddReportingsPage : User can view their reportings or removed selected reportees from grid.
+deactivate AddReportingsPage
+deactivate Client
+
+
+... ...
+
+Client -> AddReportingsPage : Click on **Send Request** button
+activate Client #D3D3D3
+activate AddReportingsPage #D3D3D3
+    AddReportingsPage -> AddReportingsPage : Call **onSendRequestClicked()**
+    activate AddReportingsPage #D16587
+        AddReportingsPage -> AddReportingsPage : Find the loggined user from **allUsers** and assign it into a **Reporter** variable and\n **filter the reportings of the Reporter** by removing their "Id"
+        AddReportingsPage -> AddReportingsPage : Loop the **selectedEmployees** and form an new array **selectedUserIds** with the userId of all users \nfrom **selectedEmployees** array
+        alt loggined User's filtered reportings array is same as selectedUserIds
+            Client <-- AddReportingsPage : User can get a dismissible snack bar which indicates a failure message
+        else 
+            AddReportingsPage -> AddReportingsPage : Form an **RequestedData** in type of **reporteeMigration** with **Reporter and selectedEmployees**
+            AddReportingsPage -> usersService.ts : **sendReporteeMigrationRequest(RequestedData, loggined user's userId)**
+            activate usersService.ts #D3D3D3
+                usersService.ts -> Backend : **"/users/:userId/reportee-migration/request"** in POST Method \nwith **RequestedData in Body**
+                activate Backend #D3D3D3
+                    return return AxiosReponse
+                deactivate Backend
+                AddReportingsPage <-- usersService.ts : return AxiosResponse
+            deactivate usersService.ts
+            alt is success response 
+                Client <-- AddReportingsPage : User can get a dismissible snack bar which indicates a success message
+            else 
+                Client <-- AddReportingsPage : User can get a dismissible snack bar which indicates a failure message
+            end
+        end
+    deactivate AddReportingsPage
+    Client <-- AddReportingsPage : User can View the response of their migration request.
+deactivate AddReportingsPage
+deactivate Client
+
+
+... ...
+... ...
+...~~**Change Functionalities**~~...
+... ...
+
+
+Client -> AddReportingsPage : Entering values on **Domain** select field
+activate Client #D3D3D3
+activate AddReportingsPage #D3D3D3
+    AddReportingsPage -> AddReportingsPage : Filter the domins with entered text 
+    Client <-- AddReportingsPage : User can have the suggestion with serched domain
+deactivate AddReportingsPage
+deactivate Client
+
+... ...
+
+
+Client -> AddReportingsPage : Entering values on **User** select field
+activate Client #D3D3D3
+activate AddReportingsPage #D3D3D3
+    AddReportingsPage -> AddReportingsPage : Filter the users with entered text
+    Client <-- AddReportingsPage : User can have the suggestion with serched user
+deactivate AddReportingsPage
+deactivate Client
+
+
+... ...
+
+
+Client -> AddReportingsPage : Entering values on **Seacrch** field of reportees or selected employees
+activate Client #D3D3D3
+activate AddReportingsPage #D3D3D3
+    AddReportingsPage -> AddReportingsPage : **handleViewReporteesSearch(search input)
+    activate AddReportingsPage #D16587
+        AddReportingsPage -> AddReportingsPage : Filter the **selectedEmployee** oF User[] with User.name includes the search text\n Update the **filteredEmployees** with filtered User[]
+    deactivate AddReportingsPage
+    Client <-- AddReportingsPage : User can view the searched users in reportees Grid.
+deactivate AddReportingsPage
+deactivate Client
+
+
+@enduml

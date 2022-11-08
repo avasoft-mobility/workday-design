@@ -1,0 +1,40 @@
+@startuml AddReportingsPage Class Diagram 
+
+class  AddReportingsPage {
+    AddResourceClicked() \t\t\t\t:\tvoid
+    ..
+    getReporteesDetails(string[]) \t\t\t:\tUser[]
+    ..
+    RemoveClicked(string) \t\t\t\t:\tvoid
+    ..
+    handleOnChange(any) \t\t\t\t:\tvoid
+    ..
+    onTeamSelected(any) \t\t\t\t:\tvoid
+    ..
+    onDomainClicked(any)  \t\t\t\t:\tvoid
+    ..
+    onSendRequestClicked()  \t\t\t:\tvoid
+    ..
+    handleViewReporteesSearch(string) \t:\tvoid
+    ..
+    cancelMigration() \t\t\t\t\t:\tvoid
+    ..
+    allEmployees  \t\t\t\t\t\t:\tUser[]
+    ..
+    allUsers \t\t\t\t\t\t\t:\tUser[]
+    ..
+    resourceList \t\t\t\t\t\t:\tUser
+    ..
+    selectedTeam \t\t\t\t\t\t:\tstring
+    ..
+    selectedDomain \t\t\t\t\t:\tstring[]
+    ..
+    selectedEmployees \t\t\t\t\t:\tUser[]
+    ..
+    allDomains \t\t\t\t\t\t:\tstring[]
+    ..
+    filteredEmployees \t\t\t\t\t:\tUser[]
+    ..
+    searchValue \t\t\t\t\t\t:\tstring
+}
+@enduml
