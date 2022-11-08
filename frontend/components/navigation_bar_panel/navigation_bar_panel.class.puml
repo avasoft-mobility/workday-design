@@ -21,6 +21,8 @@ class NavigationBarPanel {
     ..
     handleProfileMenuClose() \t\t\t:\tvoid
     ..
+    logoutFromHive() \t\t\t\t\t:\tvoid
+    ..
     imageUrl \t\t\t\t\t\t\t:\tstring
     ..
     notifications \t\t\t\t\t\t:\tNotIficationBO[]

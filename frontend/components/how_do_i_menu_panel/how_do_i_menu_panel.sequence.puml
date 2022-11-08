@@ -34,17 +34,17 @@ Client -> HowDoIMenuPanel : When the user onClicks the menuItem in the menu
 activate Client #D3D3D3
     activate HowDoIMenuPanel #D3D3D3
         alt case: When user onClicks the **Leave Request** menuItem
-            HowDoIMenuPanel -> HowDoIMenuPanel : user will be navigated\n to `https://hivenp.avasoft.com/leaveform`
+            HowDoIMenuPanel -> HowDoIMenuPanel : user will be navigated\n to `https://hive.avasoft.com/leaveform`
         else case : When user onClicks the **WFH Request** menuItem
-            HowDoIMenuPanel -> HowDoIMenuPanel : user will be navigated\n to `https://hivenp.avasoft.com/wfhform`
+            HowDoIMenuPanel -> HowDoIMenuPanel : user will be navigated\n to `https://hive.avasoft.com/wfhform`
         else case : When user onClicks the **Raise a Concern** menuItem
-            HowDoIMenuPanel -> HowDoIMenuPanel : user will be navigated\n to `https://hivenp.avasoft.com/concernForm`
+            HowDoIMenuPanel -> HowDoIMenuPanel : user will be navigated\n to `https://hive.avasoft.com/concernForm`
         else case : When user onClicks the **Holiday List** menuItem
-            HowDoIMenuPanel -> HowDoIMenuPanel : user will be navigated\n to `https://hivenp.avasoft.com/HolidayList`
+            HowDoIMenuPanel -> HowDoIMenuPanel : user will be navigated\n to `https://hive.avasoft.com/HolidayList`
         else case : When user onClicks the **FAQ's** menuItem
-            HowDoIMenuPanel -> HowDoIMenuPanel : user will be navigated\n to `https://hivenp.avasoft.com/FAQ`
+            HowDoIMenuPanel -> HowDoIMenuPanel : user will be navigated\n to `https://hive.avasoft.com/FAQ`
         else case : When user onClicks the **Policy** menuItem
-            HowDoIMenuPanel -> HowDoIMenuPanel : user will be navigated\n to `https://hivenp.avasoft.com/policy`
+            HowDoIMenuPanel -> HowDoIMenuPanel : user will be navigated\n to `https://hive.avasoft.com/policy`
         end
         Client <-- HowDoIMenuPanel : user will be redirected to the particular route
     deactivate HowDoIMenuPanel

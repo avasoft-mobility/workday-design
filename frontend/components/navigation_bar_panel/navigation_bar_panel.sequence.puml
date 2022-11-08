@@ -21,7 +21,11 @@ activate NavigationBarPanel #D3D3D3
     else 
         NavigationBarPanel -> NavigationBarPanel : cannot change the rofile icon
     end
-    
+    NavigationBarPanel -> NavigationBarPanel : Bind the **renderHowDoiMenu**  
+    NavigationBarPanel -> NavigationBarPanel : Bind the **renderEmployeeMenu**
+    NavigationBarPanel -> NavigationBarPanel : Bind the **renderNotificationMenu**  
+    NavigationBarPanel -> NavigationBarPanel : Bind the **renderRecruitmentMenu**
+    NavigationBarPanel -> NavigationBarPanel : Bind the **renderProfileMenu**
     alt loggined user is "Hr Manager"
         NavigationBarPanel -> Client : User can receive expected App Bar with all menues
     else loggined user is "Manager"
@@ -32,6 +36,66 @@ activate NavigationBarPanel #D3D3D3
         NavigationBarPanel -> NavigationBarPanel : Change the **Team Memnber** menu with **My Performance**
         NavigationBarPanel -> Client : User can receive expected App Bar without **Admin** and **Recruitment** menu 
     end
+deactivate Client
+deactivate NavigationBarPanel
+
+... ...
+Client -> NavigationBarPanel : **renderHowDoiMenu**
+activate Client #D3D3D3
+activate NavigationBarPanel #D3D3D3
+    NavigationBarPanel -> NavigationBarPanel : Call <HowDoIMenuPanel ...{props} />
+    note right of NavigationBarPanel : props: {\n\tanchorEl={howDoIMenu}\n\tisShowMenu={isHowdoImenu}\n\tonClose={handleHowDoIMenuClose}\n\tuserRole={Currentuser's role}\n\tuserId={currentUser id!}\n}
+    note right of NavigationBarPanel : Refer the how_do_i_menu_panel sequence diagram
+    Client <-- NavigationBarPanel : return an JSX.element
+deactivate Client
+deactivate NavigationBarPanel
+
+... ...
+Client -> NavigationBarPanel : **renderEmployeeMenu**
+activate Client #D3D3D3
+activate NavigationBarPanel #D3D3D3
+    NavigationBarPanel -> NavigationBarPanel : Call <TeamMemberMenuPanel ...{props} />
+    note right of NavigationBarPanel : props: {\n\tanchorEl={employeeMenu}\n\tisShowMenu={isEmployeeMenu}\n\tonClose={handleHowEmployeeMenuClose}\n\tuserRole={Currentuser's role}\n\tuserId={currentUser id!}\n}
+    note right of NavigationBarPanel : Refer the team_member_menu_panel sequence diagram
+    Client <-- NavigationBarPanel : return an JSX.element
+deactivate Client
+deactivate NavigationBarPanel
+
+... ...
+Client -> NavigationBarPanel : **renderRecruitmentMenu**
+activate Client #D3D3D3
+activate NavigationBarPanel #D3D3D3
+    alt current user is a Manager and also a panel member
+        NavigationBarPanel -> NavigationBarPanel : Bind a Job menu options  
+    else 
+        NavigationBarPanel -> NavigationBarPanel : Bind a Job , Onboarding menu options
+    end
+    Client <-- NavigationBarPanel : return an JSX.element
+deactivate Client
+deactivate NavigationBarPanel
+
+... ...
+Client -> NavigationBarPanel : **renderProfileMenu**
+activate Client #D3D3D3
+activate NavigationBarPanel #D3D3D3
+    NavigationBarPanel -> NavigationBarPanel : Bind menu with Two menu options, which is My Profile and Logout
+    Client <-- NavigationBarPanel : return an JSX.element
+deactivate Client
+deactivate NavigationBarPanel
+
+... ...
+Client -> NavigationBarPanel : **renderNotificationMenu**
+activate Client #D3D3D3
+activate NavigationBarPanel #D3D3D3
+    alt isNotificationLoading is true
+        NavigationBarPanel -> NavigationBarPanel : Bind a Loader
+    else fetched Notification empty  
+        NavigationBarPanel -> NavigationBarPanel : Bind a text with empty indication
+    else 
+        NavigationBarPanel -> NavigationBarPanel : Bind the Notification detail as list
+    end
+    NavigationBarPanel -> NavigationBarPanel : Redirect to the **Hive application**
+    Client <-- NavigationBarPanel : return an JSX.element
 deactivate Client
 deactivate NavigationBarPanel
 
@@ -69,7 +133,7 @@ deactivate NavigationBarPanel
 Client -> NavigationBarPanel : User Click or Hover on the **Recruitment** menu
 activate Client #D3D3D3
 activate NavigationBarPanel #D3D3D3
-    NavigationBarPanel -> NavigationBarPanel : call **recruitmentMenuOpen()** and it opens the **Recruitemnt** menu \nand close all the other menu popups
+    NavigationBarPanel -> NavigationBarPanel : call **recruitmentMenuOpen()** and \nit change the visibility of **renderRecruitmentMenu**, it opens the **Recruitemnt** menu \nand close all the other menu popups
     Client <-- NavigationBarPanel : User can view and select the options from **Recruitment** menu
 deactivate Client
 deactivate NavigationBarPanel
@@ -78,7 +142,7 @@ deactivate NavigationBarPanel
 Client -> NavigationBarPanel : User Click or Hover on the **Team Member** or **My Performance** menu
 activate Client #D3D3D3
 activate NavigationBarPanel #D3D3D3
-    NavigationBarPanel -> NavigationBarPanel : call **handleEmployeeMenuOpen()** and it opens the **Team Member** menu \nand close all the other menu popups
+    NavigationBarPanel -> NavigationBarPanel : call **handleEmployeeMenuOpen()** and \nit change the visibility of **renderEmployeeMenu**, it opens the **Team Member** menu \nand close all the other menu popups
     Client <-- NavigationBarPanel : User can view and select the options from **Team Member** menu
 deactivate Client
 deactivate NavigationBarPanel
@@ -87,7 +151,7 @@ deactivate NavigationBarPanel
 Client -> NavigationBarPanel : User Click or Hover on the **How Do I?** menu
 activate Client #D3D3D3
 activate NavigationBarPanel #D3D3D3
-    NavigationBarPanel -> NavigationBarPanel : call **handleHowDoIMenuOpen()** and it opens the **How Do I?** menu \nand close all the other menu popups
+    NavigationBarPanel -> NavigationBarPanel : call **handleHowDoIMenuOpen()** and \nit change the visibility of **renderHowDoiMenu**, it opens the **How Do I?** menu \nand close all the other menu popups
     Client <-- NavigationBarPanel : User can view and select the options from **How Do I?** menu
 deactivate Client
 deactivate NavigationBarPanel
@@ -96,7 +160,7 @@ deactivate NavigationBarPanel
 Client -> NavigationBarPanel : User Click or Hover on the **Profile Icon** menu
 activate Client #D3D3D3
 activate NavigationBarPanel #D3D3D3
-    NavigationBarPanel -> NavigationBarPanel : call **handleProfileMenuOpen()** and it opens the **Profile** menu \nand close all the other menu popups
+    NavigationBarPanel -> NavigationBarPanel : call **handleProfileMenuOpen()** \nit change the visibility of **renderProfileMenu**, and it opens the **Profile** menu \nand close all the other menu popups
     Client <-- NavigationBarPanel : User can view and select the options from the menu
 deactivate Client
 deactivate NavigationBarPanel
@@ -105,7 +169,7 @@ deactivate NavigationBarPanel
 Client -> NavigationBarPanel : User Click on the **Notification Bell Icon** menu
 activate Client #D3D3D3
 activate NavigationBarPanel #D3D3D3
-    NavigationBarPanel -> NavigationBarPanel : call **handleNotificationMenuOpen()** and it Open the notiification menu with a loader by \nBy updating **isNotificationLoading** as true
+    NavigationBarPanel -> NavigationBarPanel : call **handleNotificationMenuOpen()** \nit change the visibility of **renderNotificationMenu**, and it Open the notiification menu with a loader by \nBy updating **isNotificationLoading** as true
     NavigationBarPanel -> userServices.ts : **fetchNotifications(userid)**
     activate userServices.ts #D3D3D3
         userServices.ts -> Backend : Request notifications details for the user
@@ -124,13 +188,26 @@ deactivate Client
 deactivate NavigationBarPanel
 
 ... ...
-Client -> NavigationBarPanel : User Click on the any of the options from the menu
+
+Client -> NavigationBarPanel : When the user onClicks the menuItems  
 activate Client #D3D3D3
-activate NavigationBarPanel #D3D3D3
-    NavigationBarPanel -> NavigationBarPanel : Redirect to the **Hive application**
-    Client <-- NavigationBarPanel : User can view the respective page form **Hive Application**
+    activate NavigationBarPanel #D3D3D3
+        alt case: When user Clicks the **Jobs** menuItem
+            NavigationBarPanel -> NavigationBarPanel : user will be navigated\n to `https://hive.avasoft.com/recruitment`
+        else case : When user Clicks the **Onboarding** menuItem
+            NavigationBarPanel -> NavigationBarPanel : user will be navigated\n to `https://hive.avasoft.com/Onboarding`
+        else case : When user Clicks the **My Profile** menuItem
+            NavigationBarPanel -> NavigationBarPanel : user will be navigated\n to `https://hive.avasoft.com/profilecontainer?EmpId=${currentUserInfo.userId}&IsTeamMember=true`
+        else case : When user Clicks the **Logout** menuItem
+            NavigationBarPanel -> NavigationBarPanel : call **logoutFromHive()**
+            activate NavigationBarPanel #D16587
+                NavigationBarPanel -> NavigationBarPanel : clear the **sessionStorage**  
+                NavigationBarPanel -> NavigationBarPanel : user will be navigated\n to `https://hive.avasoft.com`
+            deactivate NavigationBarPanel
+        end
+        Client <-- NavigationBarPanel : user will be redirected to the particular page in Hive application
+    deactivate NavigationBarPanel
 deactivate Client
-deactivate NavigationBarPanel
 
 
 @enduml
