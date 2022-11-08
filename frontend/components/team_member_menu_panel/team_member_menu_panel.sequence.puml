@@ -1,0 +1,66 @@
+@startuml TeamMemberMenuPanel sequence Diagram
+participant Client
+participant TeamMemberMenuPanel
+
+Client -> TeamMemberMenuPanel : call the component in any component with **<TeamMemberMenuPanel {...props}/>**
+activate Client #D3D3D3
+    activate TeamMemberMenuPanel #D3D3D3
+        note left of TeamMemberMenuPanel : props: {\n anchorEl: HTMLElement | null;\nisShowMenu: boolean;\nonClose: Function;\nuserRole: "HR Manager" | "Manager" | "Team Member";\nuserId: string; \n}
+        TeamMemberMenuPanel -> TeamMemberMenuPanel : Implement Menu from antd and\n pass the **props.anchorEl** to anchorEl.
+        TeamMemberMenuPanel -> TeamMemberMenuPanel : Implement menuItem for menu as static and\n for each menu item mention the onClick functionalities.
+        alt props.userRole is not "Team Member"
+            TeamMemberMenuPanel -> TeamMemberMenuPanel : Bind all menus
+        else 
+            TeamMemberMenuPanel -> TeamMemberMenuPanel : Bind only **Performance and Touchbase** menu
+        end
+        Client <-- TeamMemberMenuPanel : User will receive the expected view.
+    deactivate TeamMemberMenuPanel
+deactivate Client
+
+... ...
+... ...
+...~~**onClick Functionalities**~~ ...
+... ...
+... ...
+
+Client -> TeamMemberMenuPanel : When the user tries to close the menu 
+activate Client #D3D3D3
+    activate TeamMemberMenuPanel #D3D3D3
+        TeamMemberMenuPanel -> TeamMemberMenuPanel : trigger **onClose()** method in the parent.
+        Client <-- TeamMemberMenuPanel : **onClose()** method in the parent will trigger
+    deactivate TeamMemberMenuPanel
+deactivate Client
+
+... ...
+... ...
+
+
+Client -> TeamMemberMenuPanel : When the user onClicks the menuItem in the menu 
+activate Client #D3D3D3
+    activate TeamMemberMenuPanel #D3D3D3
+        alt case: When user onClicks the **Performance** menuItem
+            TeamMemberMenuPanel -> TeamMemberMenuPanel : user will be navigated\n to `https://hivenp.avasoft.com/performance`
+        else case : When user onClicks the **Touchbase** menuItem
+            TeamMemberMenuPanel -> TeamMemberMenuPanel : user will be navigated\n to `https://hivenp.avasoft.com/touchbase`
+        else case : When user onClicks the **Team Directory** menuItem
+            TeamMemberMenuPanel -> TeamMemberMenuPanel : user will be navigated\n to `https://hivenp.avasoft.com/TeamDirectory`
+        else case : When user onClicks the **Manage Goals** menuItem
+            TeamMemberMenuPanel -> TeamMemberMenuPanel : user will be navigated\n to `https://hivenp.avasoft.com/goaltemplate`
+        else case : When user onClicks the **Team Member Moods** menuItem
+            TeamMemberMenuPanel -> TeamMemberMenuPanel : user will be navigated\n to `https://hivenp.avasoft.com/moodgrid`
+        else case : When user onClicks the **Offboarding** menuItem
+            TeamMemberMenuPanel -> TeamMemberMenuPanel : user will be navigated\n to `https://hivenp.avasoft.com/HrOffboardingGrid`
+        else case : When user onClicks the **Concern** menuItem
+            TeamMemberMenuPanel -> TeamMemberMenuPanel : user will be navigated\n to `https://hivenp.avasoft.com/concerns`
+        else case : When user onClicks the **Appreciation** menuItem
+            TeamMemberMenuPanel -> TeamMemberMenuPanel : user will be navigated\n to `https://hivenp.avasoft.com/appreciation`
+        else case : When user onClicks the **Feedback** menuItem
+            TeamMemberMenuPanel -> TeamMemberMenuPanel : user will be navigated\n to `https://hivenp.avasoft.com/FeedbackGrid?EmpId=${props.userId}`
+        else case : When user onClicks the **Profile Update** menuItem
+            TeamMemberMenuPanel -> TeamMemberMenuPanel : user will be navigated\n to `https://hivenp.avasoft.com/profileUpdate`
+        end
+        Client <-- TeamMemberMenuPanel : user will be redirected to the particular page in Hive application
+    deactivate TeamMemberMenuPanel
+deactivate Client
+
+@enduml
