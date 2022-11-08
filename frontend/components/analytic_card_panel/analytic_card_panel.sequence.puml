@@ -1,0 +1,15 @@
+@startuml AnalyticCardPanel Sequence Diagram
+participant Client
+participant AnalyticCardPanel
+
+Client -> AnalyticCardPanel : Call the component **<AnalyticCardPanel {...props} />**
+activate Client #D3D3D3
+activate AnalyticCardPanel #D3D3D3
+    note left of AnalyticCardPanel : props: {\n\ttitle: string;\n\tsubTitle: string | number;\n\twidth: number;\n\tstyle?: React.CSSProperties;\n}
+    AnalyticCardPanel -> AnalyticCardPanel : Bind the **props.title and props.subTitle** in text fields
+    AnalyticCardPanel -> AnalyticCardPanel : If the **props.style** is defined, overrides the style of card 
+    Client <-- AnalyticCardPanel : User Receives the expected Card view
+deactivate AnalyticCardPanel
+deactivate Client
+
+@enduml
