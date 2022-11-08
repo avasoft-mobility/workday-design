@@ -1,0 +1,21 @@
+@startuml search pop_over class diagram
+
+class BreadCrumbs {
+  onChangeSearchInput() \t\t\t\t\t : \t\t Void
+  ..
+  onFocusSearchInput() \t\t\t\t\t : \t\t Void
+  ..
+  handleOnBlur() \t\t\t\t\t\t : \t\t Void
+  ..
+  handleItemClick() \t\t\t\t\t\t : \t\t Void
+  ..
+  filterUsers() \t\t\t\t\t\t\t : \t\t Void
+  ..
+  open \t\t\t\t\t\t\t\t : \t\t boolean
+  ..
+  reports \t\t\t\t\t\t\t\t : \t\t TeamReport[]
+  ..
+  noMatches \t\t\t\t\t\t\t : \t\t boolean
+}
+
+@enduml

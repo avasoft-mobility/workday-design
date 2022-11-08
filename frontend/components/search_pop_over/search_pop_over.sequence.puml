@@ -1,0 +1,91 @@
+@startuml search pop_over sequence diagram
+participant Client
+participant SearchPopOver
+
+Client -> SearchPopOver : call the component in any component with **<SearchPopOver {...props}/>**
+activate Client #D3D3D3
+    activate SearchPopOver #D3D3D3
+        note left of SearchPopOver : props: {\n teamReport: TeamReport[];\n onItemSelect: (userId: string) => void;\n}
+        SearchPopOver -> SearchPopOver : bind the **Search** component\n (refer the search folder for\n search component class and\n sequence diagram)
+        SearchPopOver -> SearchPopOver : bind the **AutoSearch** component\n (refer the auto_search folder for\n auto_search component class and\n sequence diagram)
+        Client <-- SearchPopOver : User will receive the expected view.
+    deactivate SearchPopOver
+deactivate Client
+
+... ...
+... ...
+...~~**onChange Functionalities**~~ ...
+... ...
+... ...
+
+Client -> SearchPopOver : When user onchange the values in search component
+activate Client #D3D3D3
+    activate SearchPopOver #D3D3D3
+        SearchPopOver -> SearchPopOver : **onChangeSearchInput(input: string)** method will trigger.
+        SearchPopOver -> SearchPopOver : call the **filterUsers(input)** method
+        SearchPopOver -> SearchPopOver : **filterUsers()**
+        activate SearchPopOver #D16587
+            SearchPopOver -> SearchPopOver : filter the **teamReport** from component props and\n get the username which matches the **input** and\n save the user Details in a variable called **searchResult**
+            alt case: searchResult.length is equals to 0
+                SearchPopOver -> SearchPopOver : Update **noMatches** variable values to **true**.
+                SearchPopOver -> SearchPopOver : Update **reports** variable values to **searchResult**.
+                SearchPopOver -> SearchPopOver : return
+            end
+            alt case: input from method props is ""
+                SearchPopOver -> SearchPopOver : assign **empty[]** variable to the **searchResult**.
+            end
+            SearchPopOver -> SearchPopOver : Update the **noMatches** variable to **false**.
+            SearchPopOver -> SearchPopOver : Update the **reports** variable values to **searchResult**.
+            Client <-- SearchPopOver : onChange values will be sorted\n and updated to the particular state variable.
+        deactivate SearchPopOver
+    deactivate SearchPopOver
+deactivate Client
+
+... ...
+... ...
+...~~**onFocus Functionalities**~~ ...
+... ...
+... ...
+
+Client -> SearchPopOver : when user Focuses the input text field in search component
+activate Client #D3D3D3
+    activate SearchPopOver #D3D3D3
+        SearchPopOver -> SearchPopOver : **onFocusSearchInput()** method will trigger.
+        SearchPopOver -> SearchPopOver : Update the **open** variable values to **true**.
+        Client <-- SearchPopOver : search popOver will open\n when the user focuses the search component.
+    deactivate SearchPopOver
+deactivate Client
+
+
+... ...
+... ...
+...~~**onBlur Functionalities**~~ ...
+... ...
+... ...
+
+Client -> SearchPopOver : when the user onBlur's the input text field in search component
+activate Client #D3D3D3
+    activate SearchPopOver #D3D3D3
+        SearchPopOver -> SearchPopOver : **handleOnBlur()** method will trigger.
+        SearchPopOver -> SearchPopOver : after 500ms of onblur Update the **open** variabel\n values to false.
+        Client <-- SearchPopOver : search popOver will close\n when the user onBlur's the search component.
+    deactivate SearchPopOver
+deactivate Client
+
+... ...
+... ...
+...~~**onClick Functionalities**~~ ...
+... ...
+... ...
+
+Client -> SearchPopOver : when the user onClick's any user in search pop over
+activate Client #D3D3D3
+    activate SearchPopOver #D3D3D3
+        SearchPopOver -> SearchPopOver : **handleItemClick** method will trigger.
+        SearchPopOver -> SearchPopOver : **onItemSelect** method in the parent will trigger.
+        SearchPopOver -> SearchPopOver : Update the **open** variable values to **false**.
+        Client <-- SearchPopOver : **onItemSelect** method in the parent will trigger and\n pop over will close when the user onClick's any user in search pop over.
+    deactivate SearchPopOver
+deactivate Client
+
+@enduml
