@@ -1,0 +1,140 @@
+@startuml GraphReportings Component 
+participant Client
+participant GraphReportings
+
+Client -> GraphReportings : call the **<GraphReportings ...{props} />**
+activate Client #D3D3D3
+activate GraphReportings #D3D3D3
+    note right of GraphReportings : props : { teamReport: TeamReport[] }
+    GraphReportings -> GraphReportings : When component mounting, update the **targetUserId** and **previousTargetUserId** with loggined userId
+    GraphReportings -> usersService.ts : **getGraphReportings({loggined userId},targetUserId,selectedDate)**
+    activate usersService.ts #D3D3D3
+        usersService.ts -> Backend : request for the graphReportings details for particular users
+        activate Backend #D3D3D3
+            usersService.ts <-- Backend : return GraphViewUesr[]
+        deactivate Backend
+        GraphReportings <-- usersService.ts : return promise<GraphViewUesr[]>
+    deactivate usersService.ts
+
+    alt getGraphReportings call is successfull
+        GraphReportings -> GraphReportings : if the second last element of GraphViewUesr[] array's reportingsDetails length is 0 \nthen update the **targetUserId** with **previousTargetUserId**
+    end 
+
+    GraphReportings -> GraphReportings : Append a search box to search the users in graphView \nusing **<SearchPopOver ...{props} />**
+    activate GraphReportings #D16587
+        note right of GraphReportings : props : {\n\tteamReport = props.teamReport, \n\tonItemSelect={(userId: string) => {switchTargetUser(userId)}\n}
+        note right of GraphReportings : Refer basic_popover component sequence diagram
+        GraphReportings -> GraphReportings : return an search input component
+    deactivate GraphReportings
+
+    GraphReportings -> GraphReportings : Append a date selector component with default value as current date
+    alt getGraphReportings call is processing
+        Client <-- GraphReportings : User can view a skeleton view
+    else
+        loop graphReportingsCall response as user
+            GraphReportings -> GraphReportings : Append a card of user details with name and role as card \nusing **<GraphLeadTile ...{props} />**
+            activate GraphReportings #D16587
+                note right of GraphReportings : props : {\n\tuserId = user.userId \n\tposition = user.role \n\tname = user.name\n\tonClick={() => {switchTargetUser(user.userId)}}\n}
+                note right of GraphReportings : Refer graph_lead_tile component sequence diagram
+                GraphReportings -> GraphReportings : return a card component with name and role of user
+            deactivate GraphReportings
+            GraphReportings -> GraphReportings : Add a vertical line after that
+            alt user have reportingsDetails
+                GraphReportings -> GraphReportings : Append a user's reporting deails as cards \nusing **<ReportingUsers ...{props} />**
+                activate GraphReportings #D16587
+                    note right of GraphReportings : props : {\n\tuser = user\n\tonViewAllClicked = Function\n\tonViewBranchingClicked = Function\n}
+                    note right of GraphReportings : Refer reporting_users in graph_reportings component sequence diagram
+                    GraphReportings -> GraphReportings : return a component with multiple card components
+                deactivate GraphReportings
+            else 
+                GraphReportings -> GraphReportings : It connot have any view
+            end
+        end
+        Client <-- GraphReportings : User receives expected view in tree structure
+    end
+deactivate Client
+deactivate GraphReportings
+
+... ...
+... ...
+...~~**Click Functionalities**~~...
+... ...
+
+Client -> GraphReportings : Click on the **date picker**
+activate Client #D3D3D3
+activate GraphReportings #D3D3D3
+    GraphReportings -> GraphReportings : it enables a calender below the date picker as popup
+    Client <-- GraphReportings : user can able to select the date
+deactivate Client
+deactivate GraphReportings
+
+... ...
+
+Client -> GraphReportings : Click on any date in calendar of date picker
+activate Client #D3D3D3
+activate GraphReportings #D3D3D3
+    GraphReportings -> GraphReportings : Update the component with selected date
+    Client <-- GraphReportings : User can view the details for the selected date
+deactivate Client
+deactivate GraphReportings
+
+... ...
+
+Client -> GraphReportings : Click on the **SearchPopover component**
+activate Client #D3D3D3
+activate GraphReportings #D3D3D3
+    Client <-- GraphReportings : User can able to search on the field
+deactivate Client
+deactivate GraphReportings
+
+... ...
+Client -> GraphReportings : Click on the **"View All"** button in GraphUserTile Card
+activate Client #D3D3D3
+activate GraphReportings #D3D3D3
+    GraphReportings -> GraphReportings : Navigate to that user's Home page
+    Client <-- GraphReportings : User can able to search on the field
+deactivate Client
+deactivate GraphReportings
+
+... ...
+Client -> GraphReportings : Click on the **"View Branching"** button in GraphUserTile Card
+activate Client #D3D3D3
+activate GraphReportings #D3D3D3
+    GraphReportings -> GraphReportings : Update the **previousTargetUserId** with **targetUserId** and \nupdate the **targetUserId** with clicked card user's userId\nthen make garphReportingCall, then UI get updated
+    Client <-- GraphReportings : User can able to see the updated branching structure
+deactivate Client
+deactivate GraphReportings
+
+... ...
+Client -> GraphReportings : Click on the **GraphLeadTile** component
+activate Client #D3D3D3
+activate GraphReportings #D3D3D3
+    GraphReportings -> GraphReportings : Update the **previousTargetUserId** with **targetUserId** and \nupdate the **targetUserId** with clicked card user's userId\nthen make garphReportingCall, then UI get updated
+    Client <-- GraphReportings : User can able to see the updated branching structure
+deactivate Client
+deactivate GraphReportings
+
+... ...
+Client -> GraphReportings : Select any form the **list** of users while searching
+activate Client #D3D3D3
+activate GraphReportings #D3D3D3
+    GraphReportings -> GraphReportings : Update the **previousTargetUserId** with **targetUserId** and \nupdate the **targetUserId** with clicked card user's userId\nthen make garphReportingCall, then UI get updated
+    Client <-- GraphReportings : User can able to see the updated branching structure
+deactivate Client
+deactivate GraphReportings
+
+... ...
+... ...
+...~~**Change Functionalities**~~...
+... ...
+
+Client -> GraphReportings : Search on the **SearchPopover component**
+activate Client #D3D3D3
+activate GraphReportings #D3D3D3
+    GraphReportings -> GraphReportings : It filter the options with search text
+    Client <-- GraphReportings : User can able to view the filtered options
+deactivate Client
+deactivate GraphReportings
+
+... ...
+@enduml

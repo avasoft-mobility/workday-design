@@ -1,0 +1,45 @@
+@startuml ReportingUsers
+
+participant Client 
+participant ReportingUsers
+
+Client -> ReportingUsers : Call the <ReportingUsers ...{props} />
+activate Client #D3D3D3
+activate ReportingUsers #D3D3D3
+    note right of ReportingUsers : props : {\n\t\tuser: GraphViewUser;\n\t\tonViewAllClicked: (targetUserId: string) => void;\n\t\tonViewBranchingClicked: (targetUserId: string) => void;\n\t}
+    loop props.user.reportingDetails as user 
+        ReportingUsers -> ReportingUsers : call **<GraphUserTile ...{props} />**
+        activate ReportingUsers #D16587
+            note right of ReportingUsers : props : {userId = user.userId\n\tname = user.name \n\tposition = user.role \n\tattendence =  user.attendance ? user.attendance.attendance_status : "Not Filled"  \n\ttodos = user.todos as GraphTodo[] | [] \n\tonViewAllClicked = { () => { props.onViewAllClicked(user.userId) }} \n\tonViewBranchingClicked = { () => { props.onViewBranchingClicked(user.userId) }}\n\treportings = user.reportings.length\n}
+            note right of ReportingUsers : Refer graph_user_tile component sequence diagram
+            ReportingUsers -> ReportingUsers : Return a component of card with user details and todo details
+        deactivate ReportingUsers
+        ReportingUsers -> ReportingUsers : Bind **{props.user.reportingsDetails.length}** cards of **GraphUserTile component**
+    end
+    Client <-- ReportingUsers : Return expected view of cards
+deactivate Client
+deactivate ReportingUsers
+
+... ...
+... ...
+...~~**Click Functionalities**~~...
+... ...
+Client -> ReportingUsers : Click on the **"View all"** button 
+activate Client #D3D3D3
+activate ReportingUsers #D3D3D3
+    ReportingUsers -> ReportingUsers : Navigate to the Home page of Reporting
+    Client <-- ReportingUsers : User can view the Home page of the their Reporting which Clicked
+deactivate Client
+deactivate ReportingUsers
+
+... ...
+Client -> ReportingUsers : Click on the **"View branching"** button
+activate Client #D3D3D3
+activate ReportingUsers #D3D3D3
+    ReportingUsers -> ReportingUsers : It triggers the onViewBranchingClicked() method of parent with userId
+    Client <-- ReportingUsers : It trigger the onViewBranchingClicked() method in parent
+deactivate Client
+deactivate ReportingUsers
+
+
+@enduml

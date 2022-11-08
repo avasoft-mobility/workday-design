@@ -1,0 +1,17 @@
+@startuml GraphReportings Class
+
+class GraphReportings {
+    onChangeDate(moment, string) \t:\tvoid
+    ..
+    switchTargetUser(string) \t\t\t:\tvoid
+    ..
+    targetUserId  \t\t\t\t\t:\tstring
+    ..
+    previousTargetUserId \t\t\t:\tstring
+    ..
+    selectedDate  \t\t\t\t\t:\tstring
+    ..
+    VerticalLine \t\t\t\t\t:\tJSX.element
+}
+
+@enduml
