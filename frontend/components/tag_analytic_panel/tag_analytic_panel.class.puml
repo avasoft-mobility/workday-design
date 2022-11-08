@@ -1,0 +1,19 @@
+@startuml tag analytics panel class diagram
+
+class TagsAnalyticPanel {
+  onSelectDates() \t\t\t\t\t\t : \t\t Void
+  ..
+  onSubmit() \t\t\t\t\t\t\t : \t\t Void
+  ..
+  onTapViewCalender() \t\t\t\t\t : \t\t Void
+  ..
+  isVisibleLoading \t\t\t\t\t\t : \t\t boolean
+  ..
+  isVisibleAnalytics \t\t\t\t\t\t : \t\t boolean
+  ..
+  filterdDates \t\t\t\t\t\t\t : \t\t string[]
+  ..
+  tagAnalytics \t\t\t\t\t\t\t : \t\t MultipleTagAnalysType
+}
+
+@enduml

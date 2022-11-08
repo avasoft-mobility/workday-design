@@ -1,0 +1,116 @@
+@startuml tags_analytic_panel
+participant Client
+participant TagsAnalyticPanel
+participant usersService.ts
+participant Backend
+
+Client -> TagsAnalyticPanel : call the component in any component with **<ManageTagsPanel {...props} />**
+activate Client #D3D3D3
+    activate TagsAnalyticPanel #D3D3D3
+        note left of TagsAnalyticPanel : props: {\n onPrevious: Function;\ntags: TagType[];\nonTapViewCalender: (dates: string[], tagIds: string[]) => void;\nuserId: string; \n}
+        TagsAnalyticPanel -> TagsAnalyticPanel : Implement **LeftOutlined Icon** button\n from antd design
+        alt case : props.tags.length is not equals to 0
+            loop map the props.tags 
+                TagsAnalyticPanel -> TagsAnalyticPanel : implement **Tag** from antd and\n assign the each **tagName** for a tag
+            end
+        else
+            TagsAnalyticPanel -> TagsAnalyticPanel : return **null**
+        end
+        TagsAnalyticPanel -> TagsAnalyticPanel : Implement **DatePicker** from antd
+        TagsAnalyticPanel -> TagsAnalyticPanel : Implement a **Button** from antd called **Get Report**
+        alt case: tagAnalytics is defined
+            TagsAnalyticPanel -> TagsAnalyticPanel : Implement **AnalyticCardPanel** component\n(refer analytic_card_panel for class and sequence diagram)
+            TagsAnalyticPanel -> TagsAnalyticPanel : Implement a text button called **View in Calender**
+        else
+            TagsAnalyticPanel -> TagsAnalyticPanel : show description as **No todo found**
+        end
+        
+        Client <-- TagsAnalyticPanel : user will receive the expected view
+    deactivate TagsAnalyticPanel
+deactivate Client
+
+... ...
+... ...
+...~~**onChange Functionalities**~~ ...
+... ...
+... ...
+
+Client -> TagsAnalyticPanel : When the user onChanges the dates
+activate Client #D3D3D3
+    activate TagsAnalyticPanel #D3D3D3
+        TagsAnalyticPanel -> TagsAnalyticPanel : **onSelectDates()** method will trigger
+        TagsAnalyticPanel -> TagsAnalyticPanel : onSelectDates(date: RangeValue<Moment>,\ndateString: [string, string])
+        TagsAnalyticPanel -> TagsAnalyticPanel : update **filterdDates** variable values to method prop's **dateString**
+        Client <-- TagsAnalyticPanel : selected dates will be updated to filteredDates useState variable.
+
+    deactivate TagsAnalyticPanel
+deactivate Client
+
+... ...
+... ...
+...~~**onClick Functionalities**~~ ...
+... ...
+... ...
+
+Client -> TagsAnalyticPanel : When the user onClick's **LeftOutlined button**
+activate Client #D3D3D3
+    activate TagsAnalyticPanel #D3D3D3
+        TagsAnalyticPanel -> TagsAnalyticPanel : **onPrevious()** method in the parent will be trigger.
+        Client <-- TagsAnalyticPanel : trigger **onPrevious()** method in the parent.
+    deactivate TagsAnalyticPanel
+deactivate Client
+
+... ...
+... ...
+
+Client -> TagsAnalyticPanel : When the user onClick's **Get Report button**
+activate Client #D3D3D3
+    activate TagsAnalyticPanel #D3D3D3
+        TagsAnalyticPanel -> TagsAnalyticPanel : **onSubmit()** method will trigger
+        TagsAnalyticPanel -> TagsAnalyticPanel : **onSubmit()**
+        TagsAnalyticPanel -> TagsAnalyticPanel : update the **isVisibleLoading** variable values to **true**.
+        loop map the props.tags
+            TagsAnalyticPanel -> TagsAnalyticPanel : loop the tags and save the **tag.id**\n in a array variable called **tagIds**
+        end
+        TagsAnalyticPanel -> usersService.ts :getTagAnalytic(tagIds,filterdDates[0],filterdDates[1],props.userId)
+        activate usersService.ts #D3D3D3
+            usersService.ts -> Backend : `/tags/analyse?fromDate=${fromDate.toISOString()}&toDate=${toDate.toISOString()}&userId=${userId}`,\n{\ntagIds: tagIds,\n}
+            activate Backend #D3D3D3
+                usersService.ts <-- Backend :AxiosResponse
+            deactivate Backend
+            usersService.ts -> usersService.ts : get the return response and\n save that in a variable called **tagAnalytics**
+            TagsAnalyticPanel <-- usersService.ts : any
+        deactivate usersService.ts
+        TagsAnalyticPanel -> TagsAnalyticPanel : get the return response and\n save that in a variable called **data**
+        alt case : data has **no task found**
+            TagsAnalyticPanel -> TagsAnalyticPanel : Update **tagAnalytics** variable values to **undefined**
+        else
+            TagsAnalyticPanel -> TagsAnalyticPanel : Update **tagAnalytics** variable values to **data**
+        end
+        TagsAnalyticPanel -> TagsAnalyticPanel : update the **isVisibleLoading** variable to **false**
+        TagsAnalyticPanel -> TagsAnalyticPanel : update the **isVisibleAnalytics** variable to **true**
+        Client <-- TagsAnalyticPanel : Todos respective to the selected tag and date will return.
+    deactivate TagsAnalyticPanel
+deactivate Client
+
+... ...
+... ...
+
+Client -> TagsAnalyticPanel : When the user onClick's **View in Calender**
+activate Client #D3D3D3
+    activate TagsAnalyticPanel #D3D3D3
+        TagsAnalyticPanel -> TagsAnalyticPanel : **onTapViewCalender()** method will trigger
+        TagsAnalyticPanel -> TagsAnalyticPanel : **onTapViewCalender(tagAnalytics)**
+        TagsAnalyticPanel -> TagsAnalyticPanel : Create a variable called **dates** in the string[] format and\n assign the **empty[]** as a initial value
+        TagsAnalyticPanel -> TagsAnalyticPanel : Create a variable called **todoTds** in the string[] format and\n assign the **empty[]** as a initial value
+        loop map **tagAnalytics** 
+            TagsAnalyticPanel -> TagsAnalyticPanel : loop the tagAnalytics and\n again loop every todo in a single tagAnalytics\n and push each **todos date** in the **dates** variable\n in the **"YYYY-MM-DD"** format and\n also push each todo id in the **todoIds** variable.
+        end
+        TagsAnalyticPanel -> TagsAnalyticPanel : filter the **dates** and removes the duplicates\n and save the dates in a variable called **dateArray**.
+        TagsAnalyticPanel -> TagsAnalyticPanel : filter the **todoIds** and removes the duplicates\n and save the dates in a variable called **todoArray**.
+        TagsAnalyticPanel -> TagsAnalyticPanel : call the **onTapViewCalender** method in the parent\n with props as **dateArray**, **todoArray**.
+        Client <-- TagsAnalyticPanel : **onTapViewCalender** method in the parent with props as **dateArray**, **todoArray**.
+    deactivate TagsAnalyticPanel
+deactivate Client
+
+@enduml
