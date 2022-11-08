@@ -1,0 +1,37 @@
+@startuml BasicChip class diagram
+
+class BreadCrumbs {
+  getRole() \t\t\t\t\t\t\t : \t\t Void
+  ..
+  getStepperState() \t\t\t\t\t : \t\t 1 | 2 | 3 | undefined
+  ..
+  getAcknowledgeStepStatus() \t\t\t : \t\t "Acknowledged" | "Rejected" | "Waiting" | undefined
+  ..
+  getAcceptedStepStatus() \t\t\t : \t\t "Rejected" | "Waiting" | "Accepted" | undefined
+  ..
+  getAcknowledgeStepDescription() \t\t : \t\t string | undefined
+  ..
+  getAcceptedgeStepDescription() \t\t : \t\t string | undefined
+  ..
+  getStatusOfStep() \t\t\t\t\t : \t\t  "error" | "finish" | "process"
+  ..
+  rejectMigrationRequest() \t\t\t : \t\t Void
+  ..
+  acknowledgeMigrationRequest() \t\t : \t\t Void
+  ..
+  accepetMigrationRequest() \t\t\t : \t\t Void
+  ..
+  buttonComponent() \t\t\t\t\t : \t\t JSX.Element
+  ..
+  getButtonComponent() \t\t\t\t : \t\t JSX.Element | undefined
+  ..
+  reportees  \t\t\t\t\t\t : \t\t User[]
+  ..
+  migrationRequest \t\t\t\t\t : \t\t Migration
+  ..
+  currentUser \t\t\t\t\t\t : \t\t User
+  ..
+  role \t\t\t\t\t\t\t\t : \t\t string
+}
+
+@enduml

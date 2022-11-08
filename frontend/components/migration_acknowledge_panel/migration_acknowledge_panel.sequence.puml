@@ -1,0 +1,297 @@
+@startuml home page sequence diagram
+participant Client
+participant MigrationAcknowledgePanel
+participant usersService.ts
+participant Backend
+
+Client -> MigrationAcknowledgePanel : call the component in any component with **<MigrationAcknowledgePanel/>**
+activate Client #D3D3D3
+    activate MigrationAcknowledgePanel #D3D3D3
+        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : get the loggedIn migrationId from the url\n and save that in a variable called **migrationId**.
+        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : when the page gets mounted or updated\nbelow api call will trigger.
+        MigrationAcknowledgePanel -> usersService.ts : getUserById(currentUserInfo.userId)
+            activate usersService.ts #D3D3D3
+                usersService.ts -> Backend :(GET) `/users/${userId}`
+                activate Backend #D3D3D3
+                    usersService.ts <-- Backend : AxiosResponse
+                deactivate Backend
+                usersService.ts -> usersService.ts : get the return response\n and save that in a variable\n called **result**.
+                MigrationAcknowledgePanel <-- usersService.ts : **result**
+            deactivate usersService.ts
+        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : get the return response and\n save that in a variable called **response**.
+        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : save the return response promise in a variable\n called **currentUserDetails**.
+        alt case : when the response is failure
+            MigrationAcknowledgePanel -> MigrationAcknowledgePanel : update **currentUser** variable to **undefined**
+        end
+        alt case : when the response is success
+            MigrationAcknowledgePanel -> MigrationAcknowledgePanel :  update **currentUser** variable to **response.data**
+        end
+
+        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : when the page gets mounted or updated\nbelow api call will trigger.
+        MigrationAcknowledgePanel -> usersService.ts : getMigrationDetails(migrationId,currentUserInfo.userId)
+            activate usersService.ts #D3D3D3
+                usersService.ts -> Backend :(GET) `/users/${userId}/reportee-migration/${migrationId}`
+                activate Backend #D3D3D3
+                    usersService.ts <-- Backend : AxiosResponse
+                deactivate Backend
+                usersService.ts -> usersService.ts : get the return response\n and save that in a variable\n called **response**.
+                MigrationAcknowledgePanel <-- usersService.ts : **response**
+            deactivate usersService.ts
+        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : get the return response and\n save that in a variable called **response**.
+        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : save the return response promise in a variable\n called **migrationinfo**.
+        alt case : when the response is failure
+            MigrationAcknowledgePanel -> MigrationAcknowledgePanel : update **migrationRequest** variable values to **undefined**
+            MigrationAcknowledgePanel -> MigrationAcknowledgePanel : update **reportees** variable values to **empty[]**
+        end
+        alt case : when the response is success
+            MigrationAcknowledgePanel -> MigrationAcknowledgePanel :  update **migrationRequest** variable values to **response.date**
+            MigrationAcknowledgePanel -> MigrationAcknowledgePanel :  update **reportees** variable values to **response.data.reportees**
+        end
+        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : when the Components gets mounted or updated or \n when the **migrationRequest**, **currentUser**,\n **migrationUpdateMutation.isSuccess** value changes\n call the **getRole()** method
+        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : getRole(migrationRequest!, currentUser)
+        activate MigrationAcknowledgePanel #D16587
+            alt case: migrationDetails is defined && user is defined
+                alt case : user is not a admin && user.reportings.includes(migrationDetails.toUser.userId)
+                    MigrationAcknowledgePanel -> MigrationAcknowledgePanel : update role as **"UnAuthorised"**.
+                    MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return
+                end
+                alt case : user.userId is equals migrationDetails.toUser.userId
+                    MigrationAcknowledgePanel -> MigrationAcknowledgePanel : update **role** as **"read"**.
+                    MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return
+                end
+                alt case: user.reportings.includes(migrationDetails.toUser.userId)
+                    alt case: user is admin && migrationDetails.status is equals to **"requested"**
+                        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : update **role** as **"Manager"**.
+                        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return
+                    end
+                    alt case : user is not a admin
+                        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : update **role** as **"Manager"**.
+                        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return
+                    end
+                    MigrationAcknowledgePanel -> MigrationAcknowledgePanel : update **role** as **"Admin"**.
+                    MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return
+                end
+                MigrationAcknowledgePanel -> MigrationAcknowledgePanel : update **role** as **"Admin"**.
+            end
+        deactivate MigrationAcknowledgePanel
+        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : call the **getStepperState()** method
+        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : **getStepperState()**
+        activate MigrationAcknowledgePanel #D16587
+            alt case : migrationRequest is not undefined
+                alt case: migrationRequest.status is equals to "requested"
+                    MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return 1
+                end
+                alt case: migrationRequest.status is equals to "acknowledged"
+                    MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return 2
+                end
+                alt case: migrationRequest.status is equals to "rejected"
+                    alt case: migrationRequest.acknowledgedBy is defined
+                        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return 2
+                    end
+                    MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return 1
+                end
+                alt case : migrationRequest.status is equals to "accepted"
+                    MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return 3
+                end
+                MigrationAcknowledgePanel -> MigrationAcknowledgePanel: return
+            end
+            MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return
+        deactivate MigrationAcknowledgePanel
+        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : call the **getStatusOfStep()** method
+        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : **getStatusOfStep()**
+        activate MigrationAcknowledgePanel #D16587
+            alt case: migrationRequest is not equals to undefined
+                alt case: migrationRequest.status === "rejected"
+                    MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return error
+                end
+                alt case: migrationRequest.status === "accepted"
+                    MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return finish
+                end
+                MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return process
+            end
+            MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return process
+        deactivate MigrationAcknowledgePanel
+
+        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : call the **getAcknowledgeStepStatus()** method
+        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : **getAcknowledgeStepStatus()**
+        activate MigrationAcknowledgePanel #D16587
+            alt case : migrationRequest is not undefined
+                alt case : migrationRequest.status is equals to "acknowledged" ||\n migrationRequest.status is equals to "accepted" || \n migrationRequest.acknowledgedBy is defined
+                    MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return "Acknowledged"
+                end
+                alt case: migrationRequest.status is equals to "rejected"
+                    MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return "Rejected"
+                end
+                MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return "Waiting"
+            end
+        deactivate MigrationAcknowledgePanel
+
+
+        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : call the **getAcknowledgeStepDescription()** method
+        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : **getAcknowledgeStepDescription()**
+        activate MigrationAcknowledgePanel #D16587
+            alt case : migrationRequest is not undefined
+                alt case : migrationRequest.status is equals to "acknowledged" ||\n migrationRequest.status is equals to "accepted" || \n migrationRequest.acknowledgedBy is defined
+                    MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return `${migrationRequest?.acknowledgedBy} acknowledged`
+                end
+                alt case: migrationRequest.status is equals to "rejected"
+                    MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return `${migrationRequest?.rejectedBy} rejected`
+                end
+                MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return "Waiting for Acknowledgement"
+            end
+        deactivate MigrationAcknowledgePanel
+
+
+        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : call the **getAcceptedStepStatus()** method
+        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : **getAcceptedStepStatus()**
+        activate MigrationAcknowledgePanel #D16587
+            alt case : migrationRequest is not undefined
+                alt case : migrationRequest.status is equals to "accepted"
+                    MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return "Accepted"
+                end
+                alt case: migrationRequest.status is equals to "rejected" && migrationRequest.acknowledgedBy is defined
+                    MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return "Rejected"
+                end
+                MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return "Waiting"
+            end
+        deactivate MigrationAcknowledgePanel
+
+
+        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : call the **getAcceptedgeStepDescription()** method
+        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : **getAcceptedgeStepDescription()**
+        activate MigrationAcknowledgePanel #D16587
+            alt case : migrationRequest is not undefined
+                alt case : migrationRequest.status is equals to "accepted"
+                    MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return `${migrationRequest?.acceptedBy} accepted`
+                end
+                alt case: migrationRequest.status is equals to "rejected" && migrationRequest.acknowledgedBy is defined
+                    MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return `${migrationRequest?.rejectedBy} rejected`
+                end
+                MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return "Waiting for admin approval"
+            end
+        deactivate MigrationAcknowledgePanel
+
+        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : call the **getButtonComponent()** method
+        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : **getButtonComponent()**
+        activate MigrationAcknowledgePanel #D16587
+            alt case : role is equals to "Read"
+                MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return empty div
+            end
+            alt case: "Manager"
+                alt case : migrationRequest.status is equals to "requested".
+                    MigrationAcknowledgePanel -> MigrationAcknowledgePanel : call the **buttonComponent("Acknowledge")**
+                end
+                alt case : migrationRequest.status is equals to "acknowledged"
+                    alt case: currentUser is Admin
+                        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : call the **buttonComponent("Accept")**
+                    end
+                    MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return **Alert message** of **Waiting for Admin approval**\n which is of type **warning**
+                end
+                alt case: migrationRequest.status is equals to "accepted"
+                    MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return **Alert message** of **`${migrationRequest.acceptedBy} has accepted the Request`**\n which is of type **info**
+                end
+                MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return **Alert message** of **`${migrationRequest?.rejectedBy} has rejected the Request`**\n which is of type **error**
+            end
+            alt case: role is equals to "Admin"
+                alt case : migrationRequest.status is equals to "acknowledged"
+                    MigrationAcknowledgePanel -> MigrationAcknowledgePanel : call the buttonComponent("Accept")
+                end
+                alt case : migrationRequest?.status is equals to "requested"
+                    MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return **Alert message** of **`Wait for the approval of Manager`**\n which is of type **warning**
+                end
+                alt case : migrationRequest?.status is equals to "rejected"
+                    MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return **Alert message** of **`${migrationRequest?.rejectedBy} has rejected the Request`**\n which is of type **error**
+                end
+                MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return **Alert message** of **``${migrationRequest?.acceptedBy} has accepted the Request``**\n which is of type **success**
+            end
+        deactivate MigrationAcknowledgePanel
+        alt case : currentUserDetails.isFetching || migrationinfo.isFetching
+            MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return loader spin
+        end
+        alt case: currentUserDetails.isError ||\n migrationinfo.isError ||\n migrationUpdateMutation.isError
+            MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return empty description of "Something went wrong please try after some time"
+        end
+        alt case: role is equals to "UnAuthorised"
+            MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return empty description of "You are not Authorized to view this"
+        end
+        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : bind the **Table** from antD and pass\n **reportees** variable as a **dataSource**
+        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : bind the **Steps** from antD and\n call the **getStepperState()**,**getStatusOfStep()**\n **getAcknowledgeStepStatus()**,**getAcknowledgeStepDescription()**,\n **getAcceptedStepStatus()**, **getAcceptedgeStepDescription()**\n fot step datas.
+        Client <-- MigrationAcknowledgePanel : User will receive the expected view.
+    deactivate MigrationAcknowledgePanel
+deactivate Client
+
+... ...
+... ...
+...~~**Common methods**~~ ...
+... ...
+... ...
+
+Client -> MigrationAcknowledgePanel : **migrationUpdateMutation.mutate(decision : string)**
+activate Client #D3D3D3
+    activate MigrationAcknowledgePanel #D3D3D3
+        MigrationAcknowledgePanel -> usersService.ts : updateMigration(currentUserInfo.userId, migrationId!, decision)
+            activate usersService.ts #D3D3D3
+                usersService.ts -> Backend :(GET) `/users/${userId}/reportee-migration/${migrationId}/${status}`
+                activate Backend #D3D3D3
+                    usersService.ts <-- Backend : AxiosResponse
+                deactivate Backend
+                usersService.ts -> usersService.ts : get the return response\n and save that in a variable\n called **response**.
+                MigrationAcknowledgePanel <-- usersService.ts : **response**
+            deactivate usersService.ts
+        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : invalidate the **["migrationDetails", migrationId]** useQuery api.
+        Client <-- MigrationAcknowledgePanel : current migration status will be updated.
+    deactivate MigrationAcknowledgePanel
+deactivate Client
+
+... ...
+... ...
+
+Client -> MigrationAcknowledgePanel : **buttonComponent(decisionText : string)**
+activate Client #D3D3D3
+    activate MigrationAcknowledgePanel #D3D3D3
+        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : returns the reject button and\n ${decisionText} button
+        Client <-- MigrationAcknowledgePanel : component will be displayed to the user.
+    deactivate MigrationAcknowledgePanel
+deactivate Client
+
+
+... ...
+... ...
+...~~**onClick Functionalities**~~ ...
+... ...
+... ...
+
+Client -> MigrationAcknowledgePanel : If user onclicks the **reject** button
+activate Client #D3D3D3
+    activate MigrationAcknowledgePanel #D3D3D3
+        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : just trigger the **migrationUpdateMutation** useMutation with props as **"reject"**\n which is mentioned in above common methods
+        Client <-- MigrationAcknowledgePanel : migrationUpdateMutation will trigger
+    deactivate MigrationAcknowledgePanel
+deactivate Client
+
+... ...
+... ...
+
+Client -> MigrationAcknowledgePanel : If user onclicks the **Acknowledge** button
+activate Client #D3D3D3
+    activate MigrationAcknowledgePanel #D3D3D3
+        MigrationAcknowledgePanel -> MigrationAcknowledgePanel  : **acknowledgeMigrationRequest()** 
+        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : just trigger the **migrationUpdateMutation** useMutation with props as **"acknowledge"**\n which is mentioned in above common methods
+        Client <-- MigrationAcknowledgePanel : migrationUpdateMutation will trigger
+    deactivate MigrationAcknowledgePanel
+deactivate Client
+
+... ...
+... ...
+
+Client -> MigrationAcknowledgePanel : If user onclicks the **Accept** button
+activate Client #D3D3D3
+    activate MigrationAcknowledgePanel #D3D3D3
+        MigrationAcknowledgePanel -> MigrationAcknowledgePanel  : **accepetMigrationRequest()** 
+        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : just trigger the **migrationUpdateMutation** useMutation with props as **"accept"**\n which is mentioned in above common methods
+        Client <-- MigrationAcknowledgePanel : migrationUpdateMutation will trigger
+    deactivate MigrationAcknowledgePanel
+deactivate Client
+
+
+@enduml
