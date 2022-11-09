@@ -1,50 +1,50 @@
 @startuml DayViewPanel
 
 class DayViewPanel {
-    days: \t\t\t\t\t string[]
+    days\t\t\t\t\t\t : \tstring[]
     ..
-    accounts: \t\t\t\t useMsal instance
+    accounts\t\t\t\t\t : \tuseMsal instance
     ..
-    isLoading: \t\t\t\t boolean
+    isLoading\t\t\t\t\t : \tboolean
     ..
-    submittingChanges: \t\t boolean
+    submittingChanges\t\t\t : \tboolean
     ..
-    childrenDrawerMode: \t\t string
+    childrenDrawerMode\t\t : \tstring
     ..
-    currentFocusingTodo: \t\t TodoItem
+    currentFocusingTodo\t\t : \tTodoItem
     ..
-    highlightedTaskIds: \t\t\t string[]
+    highlightedTaskIds\t\t\t :  \tstring[]
     ..
-    attendanceStatus: \t\t\t string
+    attendanceStatus\t\t\t :  \tstring
     ..
-    nav: \t\t\t\t\t\t useNavigate instance
+    nav\t\t\t\t\t\t :  \tuseNavigate instance
     ..
-    getDayAttendance(): \t\t void
+    getDayAttendance()\t\t\t : \tvoid
     ..
-    onClose(): \t\t\t\t void
+    onClose()\t\t\t\t\t : \tvoid
     ..
-    showChildrenDrawer(): \t\t void
+    showChildrenDrawer()\t\t : \tvoid
     ..
-    onChildrenDrawerClose(): \t void
+    onChildrenDrawerClose()\t : \tvoid
     ..
-    getDayNameFromDate(): \t string
+    getDayNameFromDate()\t\t : \tstring
     ..
-    addNewTodo(): \t\t\t void
+    addNewTodo()\t\t\t\t : \tvoid
     ..
-    deleteTodo(): \t\t\t\t void
+    deleteTodo()\t\t\t\t : \tvoid
     ..
-    editTodo(): \t\t\t\t void
+    editTodo()\t\t\t\t : \tvoid
     ..
-    viewTodo(): \t\t\t\t void
+    viewTodo()\t\t\t\t : \tvoid
     ..
-    editExistingTodo(): \t\t\t void
+    editExistingTodo()\t\t\t : \tvoid
     ..
-    getWorkHours(): \t\t\t { etaHours: number, ataHours: number }
+    getWorkHours()\t\t\t : \t{ etaHours: number, ataHours: number }
     ..
-    antIcon: \t\t\t\t\t component
+    antIcon\t\t\t\t\t : \tcomponent
     ..
-    showAddNewTaskPanel(): \t void
+    showAddNewTaskPanel()\t : \tvoid
     ..
-    getComponent(): \t\t\t AddTodoPanel or EditTodoPanel component or null
+    getComponent()\t\t\t : \tAddTodoPanel or EditTodoPanel component or null
 }
 @enduml
