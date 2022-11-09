@@ -6,7 +6,7 @@ Client -> Text : call the component **<Text {props}/>**
 activate Client #D3D3D3
 activate Text #D3D3D3
 
-note right of Client:**Props:** \n\tvalue: string, \n\ttype: {\n\t\t"heading" \n\t\t|| "small" \n\t\t|| "title1" \n\t\t|| "title2" \n\t\t|| "title3" \n\t\t|| "titleX" \n\t\t|| "regular1" \n\t\t|| "regular2" \n\t\t|| "regular3" \n\t\t|| "regular4" \n\t}, \n\tcolor: string
+note right of Client:**Props:** \n\tvalue\t : \tstring \n\ttype\t : \t{\n\t\t\t\t"heading" \n\t\t\t\t|| "small" \n\t\t\t\t|| "title1" \n\t\t\t\t|| "title2" \n\t\t\t\t|| "title3" \n\t\t\t\t|| "titleX" \n\t\t\t\t|| "regular1" \n\t\t\t\t|| "regular2" \n\t\t\t\t|| "regular3" \n\t\t\t\t|| "regular4" \n\t\t\t} \n\tcolor\t : \tstring
 Text -> Text: When the component did mount or Text type \nvalue changed call the **setStyle** method and \npass the values which should match the type of \nthe text and set the response value of the \nmethod to the variable **textStyle**
 note right of Text: Refer **setStyle** method below in **Functions**
 
