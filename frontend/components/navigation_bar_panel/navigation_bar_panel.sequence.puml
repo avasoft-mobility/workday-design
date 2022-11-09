@@ -19,7 +19,7 @@ activate NavigationBarPanel #D3D3D3
     alt user details call successfull
         NavigationBarPanel -> NavigationBarPanel : Change profile icon with user's image using currentUserInfo state value
     else 
-        NavigationBarPanel -> NavigationBarPanel : cannot change the rofile icon
+        NavigationBarPanel -> NavigationBarPanel : cannot change the Profile icon
     end
     NavigationBarPanel -> NavigationBarPanel : Bind the **renderHowDoiMenu**  
     NavigationBarPanel -> NavigationBarPanel : Bind the **renderEmployeeMenu**
