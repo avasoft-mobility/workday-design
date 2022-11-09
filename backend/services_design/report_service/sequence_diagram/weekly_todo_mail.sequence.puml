@@ -5,7 +5,7 @@ participant App.tsx
 participant reports.controller.ts
 participant ReportGenerator.ts
 
-Client -> App.tsx : "/reports/weekly-todo/mail" in GET Method
+Client -> App.tsx : **"/reports/weekly-todo/mail"** in GET Method
 activate Client #D3D3D3
 activate App.tsx #D3D3D3
 
@@ -25,9 +25,8 @@ reports.controller.ts -> ReportGenerator.ts : **getTwoWeekDateInterval()**
 activate ReportGenerator.ts #D3D3D3
     ReportGenerator.ts -> ReportGenerator.ts : decalre a variable **previousWeekMonday** and \n**getPreviousWeekMonday() with (date** as current date)
     activate ReportGenerator.ts #D16587
-        alt #0000001a date is not sunday
-            ReportGenerator.ts -> ReportGenerator.ts : set **date** as current week monday
-            ReportGenerator.ts -> ReportGenerator.ts : change the **date** to previous monday by substracting date with 7
+        alt #0000001a \tdate is not sunday
+            ReportGenerator.ts -> ReportGenerator.ts : change the **date** to previous week monday
             ReportGenerator.ts -> ReportGenerator.ts : return **date**
         else #FFFFFF
             ReportGenerator.ts -> ReportGenerator.ts : set **date** as current week monday
