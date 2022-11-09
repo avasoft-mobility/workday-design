@@ -6,28 +6,41 @@ Client -> GraphUserTile : call the component **<GraphUserTile {props}/>**
 activate Client #D3D3D3
 activate GraphUserTile #D3D3D3
 
-note left of GraphUserTile:**Props:** \n\tuserId: string, \n\tname: string, \n\tposition: string, \n\tattendence: string, \n\ttodos: GraphTodo[] | [], \n\tonViewAllClicked: Function, \n\tonViewBranchingClicked: Function, \n\treportings: number
+note left of GraphUserTile:**Props:** \n\tuserId\t\t\t\t : \tstring \n\tname\t\t\t\t : \tstring \n\tposition\t\t\t\t : \tstring \n\tattendence\t\t\t : \tstring \n\ttodos\t\t\t\t : \tGraphTodo[] | [] \n\tonViewAllClicked\t\t : \tFunction \n\tonViewBranchingClicked\t : \tFunction \n\treportings\t\t\t\t : \tnumber
 
 GraphUserTile -> GraphUserTile : Bind **User Profile Picture** by \nusing the component **ImageAvatar** \nand the **userId** from the props
-note right of GraphUserTile : Refer image_avatar component sequence diagram in component/image_avatar folder
+note right of GraphUserTile : Refer **ImageAvatar** component sequence \ndiagram in component/image_avatar folder
+
 GraphUserTile -> GraphUserTile : Bind **User Name** by using \nthe **name** from props
 GraphUserTile -> GraphUserTile : Bind **Role** by using \nthe **position** from props
 GraphUserTile -> GraphUserTile : Bind user attendance status \n**icon** by calling the method \n**getWorkingStatusIcon()**
-note right of GraphUserTile : Refer the method below
+note right of GraphUserTile : Refer **getWorkingStatusIcon** method in Functions
 
-alt When todos length is greater than 0
-    GraphUserTile -> GraphUserTile : Loop and bind the **Todos** \nby using the **GraphTodoListPanel** \ncomponent
-    note right of GraphUserTile : Refer graph_todo_list_panel component sequence diagram in component/graph_todo_list_panel folder
-end
+    alt If todos length is greater than 0
+        GraphUserTile -> GraphUserTile : Loop and bind the **Todos** \nby using the **GraphTodoListPanel** \ncomponent
+        note right of GraphUserTile : Refer **graphTodoListPanel** component sequence \ndiagram in component/graph_todo_list_panel folder
+    end
 
-alt When todos length is not greater than 0
-    GraphUserTile -> GraphUserTile : Bind **No Todos Found**
-end
+    alt If todos length is not greater than 0
+        GraphUserTile -> GraphUserTile : Bind **No Todos Found**
+    end
 
-GraphUserTile -> GraphUserTile : Bind **View All** and **View Reportings** \nbuttons when the users has \nreportees. When the user has no \nreportees then bind only **View All** \nbutton. \n**Note:** Use **reportings** from props \nto know whether user has reportings or not\n
-GraphUserTile -> GraphUserTile : When **View All** clicked trigger \n**onViewAllClicked()** function from props
-GraphUserTile -> GraphUserTile : When **View Reportings** clicked trigger \n**onViewBranchingClicked()** function from \nprops
+    alt If the users has reportees
+        GraphUserTile -> GraphUserTile : Bind **View All** and **View Reportings** \nbuttons
+    end
 
+    alt If the users has no reportees
+        GraphUserTile -> GraphUserTile : Bind only **View All** button
+    end
+    note right of GraphUserTile: Use **reportings** from props \nto know whether user has reportings or not
+
+    alt If the user clicked the \nView All button
+        GraphUserTile -> GraphUserTile : call **onViewAllClicked()** function from props \nto show all the todos
+    end
+
+    alt If the user clicked the \nView Reportings button
+        GraphUserTile -> GraphUserTile : call **onViewBranchingClicked()** function from \nprops to show the reportees
+    end
 
 Client <-- GraphUserTile : \treturn the appropriate **view**
 deactivate GraphUserTile
@@ -35,7 +48,7 @@ deactivate Client
 
 ... ...
 ... ...
-...~~**Click functionalities**~~...
+...~~**Functions**~~...
 ... ...
 
 Client -> GraphUserTile: call **getWorkingStatusIcon**
