@@ -1,9 +1,9 @@
 @startuml UnAuthorizedUserPanel
 
 class UnAuthorizedUserPanel {
-    nav: \t\t\t\t navigation
+    nav\t\t\t\t : \tnavigation
     ..
-    gotoDashboard(): \t void
+    gotoDashboard()\t : \tvoid
     ..
 }
 @enduml

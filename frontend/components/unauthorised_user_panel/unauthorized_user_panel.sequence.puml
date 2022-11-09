@@ -8,7 +8,9 @@ activate UnAuthorizedUserPanel #D3D3D3
 
 UnAuthorizedUserPanel -> UnAuthorizedUserPanel : Bind **Warning** text
 UnAuthorizedUserPanel -> UnAuthorizedUserPanel : Bind **You are not Authorized to view this.** text
-UnAuthorizedUserPanel -> UnAuthorizedUserPanel : Bind **Go to Dashboard** Button \n**Refer:** Button **onClick function** below
+UnAuthorizedUserPanel -> UnAuthorizedUserPanel : Bind **Go to Dashboard** Button
+
+note right of UnAuthorizedUserPanel: Refer button **onClick** function below in Click Functionalities
 
 Client <-- UnAuthorizedUserPanel : \treturn the **view**
 deactivate UnAuthorizedUserPanel
@@ -16,14 +18,16 @@ deactivate Client
 
 ... ...
 ... ...
-note over Client: Click function
+... ...
+...~~**Click Functionalities**~~...
+... ...
 ... ...
 
-Client -> UnAuthorizedUserPanel: **Go to Dashboard** Button \n**onClick()** function pressed
+Client -> UnAuthorizedUserPanel: **Go to Dashboard** Button \npressed
 activate Client #D3D3D3
 activate UnAuthorizedUserPanel #D3D3D3
 UnAuthorizedUserPanel -> UnAuthorizedUserPanel : Navigate the user to **Dashboard** page
-Client <-- UnAuthorizedUserPanel : \treturn the **User** to the Dashboard page
+Client <-- UnAuthorizedUserPanel : \tNavigate the **user** to the dashboard page
 deactivate UnAuthorizedUserPanel
 
 deactivate Client
