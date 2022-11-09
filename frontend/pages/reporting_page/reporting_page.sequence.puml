@@ -50,19 +50,19 @@ activate ReportingPage #D3D3D3
         deactivate ReportingPage
     deactivate ReportingPage
     ReportingPage -> ReportingPage : Bind BreadCrumbs component in top left of the page
-    note right of ReportingPage : Refer the **<BreadCrumbs ...{props} />** in bread_crumbs
+    note right of ReportingPage : Refer the **<BreadCrumbs ...{props} />** in bread_crumbs folder
     ReportingPage -> ReportingPage : Bind three DashboardCard component below the breadcrumbs
-    note right of ReportingPage : Refer the **<DashboardCard ...{props} />** in dashboard_card
+    note right of ReportingPage : Refer the **<DashboardCard ...{props} />** in dashboard_card folder
     ReportingPage -> ReportingPage : Bind a Search Component if activeTab.isGraphActive is false
-    note right of ReportingPage : Refer the **<Search ...{props} />** in search
+    note right of ReportingPage : Refer the **<Search ...{props} />** in search folder
     ReportingPage -> ReportingPage : Bind Grid Icon, Graph Icon as toggle
     alt activeTab.isGridActive is true and filteredTeamReport is not empty
         ReportingPage -> ReportingPage : Bind ReportingsListTable component
-        note right of ReportingPage : Refer the **<ReportingsListTable ...{props} />** in reportings_list_table
+        note right of ReportingPage : Refer the **<ReportingsListTable ...{props} />** in reportings_list_table folder
         Client <-- ReportingPage : User receives respective view of the stats, list reportings details in table
     else \t\tactiveTab.isGraphActive is true and filteredTeamReport is not empty
         ReportingPage -> ReportingPage : Bind GraphReportings component
-        note right of ReportingPage : Refer the **<GraphReportings ...{props} />** in graph_reportings
+        note right of ReportingPage : Refer the **<GraphReportings ...{props} />** in graph_reportings folder
         Client <-- ReportingPage : User receives respective view of the stats, tree structure of reportings
     end
 deactivate Client

@@ -9,10 +9,10 @@ activate GraphReportings #D3D3D3
     GraphReportings -> GraphReportings : When component mounting, update the **targetUserId** and **previousTargetUserId** with loggined userId
     GraphReportings -> usersService.ts : **getGraphReportings({loggined userId},targetUserId,selectedDate)**
     activate usersService.ts #D3D3D3
-        usersService.ts -> Backend : request for the graphReportings details for particular users
-        activate Backend #D3D3D3
-            usersService.ts <-- Backend : return GraphViewUesr[]
-        deactivate Backend
+        usersService.ts -> User_Backend : request for the graphReportings details for particular users\n**`/users/:userId/graph-reportings/:targetUserId?date=<date>`**
+        activate User_Backend #D3D3D3
+            usersService.ts <-- User_Backend : return **GraphViewUesr[]**
+        deactivate User_Backend
         GraphReportings <-- usersService.ts : return promise<GraphViewUesr[]>
     deactivate usersService.ts
 
@@ -23,7 +23,7 @@ activate GraphReportings #D3D3D3
     GraphReportings -> GraphReportings : Append a search box to search the users in graphView \nusing **<SearchPopOver ...{props} />**
     activate GraphReportings #D16587
         note right of GraphReportings : props : {\n\tteamReport = props.teamReport, \n\tonItemSelect={(userId: string) => {switchTargetUser(userId)}\n}
-        note right of GraphReportings : Refer basic_popover component sequence diagram
+        note right of GraphReportings : Refer basic_popover component sequence diagram in basic_popover folder
         GraphReportings -> GraphReportings : return an search input component
     deactivate GraphReportings
 
@@ -35,7 +35,7 @@ activate GraphReportings #D3D3D3
             GraphReportings -> GraphReportings : Append a card of user details with name and role as card \nusing **<GraphLeadTile ...{props} />**
             activate GraphReportings #D16587
                 note right of GraphReportings : props : {\n\tuserId = user.userId \n\tposition = user.role \n\tname = user.name\n\tonClick={() => {switchTargetUser(user.userId)}}\n}
-                note right of GraphReportings : Refer graph_lead_tile component sequence diagram
+                note right of GraphReportings : Refer graph_lead_tile component sequence diagram in graph_lead_tile folder
                 GraphReportings -> GraphReportings : return a card component with name and role of user
             deactivate GraphReportings
             GraphReportings -> GraphReportings : Add a vertical line after that

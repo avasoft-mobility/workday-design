@@ -22,7 +22,7 @@ activate EditTodoPanel #D3D3D3
         EditTodoPanel -> EditTodoPanel : Bind a select dropdown using **<MultiSelectDropdown {...props} />**
         note right of EditTodoPanel : props: {\n\ttodoTag: **selectedTagIds**;\n\tonChange: {onTagSelected()};\n\tallTags: props.tags;\n\tisDisabled: props.isEditable;\n}
         activate EditTodoPanel #D16587
-            note right of EditTodoPanel : Refer the multiselect_dropdown component sequence
+            note right of EditTodoPanel : Refer the multiselect_dropdown component sequence diagram \nin multiselect_dropdown folder
             Client <-- EditTodoPanel : User can receive a form to edit their todo and button to save the changes
         deactivate EditTodoPanel
     else 

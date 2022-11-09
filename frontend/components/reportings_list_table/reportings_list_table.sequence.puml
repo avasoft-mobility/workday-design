@@ -24,7 +24,7 @@ activate ReportingsListTable #D3D3D3
             activate ReportingsListTable #D16578
                 ReportingsListTable -> ReportingsListTable : Append the **<ProfileCard ...{props} />** component to the **Team Members Name** column
                 activate ReportingsListTable #D3D3D3
-                    note right of ReportingsListTable : Refer profile_card sequence diagram
+                    note right of ReportingsListTable : Refer profile_card sequence diagram in profile_card folder
                     ReportingsListTable -> ReportingsListTable : return a card view of userImage with name and role
                 deactivate ReportingsListTable
                 ReportingsListTable -> ReportingsListTable :Append an Text of **data.reporter_name** in "Reports to" column
@@ -32,7 +32,7 @@ activate ReportingsListTable #D3D3D3
 
                 ReportingsListTable -> ReportingsListTable : Append the **<BasicChip ...{props} />** component to the **Status** column
                 activate ReportingsListTable #D3D3D3
-                    note right of ReportingsListTable : Refer basic_chip sequence diagram
+                    note right of ReportingsListTable : Refer basic_chip sequence diagram in basic_chip folder
                     ReportingsListTable -> ReportingsListTable : return a capsule view of attendance status
                 deactivate ReportingsListTable
 

@@ -59,10 +59,10 @@ activate AddReportingsPage #D3D3D3
     end 
     AddReportingsPage -> AddReportingsPage : Bind **3 Cards which shows the time** of different places
     AddReportingsPage -> AddReportingsPage : Bind a **Search** component 
-    note right of AddReportingsPage : Refer search in components for **<Search ...{props} />**
+    note right of AddReportingsPage : Refer search in components for **<Search ...{props} />**\nin search folder
     alt route string having "migration" string
         AddReportingsPage -> AddReportingsPage : Bind **MigrationAcknowledgePanel** component
-        note right of AddReportingsPage : Refer migration_acknowledge_panel for **<MigrationAcknowledgePanel />**
+        note right of AddReportingsPage : Refer migration_acknowledge_panel for **<MigrationAcknowledgePanel />**\nin migration_acknowledge_panel folder
         Client <-- AddReportingsPage : User can able to **view their migration details** and do action against the migration request
     else 
         AddReportingsPage -> AddReportingsPage : Bind a **left arrow Icon** as clickable

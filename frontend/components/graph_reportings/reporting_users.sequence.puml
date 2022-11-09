@@ -11,7 +11,7 @@ activate ReportingUsers #D3D3D3
         ReportingUsers -> ReportingUsers : call **<GraphUserTile ...{props} />**
         activate ReportingUsers #D16587
             note right of ReportingUsers : props : {userId = user.userId\n\tname = user.name \n\tposition = user.role \n\tattendence =  user.attendance ? user.attendance.attendance_status : "Not Filled"  \n\ttodos = user.todos as GraphTodo[] | [] \n\tonViewAllClicked = { () => { props.onViewAllClicked(user.userId) }} \n\tonViewBranchingClicked = { () => { props.onViewBranchingClicked(user.userId) }}\n\treportings = user.reportings.length\n}
-            note right of ReportingUsers : Refer graph_user_tile component sequence diagram
+            note right of ReportingUsers : Refer graph_user_tile component sequence diagram in graph_user_tile folder
             ReportingUsers -> ReportingUsers : Return a component of card with user details and todo details
         deactivate ReportingUsers
         ReportingUsers -> ReportingUsers : Bind **{props.user.reportingsDetails.length}** cards of **GraphUserTile component**

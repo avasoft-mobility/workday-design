@@ -10,10 +10,10 @@ activate NavigationBarPanel #D3D3D3
     NavigationBarPanel -> NavigationBarPanel : Whenever a new notification comes up for the loggined user \nis detect using **NotifictaionView** global state \nthe notification bell icon changes
     NavigationBarPanel -> userServices.ts : Request for loggined user deails 
     activate userServices.ts #D3D3D3
-        userServices.ts -> Backend : Request for user details
-        activate Backend #D3D3D3
-            userServices.ts <-- Backend : return User
-        deactivate Backend
+        userServices.ts -> User_Backend : Request for user details **`/users/:userId`**
+        activate User_Backend #D3D3D3
+            userServices.ts <-- User_Backend : return User
+        deactivate User_Backend
         NavigationBarPanel <-- userServices.ts : return **User**
     deactivate userServices.ts 
     alt user details call successfull
@@ -45,7 +45,7 @@ activate Client #D3D3D3
 activate NavigationBarPanel #D3D3D3
     NavigationBarPanel -> NavigationBarPanel : Call <HowDoIMenuPanel ...{props} />
     note right of NavigationBarPanel : props: {\n\tanchorEl={howDoIMenu}\n\tisShowMenu={isHowdoImenu}\n\tonClose={handleHowDoIMenuClose}\n\tuserRole={Currentuser's role}\n\tuserId={currentUser id!}\n}
-    note right of NavigationBarPanel : Refer the how_do_i_menu_panel sequence diagram
+    note right of NavigationBarPanel : Refer the how_do_i_menu_panel sequence diagram in how_do_i_menu_panel folder
     Client <-- NavigationBarPanel : return an JSX.element
 deactivate Client
 deactivate NavigationBarPanel
@@ -56,7 +56,7 @@ activate Client #D3D3D3
 activate NavigationBarPanel #D3D3D3
     NavigationBarPanel -> NavigationBarPanel : Call <TeamMemberMenuPanel ...{props} />
     note right of NavigationBarPanel : props: {\n\tanchorEl={employeeMenu}\n\tisShowMenu={isEmployeeMenu}\n\tonClose={handleHowEmployeeMenuClose}\n\tuserRole={Currentuser's role}\n\tuserId={currentUser id!}\n}
-    note right of NavigationBarPanel : Refer the team_member_menu_panel sequence diagram
+    note right of NavigationBarPanel : Refer the team_member_menu_panel sequence diagram in team_member_menu_panel folder
     Client <-- NavigationBarPanel : return an JSX.element
 deactivate Client
 deactivate NavigationBarPanel
@@ -172,10 +172,10 @@ activate NavigationBarPanel #D3D3D3
     NavigationBarPanel -> NavigationBarPanel : call **handleNotificationMenuOpen()** \nit change the visibility of **renderNotificationMenu**, and it Open the notiification menu with a loader by \nBy updating **isNotificationLoading** as true
     NavigationBarPanel -> userServices.ts : **fetchNotifications(userid)**
     activate userServices.ts #D3D3D3
-        userServices.ts -> Backend : Request notifications details for the user
-        activate Backend #D3D3D3
-            userServices.ts <-- Backend : return NotificationBO[]
-        deactivate Backend 
+        userServices.ts -> Hive_Backend : Request notifications details for the user\n **`/leave` in Post method with Payload**
+        activate Hive_Backend #D3D3D3
+            userServices.ts <-- Hive_Backend : return NotificationBO[]
+        deactivate Hive_Backend 
         NavigationBarPanel <-- userServices.ts : return **NotificationBO[]**
     deactivate userServices.ts 
     NavigationBarPanel -> NavigationBarPanel : Update **isNotificationLoading** as false
