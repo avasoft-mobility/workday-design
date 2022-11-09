@@ -27,7 +27,8 @@ activate Client #D3D3D3
         end
         alt case : when the response is success
             alt case: response.data.reportings has userId
-                HomePage -> HomePage : call **setUserRoleWithReporting(userInfo)** \n(refer this method in below common methods)
+                HomePage -> HomePage : call **setUserRoleWithReporting(userInfo)** 
+                note right of HomePage : Refer the setUserRoleWithReporting() method in below common methods
                 HomePage -> HomePage : Update user's employeeId in **global state** variable.
                 HomePage -> HomePage : save user info in **hiveSessionHandler**.
                 HomePage -> HomePage : update **authorized** state variable to **true**.
@@ -66,7 +67,8 @@ activate Client #D3D3D3
                 HomePage -> HomePage : get the return response\n and save that in a variable\n called **result**.
                 HomePage -> HomePage : Update **todoUser** variable with values of **result.data**
                 alt case : result.data has the reportings greater than 1
-                    HomePage -> HomePage : call the **getTeamReports()**\n (refer getTeamReports() method in commom methods )
+                    HomePage -> HomePage : call the **getTeamReports()**
+                    note right of HomePage :  Refer **getTeamReports()** method in commom methods
                 end
             end
         deactivate HomePage
@@ -81,10 +83,10 @@ activate Client #D3D3D3
                 HomePage -> HomePage : return
             end
             HomePage -> HomePage : Bind the **LeadsAction** Component
-            note right of HomePage : refer leads_action component.
+            note right of HomePage : Refer leads_action sequence diagram from components/leads_action folder
         deactivate HomePage
         HomePage -> HomePage : Bind **UserCalanderPage** component.
-        note right of HomePage: Refer user_calender_page component
+        note right of HomePage: Refer user_calender_page component from components/user_calender_page
         Client <-- HomePage : User receives the expected view.
     deactivate HomePage
 deactivate Client

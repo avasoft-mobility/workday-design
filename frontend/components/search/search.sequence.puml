@@ -6,7 +6,8 @@ Client -> Search : call the component in any component with **<Search {...props}
 activate Client #D3D3D3
     activate Search #D3D3D3
         note left of Search : props: {\n input: Function;\nonFocus?: Function;\nvalue?: string;\nonBlur?: React.FocusEventHandler<HTMLInputElement | HTMLTextAreaElement>; \n}
-        Search -> Search : bind the **input** component\n(refer input from input sequence diagram )
+        Search -> Search : bind the **input** component
+        note right of Search : Refer input from input sequence diagram from components/input folder.
         Search -> Search : bind **searchIcon** before the input component
         Client <-- Search : user receives the expected view.
     deactivate Search

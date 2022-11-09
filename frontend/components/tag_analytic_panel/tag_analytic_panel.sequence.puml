@@ -19,7 +19,8 @@ activate Client #D3D3D3
         TagsAnalyticPanel -> TagsAnalyticPanel : Implement **DatePicker** from antd
         TagsAnalyticPanel -> TagsAnalyticPanel : Implement a **Button** from antd called **Get Report**
         alt case: tagAnalytics is defined
-            TagsAnalyticPanel -> TagsAnalyticPanel : Implement **AnalyticCardPanel** component\n(refer analytic_card_panel for class and sequence diagram)
+            TagsAnalyticPanel -> TagsAnalyticPanel : Implement **AnalyticCardPanel** component
+            note right of TagsAnalyticPanel : Refer analytic_card_panel sequence diagram\nfrom components/analytic_card_panel folder.
             TagsAnalyticPanel -> TagsAnalyticPanel : Implement a text button called **View in Calender**
         else
             TagsAnalyticPanel -> TagsAnalyticPanel : show description as **No todo found**

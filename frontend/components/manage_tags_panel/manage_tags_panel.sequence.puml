@@ -9,7 +9,8 @@ activate Client #D3D3D3
     activate ManageTagsPanel #D3D3D3
         note left of ManageTagsPanel : props: {\nonClose: Function;\nvisible: boolean;\nuserId: string;\nonTagMode: boolean;\nonViewCalender: (dates: string[], todoIds: string[]) => void;\nisViewingTeamTODO: boolean;\n}
         ManageTagsPanel -> ManageTagsPanel : When the component gets mounted call the **initialize()** method
-        ManageTagsPanel -> ManageTagsPanel : **initialize()** (refer initialize\n method from below common methods)
+        ManageTagsPanel -> ManageTagsPanel : **initialize()**
+        note right of ManageTagsPanel : Refer initialize method from below common methods
         ManageTagsPanel -> ManageTagsPanel : when the component gets updated or mounted\n or when the **[props.onClose]** gets updated,\n perform below if condition.
         alt case: selectedTags.length is equals to 0
             ManageTagsPanel -> ManageTagsPanel : update the **tagVisible** value as **true**
@@ -93,7 +94,7 @@ activate Client #D3D3D3
         ManageTagsPanel -> ManageTagsPanel : get the return response and save\n that in a variable called **updatedTag**.
         alt case: updatedTag is defined
             ManageTagsPanel -> ManageTagsPanel : call the **initialize()** method.
-            note right of ManageTagsPanel : refer initialize() method from above sequence diagrams
+            note right of ManageTagsPanel : refer initialize() method from above Common methods.
             ManageTagsPanel -> ManageTagsPanel : update the **input** value as **empty string**
             ManageTagsPanel -> ManageTagsPanel : update the **tagId** value as **empty string**
         end
@@ -155,7 +156,8 @@ activate Client #D3D3D3
         deactivate usersService.ts
         ManageTagsPanel -> ManageTagsPanel : ge the return response and\n save that in a variable called **tag**
         alt case: tag is defined
-            ManageTagsPanel -> ManageTagsPanel : call **initialize()** method\n refer the above **initialize()** method.
+            ManageTagsPanel -> ManageTagsPanel : call **initialize()** method.
+            note right of ManageTagsPanel : Refer the above **initialize()** method from common methods.
         end
         Client <-- ManageTagsPanel : User clicked tag will be deleted\n and remaining tags will be shown to the user.
     deactivate ManageTagsPanel
@@ -167,7 +169,8 @@ Client -> ManageTagsPanel : user Clicks **Add Team Tag** || **Update Tag** || **
 activate Client #D3D3D3
     activate ManageTagsPanel #D3D3D3
         ManageTagsPanel -> ManageTagsPanel : onSubmit(type?: string)
-        ManageTagsPanel -> ManageTagsPanel : validate(input)  (refer validate method\n from above common methods)
+        ManageTagsPanel -> ManageTagsPanel : validate(input)
+        note right of ManageTagsPanel : Refer validate method\n from above common methods
         alt case: validate(input) returns false
             ManageTagsPanel -> ManageTagsPanel : update the **error** value as **"error"**
             ManageTagsPanel -> ManageTagsPanel : return
@@ -192,7 +195,8 @@ activate Client #D3D3D3
             deactivate usersService.ts
             ManageTagsPanel -> ManageTagsPanel : update the **spin** value as **"false"** (it will made the spin loader\n to stop loading and disable it)
             ManageTagsPanel -> ManageTagsPanel : update the **input** value as **empty string**
-            ManageTagsPanel -> ManageTagsPanel : call **initialize()** method,\n refer the above **initialize()** method.
+            ManageTagsPanel -> ManageTagsPanel : call **initialize()** method
+            note right of ManageTagsPanel :  Refer the above **initialize()** method.
             ManageTagsPanel -> ManageTagsPanel : return
         end
         ManageTagsPanel -> ManageTagsPanel : loop the tags and find\n whether the newly entered\n tag name matches with the already\n existing tag name and save the\n matched tag name in a variable called **existingTag**
@@ -202,7 +206,8 @@ activate Client #D3D3D3
             ManageTagsPanel -> ManageTagsPanel : notify the user with\n message:**Could not update the tag**\n descrption: **Tag with this name was already present**\n
             ManageTagsPanel -> ManageTagsPanel : return
         end
-        ManageTagsPanel -> ManageTagsPanel : updateTag(tagId) ( refer the above **updateTag(tagId: string)** method.)
+        ManageTagsPanel -> ManageTagsPanel : updateTag(tagId)
+        note right of ManageTagsPanel : Refer the above **updateTag(tagId: string)** method from common methods.
         Client <-- ManageTagsPanel : Add || update the tag and the tag is shown in the manage tags panel
     deactivate ManageTagsPanel
 deactivate Client
@@ -247,7 +252,8 @@ activate Client #D3D3D3
     activate ManageTagsPanel #D3D3D3
         ManageTagsPanel -> ManageTagsPanel : onInputChange(text: string)
         ManageTagsPanel -> ManageTagsPanel : update the **input** value as **text**
-        ManageTagsPanel -> ManageTagsPanel : validate(text) (refer validate method\n from above common methods)
+        ManageTagsPanel -> ManageTagsPanel : validate(text) 
+        note right of ManageTagsPanel : Refer validate method\n from above common methods
         alt case : validate(text) returns true
             ManageTagsPanel -> ManageTagsPanel : update the **error** value as **undefined**
             ManageTagsPanel -> ManageTagsPanel : return

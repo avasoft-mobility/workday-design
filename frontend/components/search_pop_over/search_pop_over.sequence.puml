@@ -6,8 +6,10 @@ Client -> SearchPopOver : call the component in any component with **<SearchPopO
 activate Client #D3D3D3
     activate SearchPopOver #D3D3D3
         note left of SearchPopOver : props: {\n teamReport: TeamReport[];\n onItemSelect: (userId: string) => void;\n}
-        SearchPopOver -> SearchPopOver : bind the **Search** component\n (refer the search folder for\n search component class and\n sequence diagram)
-        SearchPopOver -> SearchPopOver : bind the **AutoSearch** component\n (refer the auto_search folder for\n auto_search component class and\n sequence diagram)
+        SearchPopOver -> SearchPopOver : bind the **Search** component.
+        note right of SearchPopOver : Refer Search sequence diagram from components/search folder.
+        SearchPopOver -> SearchPopOver : bind the **AutoSearch** component
+        note right of SearchPopOver : Refer the auto_search sequence diagram from components/auto_search folder.
         Client <-- SearchPopOver : User will receive the expected view.
     deactivate SearchPopOver
 deactivate Client

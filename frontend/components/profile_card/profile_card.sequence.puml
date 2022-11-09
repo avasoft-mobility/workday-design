@@ -6,8 +6,10 @@ Client -> ProfileCard : call the component in any component with **<ProfileCard 
 activate Client #D3D3D3
     activate ProfileCard #D3D3D3
         note left of ProfileCard : props: {\n name: string;\nrole: string;\nuserId: string;\ncolorToName?: string;\ncolorToRole?: string;nameTextStyle:\n| "heading"\n| "small"\n| "title1"\n| "title2"\n| "title3"\n| "titleX"\n| "regular1"\n| "regular2"\n| "regular3"\n| "regular4";\nroleTextStyle:\n| "heading"\n| "small"\n| "title1"\n| "title2"\n| "title3"\n| "titleX"\n| "regular1"\n| "regular2"| "regular3"\n| "regular4";\n}
-        ProfileCard -> ProfileCard : Implement **ImageAvatar** component\n (refer image_avatar sequence diagram)
-        ProfileCard -> ProfileCard : Implement **Text** component\n (refer text sequence diagram)
+        ProfileCard -> ProfileCard : Implement **ImageAvatar** component.
+        note right of ProfileCard : Refer image_avatar sequence diagram from components/image_avatar folder.
+        ProfileCard -> ProfileCard : Implement **Text** component
+        note right of ProfileCard : Refer text sequence diagram from components/text folder.
         ProfileCard -> ProfileCard : bind the props value to the component
         Client <-- ProfileCard : User will receive the expected view 
     deactivate ProfileCard

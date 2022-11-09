@@ -16,7 +16,7 @@ activate Client #D3D3D3
             Client <-- app.ts : status: 400,\n message: userId is required.
             microsoftUser.router.ts -> microsoftUser.router.ts : getUserById(userId.toString())
             activate microsoftUser.router.ts #D16587
-                note right of microsoftUser.router.ts : refer getUserById in shared file
+                note right of microsoftUser.router.ts : refer getUserById in shared_service_design folder
                 microsoftUser.router.ts -> microsoftUser.router.ts : return queryResut
             deactivate microsoftUser.router.ts
             microsoftUser.router.ts -> microsoftUser.router.ts : get the return result\n and save that in a variable\n called **result**
