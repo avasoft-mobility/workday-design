@@ -106,7 +106,7 @@ deactivate NavigationBarPanel
 Client -> NavigationBarPanel : User Click on the **Admin** menu
 activate Client #D3D3D3
 activate NavigationBarPanel #D3D3D3
-    NavigationBarPanel -> NavigationBarPanel : Redirect to the **Hive application**
+    NavigationBarPanel -> NavigationBarPanel : Redirect to the `https://hive.avasoft.com/admin`
     Client <-- NavigationBarPanel : User can view the admin module form **Hive Application**
 deactivate Client
 deactivate NavigationBarPanel
@@ -115,7 +115,7 @@ deactivate NavigationBarPanel
 Client -> NavigationBarPanel : User Click on the **Dashboard** menu
 activate Client #D3D3D3
 activate NavigationBarPanel #D3D3D3
-    NavigationBarPanel -> NavigationBarPanel : Redirect to the **Hive application**
+    NavigationBarPanel -> NavigationBarPanel : Redirect to the `https://hive.avasoft.com/Overview`
     Client <-- NavigationBarPanel : User can view their dashboard on **Hive Application**
 deactivate Client
 deactivate NavigationBarPanel
@@ -124,7 +124,7 @@ deactivate NavigationBarPanel
 Client -> NavigationBarPanel : User Click on the **Leave** menu
 activate Client #D3D3D3
 activate NavigationBarPanel #D3D3D3
-    NavigationBarPanel -> NavigationBarPanel : Redirect to the **Hive application**
+    NavigationBarPanel -> NavigationBarPanel : Redirect to the `https://hive.avasoft.com/leavewfh`
     Client <-- NavigationBarPanel : User can view their leave requests on **Hive Application**
 deactivate Client
 deactivate NavigationBarPanel
@@ -189,7 +189,7 @@ deactivate NavigationBarPanel
 
 ... ...
 
-Client -> NavigationBarPanel : When the user onClicks the menuItems  
+Client -> NavigationBarPanel : When the user click the menuItems  
 activate Client #D3D3D3
     activate NavigationBarPanel #D3D3D3
         alt case: When user Clicks the **Jobs** menuItem
@@ -205,7 +205,7 @@ activate Client #D3D3D3
                 NavigationBarPanel -> NavigationBarPanel : user will be navigated\n to `https://hive.avasoft.com`
             deactivate NavigationBarPanel
         end
-        Client <-- NavigationBarPanel : user will be redirected to the particular page in Hive application
+        Client <-- NavigationBarPanel : user will be redirected to the respective page in Hive application
     deactivate NavigationBarPanel
 deactivate Client
 

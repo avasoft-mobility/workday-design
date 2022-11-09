@@ -65,7 +65,7 @@ activate AttendanceService.ts #D16587
 
     DB -> DB : AttendanceDB.find(query)
 
-    AttendanceService.ts <-- DB : return **7Attendance[]**
+    AttendanceService.ts <-- DB : return **Attendance[]**
 
     deactivate DB
 

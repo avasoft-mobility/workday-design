@@ -10,10 +10,10 @@ activate AddReportingsPage #D3D3D3
     activate AddReportingsPage #D16587
         AddReportingsPage -> usersService.ts : **getAllUsers()**
         activate usersService.ts #D3D3D3
-            usersService.ts -> Backend : "/users" in GET methd
-            activate Backend #D3D3D3
-                usersService.ts <-- Backend : return **User[]**
-            deactivate Backend
+            usersService.ts -> User_Backend : "/users" in GET methd
+            activate User_Backend #D3D3D3
+                usersService.ts <-- User_Backend : return **User[]**
+            deactivate User_Backend
             AddReportingsPage <-- usersService.ts : return **User[]**
         deactivate usersService.ts
         alt Api response is success 
@@ -24,10 +24,10 @@ activate AddReportingsPage #D3D3D3
         end
         AddReportingsPage -> usersService.ts : **getAllDomains()**
         activate usersService.ts #D3D3D3
-            usersService.ts -> Backend : "/users/domains" in GET methd
-            activate Backend #D3D3D3
-                usersService.ts <-- Backend : return **string[]**
-            deactivate Backend
+            usersService.ts -> User_Backend : "/users/domains" in GET methd
+            activate User_Backend #D3D3D3
+                usersService.ts <-- User_Backend : return **string[]**
+            deactivate User_Backend
             AddReportingsPage <-- usersService.ts : return **string[]**
         deactivate usersService.ts
         alt Api response is success 
@@ -38,10 +38,10 @@ activate AddReportingsPage #D3D3D3
         end
         AddReportingsPage -> usersService.ts : **getMyTeamReports(logginedUser's Id)**
         activate usersService.ts #D3D3D3
-            usersService.ts -> Backend : "/users/:userId/my-team" in GET methd
-            activate Backend #D3D3D3
-                usersService.ts <-- Backend : return **User[]**
-            deactivate Backend
+            usersService.ts -> User_Backend : "/users/:userId/my-team" in GET methd
+            activate User_Backend #D3D3D3
+                usersService.ts <-- User_Backend : return **User[]**
+            deactivate User_Backend
             AddReportingsPage <-- usersService.ts : return **User[]**
         deactivate usersService.ts
         alt Api response is success 
@@ -270,10 +270,10 @@ activate AddReportingsPage #D3D3D3
             AddReportingsPage -> AddReportingsPage : Form an **RequestedData** in type of **reporteeMigration** with **Reporter and selectedEmployees**
             AddReportingsPage -> usersService.ts : **sendReporteeMigrationRequest(RequestedData, loggined user's userId)**
             activate usersService.ts #D3D3D3
-                usersService.ts -> Backend : **"/users/:userId/reportee-migration/request"** in POST Method \nwith **RequestedData in Body**
-                activate Backend #D3D3D3
+                usersService.ts -> User_Backend : **"/users/:userId/reportee-migration/request"** in POST Method \nwith **RequestedData in Body**
+                activate User_Backend #D3D3D3
                     return return AxiosReponse
-                deactivate Backend
+                deactivate User_Backend
                 AddReportingsPage <-- usersService.ts : return AxiosResponse
             deactivate usersService.ts
             alt is success response 

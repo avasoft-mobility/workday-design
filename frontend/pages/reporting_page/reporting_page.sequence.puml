@@ -24,10 +24,10 @@ activate ReportingPage #D3D3D3
             activate ReportingPage 
                 ReportingPage -> usersService.ts : getMyTeamReports(currentUserInfo.userId)
                 activate usersService.ts #D3D3D3
-                    usersService.ts -> Backend : Request for the reporings of user "/users/:userId/my-team"
-                    activate Backend #D3D3D3
-                    usersService.ts <-- Backend : return AxiosResponse<any,any>
-                    deactivate Backend
+                    usersService.ts -> User_Backend : Request for the reporings of user "/users/:userId/my-team"
+                    activate User_Backend #D3D3D3
+                    usersService.ts <-- User_Backend : return AxiosResponse<any,any>
+                    deactivate User_Backend
                     ReportingPage <-- usersService.ts : return any[]
                 deactivate usersService.ts
                 ReportingPage -> ReportingPage : Update the **teamReport** and **filteredTeamReport** with the returned response
@@ -36,10 +36,10 @@ activate ReportingPage #D3D3D3
             activate ReportingPage 
                 ReportingPage -> usersService.ts : fetchStatistics(currentUserInfo.userId)
                 activate usersService.ts #D3D3D3
-                    usersService.ts -> Backend : Request for the stattics of team for user "/users/:userId/statistics"
-                    activate Backend #D3D3D3
-                    usersService.ts <-- Backend : return AxiosResponse<any,any>
-                    deactivate Backend
+                    usersService.ts -> User_Backend : Request for the stattics of team for user "/users/:userId/statistics"
+                    activate User_Backend #D3D3D3
+                    usersService.ts <-- User_Backend : return AxiosResponse<any,any>
+                    deactivate User_Backend
                     ReportingPage <-- usersService.ts : return any[]
                 deactivate usersService.ts
                 ReportingPage -> ReportingPage : Update the **statitics** with the returned response
