@@ -20,7 +20,7 @@ deactivate Client
 ...~~**onClick functionalities**~~ ...
 ... ...
 
-Client -> BasicPopover : when user onClicks the **Export to Excel** Button
+Client -> BasicPopover : when user Clicks the **Export to Excel** Button
 activate Client #D3D3D3
     activate BasicPopover #D3D3D3
         BasicPopover -> BasicPopover : triggers the **handleClick(event: React.MouseEvent<HTMLButtonElement>)** method
@@ -42,7 +42,7 @@ deactivate Client
 
 ... ...
 
-Client -> BasicPopover : when user onClicks **Export Yesterday's To-Do** button in the popover
+Client -> BasicPopover : when user Clicks **Export Yesterday's To-Do** button in the popover
 activate Client #D3D3D3
     activate BasicPopover #D3D3D3
         BasicPopover -> BasicPopover : triggers **downloadDailyTodoReport** method
@@ -65,7 +65,7 @@ deactivate Client
 
 ... ...
 
-Client -> BasicPopover : when user onClicks **Export Weekly To-Do** button in the popover
+Client -> BasicPopover : when user Clicks **Export Weekly To-Do** button in the popover
 activate Client #D3D3D3
     activate BasicPopover #D3D3D3
         BasicPopover -> BasicPopover : triggers **downloadPreviousWeeklyReport** method
@@ -88,7 +88,7 @@ deactivate Client
 
 ... ...
 
-Client -> BasicPopover : when user onClicks **Export Attendance** button in the popover
+Client -> BasicPopover : when user Clicks **Export Attendance** button in the popover
 activate Client #D3D3D3
     activate BasicPopover #D3D3D3
         BasicPopover -> BasicPopover : triggers **downloadDailyAttendanceReport** method

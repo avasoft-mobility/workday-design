@@ -30,20 +30,20 @@ deactivate Client
 ... ...
 
 
-Client -> HowDoIMenuPanel : When the user onClicks the menuItem in the menu 
+Client -> HowDoIMenuPanel : When the user Clicks the menuItem in the menu 
 activate Client #D3D3D3
     activate HowDoIMenuPanel #D3D3D3
-        alt case: When user onClicks the **Leave Request** menuItem
+        alt case: When user Clicks the **Leave Request** menuItem
             HowDoIMenuPanel -> HowDoIMenuPanel : user will be navigated\n to `https://hive.avasoft.com/leaveform`
-        else case : When user onClicks the **WFH Request** menuItem
+        else case : When user Clicks the **WFH Request** menuItem
             HowDoIMenuPanel -> HowDoIMenuPanel : user will be navigated\n to `https://hive.avasoft.com/wfhform`
-        else case : When user onClicks the **Raise a Concern** menuItem
+        else case : When user Clicks the **Raise a Concern** menuItem
             HowDoIMenuPanel -> HowDoIMenuPanel : user will be navigated\n to `https://hive.avasoft.com/concernForm`
-        else case : When user onClicks the **Holiday List** menuItem
+        else case : When user Clicks the **Holiday List** menuItem
             HowDoIMenuPanel -> HowDoIMenuPanel : user will be navigated\n to `https://hive.avasoft.com/HolidayList`
-        else case : When user onClicks the **FAQ's** menuItem
+        else case : When user Clicks the **FAQ's** menuItem
             HowDoIMenuPanel -> HowDoIMenuPanel : user will be navigated\n to `https://hive.avasoft.com/FAQ`
-        else case : When user onClicks the **Policy** menuItem
+        else case : When user Clicks the **Policy** menuItem
             HowDoIMenuPanel -> HowDoIMenuPanel : user will be navigated\n to `https://hive.avasoft.com/policy`
         end
         Client <-- HowDoIMenuPanel : user will be redirected to the particular route

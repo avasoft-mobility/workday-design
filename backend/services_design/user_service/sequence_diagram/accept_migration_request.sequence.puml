@@ -64,7 +64,7 @@ activate Client #D3D3D3
                 microsoftUser.service.ts -> microsoftUser.service.ts : remove duplicates Ids from  **reporteeIds**
                 microsoftUser.service.ts -> microsoftUser.service.ts : getReporteeDetails(reporteeIds)
                 activate microsoftUser.service.ts #D16587
-                    note right of microsoftUser.service.ts : visit get_reportee_details method from shared services design
+                    note right of microsoftUser.service.ts : Refer get_reportee_details method from shared services design
                     microsoftUser.service.ts -> microsoftUser.service.ts : return  MicrosoftUser[]
                 deactivate microsoftUser.service.ts
                 microsoftUser.service.ts -> microsoftUser.service.ts : push **result.toUserId** to **reporteeIds**
@@ -83,7 +83,7 @@ activate Client #D3D3D3
                 end
                 microsoftUser.service.ts -> microsoftUser.service.ts : getUserById(result.toUserId)
                 activate microsoftUser.service.ts #D16587
-                    note right of microsoftUser.service.ts : Visit **get_user_by_id** method in shared services design
+                    note right of microsoftUser.service.ts : Refer **get_user_by_id** method in shared services design
                     microsoftUser.service.ts -> microsoftUser.service.ts : return MicrosoftUser
                 deactivate microsoftUser.service.ts
                 microsoftUser.service.ts -> microsoftUser.service.ts : get the return response and save that\n in a variable called **toUser**
@@ -92,13 +92,13 @@ activate Client #D3D3D3
                 end
                 microsoftUser.service.ts -> microsoftUser.service.ts : findPracticeManager(\ntoUser.userId,\ntoUser.practice)
                 activate microsoftUser.service.ts #D16587
-                    note right of microsoftUser.service.ts : Visit find_practice_manager_method in shared services design folder
+                    note right of microsoftUser.service.ts : Refer find_practice_manager_method in shared services design folder
                     microsoftUser.service.ts -> microsoftUser.service.ts : return  MicrosoftUser
                 deactivate microsoftUser.service.ts
                 microsoftUser.service.ts -> microsoftUser.service.ts : get the return response and save\n that in a variable called **practiceManager**
                 microsoftUser.service.ts -> microsoftUser.service.ts : findDirectManager(toUser.managerId)
                 activate microsoftUser.service.ts #D16587
-                    note right of microsoftUser.service.ts : Visit **find_practice_manager_method** in shared services design folder
+                    note right of microsoftUser.service.ts : Refer **find_practice_manager_method** in shared services design folder
                     microsoftUser.service.ts -> microsoftUser.service.ts : return  MicrosoftUser
                 deactivate microsoftUser.service.ts
                 microsoftUser.service.ts -> microsoftUser.service.ts : get the return response and save\n that in a variable called **directManager**

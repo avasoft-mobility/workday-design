@@ -41,7 +41,7 @@ activate Client #D3D3D3
         MigrationAcknowledgePanel -> MigrationAcknowledgePanel : save the return response promise in a variable\n called **migrationinfo**.
         alt case : when the response is failure
             MigrationAcknowledgePanel -> MigrationAcknowledgePanel : update **migrationRequest** variable values to **undefined**
-            MigrationAcknowledgePanel -> MigrationAcknowledgePanel : update **reportees** variable values to **empty[]**
+            MigrationAcknowledgePanel -> MigrationAcknowledgePanel : update **reportees** variable values to **empty `[ ]`**
         end
         alt case : when the response is success
             MigrationAcknowledgePanel -> MigrationAcknowledgePanel :  update **migrationRequest** variable values to **response.date**
@@ -261,7 +261,7 @@ deactivate Client
 ... ...
 ... ...
 
-Client -> MigrationAcknowledgePanel : If user onclicks the **reject** button
+Client -> MigrationAcknowledgePanel : If user Clicks the **reject** button
 activate Client #D3D3D3
     activate MigrationAcknowledgePanel #D3D3D3
         MigrationAcknowledgePanel -> MigrationAcknowledgePanel : just trigger the **migrationUpdateMutation** useMutation with props as **"reject"**\n which is mentioned in above common methods
@@ -272,7 +272,7 @@ deactivate Client
 ... ...
 ... ...
 
-Client -> MigrationAcknowledgePanel : If user onclicks the **Acknowledge** button
+Client -> MigrationAcknowledgePanel : If user Clicks the **Acknowledge** button
 activate Client #D3D3D3
     activate MigrationAcknowledgePanel #D3D3D3
         MigrationAcknowledgePanel -> MigrationAcknowledgePanel  : **acknowledgeMigrationRequest()** 
@@ -284,7 +284,7 @@ deactivate Client
 ... ...
 ... ...
 
-Client -> MigrationAcknowledgePanel : If user onclicks the **Accept** button
+Client -> MigrationAcknowledgePanel : If user Clicks the **Accept** button
 activate Client #D3D3D3
     activate MigrationAcknowledgePanel #D3D3D3
         MigrationAcknowledgePanel -> MigrationAcknowledgePanel  : **accepetMigrationRequest()** 

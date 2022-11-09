@@ -101,8 +101,8 @@ activate Client #D3D3D3
     activate TagsAnalyticPanel #D3D3D3
         TagsAnalyticPanel -> TagsAnalyticPanel : **onTapViewCalender()** method will trigger
         TagsAnalyticPanel -> TagsAnalyticPanel : **onTapViewCalender(tagAnalytics)**
-        TagsAnalyticPanel -> TagsAnalyticPanel : Create a variable called **dates** in the string[] format and\n assign the **empty[]** as a initial value
-        TagsAnalyticPanel -> TagsAnalyticPanel : Create a variable called **todoTds** in the string[] format and\n assign the **empty[]** as a initial value
+        TagsAnalyticPanel -> TagsAnalyticPanel : Create a variable called **dates** in the string[] format and\n assign the **empty `[ ]`** as a initial value
+        TagsAnalyticPanel -> TagsAnalyticPanel : Create a variable called **todoTds** in the string[] format and\n assign the **empty `[ ]`** as a initial value
         loop map **tagAnalytics** 
             TagsAnalyticPanel -> TagsAnalyticPanel : loop the tagAnalytics and\n again loop every todo in a single tagAnalytics\n and push each **todos date** in the **dates** variable\n in the **"YYYY-MM-DD"** format and\n also push each todo id in the **todoIds** variable.
         end

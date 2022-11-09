@@ -63,7 +63,7 @@ deactivate Client
 ... ...
 ... ...
 
-Client -> TodoViewPanel : User onClicks **eye outlined** button\n to view the todo which was in the status\n of completed or the todos which were in the past
+Client -> TodoViewPanel : user Clicks **eye outlined** button\n to view the todo which was in the status\n of completed or the todos which were in the past
 activate Client #D3D3D3
     activate TodoViewPanel #D3D3D3
         TodoViewPanel -> TodoViewPanel : **viewTodo(todo: TodoItem)** method was triggered
@@ -75,7 +75,7 @@ deactivate Client
 ... ...
 ... ...
 
-Client -> TodoViewPanel : User onClicks **edit outlined** button to edit the todo
+Client -> TodoViewPanel : user Clicks **edit outlined** button to edit the todo
 activate Client #D3D3D3
     activate TodoViewPanel #D3D3D3
         TodoViewPanel -> TodoViewPanel : **editTodo(todo: TodoItem)** method was triggered
@@ -87,7 +87,7 @@ deactivate Client
 ... ...
 ... ...
 
-Client -> TodoViewPanel : User onClicks **SwapLeftOutlined** button\n to edit the todo
+Client -> TodoViewPanel : user Clicks **SwapLeftOutlined** button\n to edit the todo
 activate Client #D3D3D3
     activate TodoViewPanel #D3D3D3
         TodoViewPanel -> TodoViewPanel : moveTodoToFuture(todo, -1)
@@ -116,7 +116,7 @@ deactivate Client
 ... ...
 ... ...
 
-Client -> TodoViewPanel : User onClicks **delete outlined** button to delete the todo
+Client -> TodoViewPanel : user Clicks **delete outlined** button to delete the todo
 activate Client #D3D3D3
     activate TodoViewPanel #D3D3D3
         TodoViewPanel -> TodoViewPanel : call the **delete** method in the parent(props.deleteTodo).

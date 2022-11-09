@@ -70,17 +70,21 @@ activate Client #D3D3D3
                 end
             end
         deactivate HomePage
-        HomePage -> HomePage : Bind **ManageTagsPanel** component\n (refer manage_tags_panel component)
-        HomePage -> HomePage : Bind **BreadCrumbs** component\n (refer bread_crumbs component)
+        HomePage -> HomePage : Bind **ManageTagsPanel** component.
+        note right of HomePage : Refer manage_tags_panel component.
+        HomePage -> HomePage : Bind **BreadCrumbs** component
+        note  right of HomePage : Refer bread_crumbs component
         HomePage -> HomePage : call **onViewLeadsAction()** method
         HomePage -> HomePage : **onViewLeadsAction()**
         activate HomePage #D16587
             alt case: user role is equals to Team Member ||\n global state saved userId is not equals to userId
                 HomePage -> HomePage : return
             end
-            HomePage -> HomePage : Bind the **LeadsAction** Component\n (refer leads_action component)
+            HomePage -> HomePage : Bind the **LeadsAction** Component
+            note right of HomePage : refer leads_action component.
         deactivate HomePage
-        HomePage -> HomePage : Bind **UserCalanderPage** component\n (refer user_calender_page component)
+        HomePage -> HomePage : Bind **UserCalanderPage** component.
+        note right of HomePage: Refer user_calender_page component
         Client <-- HomePage : User receives the expected view.
     deactivate HomePage
 deactivate Client
@@ -161,7 +165,7 @@ deactivate Client
 ... ...
 ... ...
 
-Client -> HomePage :  When user onClicks **Manage Reporting** button.
+Client -> HomePage :  When user Clicks **Manage Reporting** button.
 activate Client #D3D3D3
     activate HomePage #D3D3D3
         HomePage -> HomePage : navigate to `/add-reportees` page
@@ -172,19 +176,19 @@ deactivate Client
 ... ...
 ... ...
 
-Client -> HomePage :  When user onClicks **Clear Filter** || **Manage Tags** button.
+Client -> HomePage :  When user Clicks **Clear Filter** || **Manage Tags** button.
 activate Client #D3D3D3
     activate HomePage #D3D3D3
         alt case: todoIds.length is equals to 0
             HomePage -> HomePage : update **isVisibleTagForm** variable to **true**.
         end 
-        HomePage -> HomePage : update **todoIds** variable values to **empty[]**
+        HomePage -> HomePage : update **todoIds** variable values to **empty `[ ]`**
         HomePage -> HomePage : call **onTapTags()** methods
         HomePage -> HomePage : **onTapTags()**
         activate HomePage #D16587
             alt case: todoIds.length not equals to 0
-                HomePage -> HomePage : update **dates** variable values to **empty[]**.
-                HomePage -> HomePage : update **todoIds** variable values to **empty[]**.
+                HomePage -> HomePage : update **dates** variable values to **empty `[ ]`**.
+                HomePage -> HomePage : update **todoIds** variable values to **empty `[ ]`**.
                 HomePage -> HomePage : update **isVisibleTagForm** variable values to **false**.
                 HomePage -> HomePage : update **onTagMode** variable values to **false**.
             end

@@ -32,7 +32,7 @@ activate Client #D3D3D3
                 SearchPopOver -> SearchPopOver : return
             end
             alt case: input from method props is ""
-                SearchPopOver -> SearchPopOver : assign **empty[]** variable to the **searchResult**.
+                SearchPopOver -> SearchPopOver : assign **empty `[ ]`** variable to the **searchResult**.
             end
             SearchPopOver -> SearchPopOver : Update the **noMatches** variable to **false**.
             SearchPopOver -> SearchPopOver : Update the **reports** variable values to **searchResult**.

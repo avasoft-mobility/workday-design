@@ -35,28 +35,28 @@ deactivate Client
 ... ...
 
 
-Client -> TeamMemberMenuPanel : When the user onClicks the menuItem in the menu 
+Client -> TeamMemberMenuPanel : When the user Clicks the menuItem in the menu 
 activate Client #D3D3D3
     activate TeamMemberMenuPanel #D3D3D3
-        alt case: When user onClicks the **Performance** menuItem
+        alt case: When user Clicks the **Performance** menuItem
             TeamMemberMenuPanel -> TeamMemberMenuPanel : user will be navigated\n to `https://hive.avasoft.com/performance`
-        else case : When user onClicks the **Touchbase** menuItem
+        else case : When user Clicks the **Touchbase** menuItem
             TeamMemberMenuPanel -> TeamMemberMenuPanel : user will be navigated\n to `https://hive.avasoft.com/touchbase`
-        else case : When user onClicks the **Team Directory** menuItem
+        else case : When user Clicks the **Team Directory** menuItem
             TeamMemberMenuPanel -> TeamMemberMenuPanel : user will be navigated\n to `https://hive.avasoft.com/TeamDirectory`
-        else case : When user onClicks the **Manage Goals** menuItem
+        else case : When user Clicks the **Manage Goals** menuItem
             TeamMemberMenuPanel -> TeamMemberMenuPanel : user will be navigated\n to `https://hive.avasoft.com/goaltemplate`
-        else case : When user onClicks the **Team Member Moods** menuItem
+        else case : When user Clicks the **Team Member Moods** menuItem
             TeamMemberMenuPanel -> TeamMemberMenuPanel : user will be navigated\n to `https://hive.avasoft.com/moodgrid`
-        else case : When user onClicks the **Offboarding** menuItem
+        else case : When user Clicks the **Offboarding** menuItem
             TeamMemberMenuPanel -> TeamMemberMenuPanel : user will be navigated\n to `https://hive.avasoft.com/HrOffboardingGrid`
-        else case : When user onClicks the **Concern** menuItem
+        else case : When user Clicks the **Concern** menuItem
             TeamMemberMenuPanel -> TeamMemberMenuPanel : user will be navigated\n to `https://hive.avasoft.com/concerns`
-        else case : When user onClicks the **Appreciation** menuItem
+        else case : When user Clicks the **Appreciation** menuItem
             TeamMemberMenuPanel -> TeamMemberMenuPanel : user will be navigated\n to `https://hive.avasoft.com/appreciation`
-        else case : When user onClicks the **Feedback** menuItem
+        else case : When user Clicks the **Feedback** menuItem
             TeamMemberMenuPanel -> TeamMemberMenuPanel : user will be navigated\n to `https://hive.avasoft.com/FeedbackGrid?EmpId=${props.userId}`
-        else case : When user onClicks the **Profile Update** menuItem
+        else case : When user Clicks the **Profile Update** menuItem
             TeamMemberMenuPanel -> TeamMemberMenuPanel : user will be navigated\n to `https://hive.avasoft.com/profileUpdate`
         end
         Client <-- TeamMemberMenuPanel : user will be redirected to the particular page in Hive application

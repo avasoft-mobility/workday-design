@@ -19,7 +19,7 @@ deactivate Client
 ...~~**onClick functionalities**~~ ...
 ... ...
 
-Client -> AutoCompleteSearch : when user onClicks the **user in auto search dropdown** Button
+Client -> AutoCompleteSearch : when user Clicks the **item in auto search dropdown** Button
 activate Client #D3D3D3
     activate AutoCompleteSearch #D3D3D3
         alt case : selected user has the reportings which is greater than 1

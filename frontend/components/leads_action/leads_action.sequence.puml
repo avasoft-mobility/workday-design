@@ -6,7 +6,8 @@ Client -> LeadsAction : call the component in any component with **<LeadsAction 
 activate Client #D3D3D3
     activate LeadsAction #D3D3D3
         note left of LeadsAction : props: {\n userRole: "Team Member" | "Manager" | "HR Manager"; \n}
-        LeadsAction -> LeadsAction : bind the **BasicPopover** values\n (refer BasicPopover from BasicPopover sequence diagram from )
+        LeadsAction -> LeadsAction : bind the **BasicPopover** Component.
+        note right of LeadsAction : Refer basic_popOver sequence diagram from basic_popOver folder.
         alt case : userRole is "Manager"
             LeadsAction -> LeadsAction : set button name as **Teams ToDo**
         else case : userRole is other than "Manager"
@@ -20,7 +21,7 @@ deactivate Client
 ...~~**onClick functionalities**~~ ...
 ... ...
 
-Client -> LeadsAction : when user onClicks the **Teams ToDo** ||**Organization ToDo** Button
+Client -> LeadsAction : when user Clicks the **Teams ToDo** ||**Organization ToDo** Button
 activate Client #D3D3D3
     activate LeadsAction #D3D3D3
         LeadsAction -> LeadsAction : **onClickTeamsToDo()**

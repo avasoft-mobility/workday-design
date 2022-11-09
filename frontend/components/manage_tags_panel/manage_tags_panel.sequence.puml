@@ -92,7 +92,8 @@ activate Client #D3D3D3
         deactivate usersService.ts 
         ManageTagsPanel -> ManageTagsPanel : get the return response and save\n that in a variable called **updatedTag**.
         alt case: updatedTag is defined
-            ManageTagsPanel -> ManageTagsPanel : call the **initialize()** method (refer initialize() method from above sequence diagrams)
+            ManageTagsPanel -> ManageTagsPanel : call the **initialize()** method.
+            note right of ManageTagsPanel : refer initialize() method from above sequence diagrams
             ManageTagsPanel -> ManageTagsPanel : update the **input** value as **empty string**
             ManageTagsPanel -> ManageTagsPanel : update the **tagId** value as **empty string**
         end
@@ -106,7 +107,7 @@ deactivate Client
 ... ...
 ... ...
 
-Client -> ManageTagsPanel : User onClicks **Tag Analytics Button**
+Client -> ManageTagsPanel : user Clicks **Tag Analytics Button**
 activate Client #D3D3D3
     activate ManageTagsPanel #D3D3D3
         ManageTagsPanel -> ManageTagsPanel : onTagAnalytics(tags: TagType[])
@@ -120,7 +121,7 @@ deactivate Client
 
 ... ...
 
-Client -> ManageTagsPanel : User onClicks **onEditTag(tag: TagType)**
+Client -> ManageTagsPanel : user Clicks **onEditTag(tag: TagType)**
 activate Client #D3D3D3
     activate ManageTagsPanel #D3D3D3
         ManageTagsPanel -> ManageTagsPanel : onEditTag(tag: TagType)
@@ -136,7 +137,7 @@ deactivate Client
 
 ... ...
 
-Client -> ManageTagsPanel : User onClicks **delete button** in manage tags panel
+Client -> ManageTagsPanel : user Clicks **delete button** in manage tags panel
 activate Client #D3D3D3
     activate ManageTagsPanel #D3D3D3
         ManageTagsPanel -> ManageTagsPanel : onDelteTag(deletedTag: TagType)
@@ -162,7 +163,7 @@ deactivate Client
 
 ... ...
 
-Client -> ManageTagsPanel : User onClicks **Add Team Tag** || **Update Tag** || **+ Add Tag** button
+Client -> ManageTagsPanel : user Clicks **Add Team Tag** || **Update Tag** || **+ Add Tag** button
 activate Client #D3D3D3
     activate ManageTagsPanel #D3D3D3
         ManageTagsPanel -> ManageTagsPanel : onSubmit(type?: string)
@@ -208,7 +209,7 @@ deactivate Client
 
 ... ...
 
-Client -> ManageTagsPanel : User onClicks || onSelect Table rows in manage tags panel
+Client -> ManageTagsPanel : user Clicks || onSelect Table rows in manage tags panel
 activate Client #D3D3D3
     activate ManageTagsPanel #D3D3D3
         ManageTagsPanel -> ManageTagsPanel : onChange in table occurs
@@ -222,7 +223,7 @@ deactivate Client
 
 ... ...
 
-Client -> ManageTagsPanel : User onClicks outside of sideBar for closing the sideBar
+Client -> ManageTagsPanel : user Clicks outside of sideBar for closing the sideBar
 activate Client #D3D3D3
     activate ManageTagsPanel #D3D3D3
         ManageTagsPanel -> ManageTagsPanel : onClose in Drawer triggers

@@ -37,9 +37,12 @@ activate Client #D3D3D3
         end
         DayStatsPanel -> DayStatsPanel : show the **workingStatus** variable data to show\n the attendance status.
         DayStatsPanel -> DayStatsPanel : Implement **Card** from antd to show the dayTasks.
-        DayStatsPanel -> DayStatsPanel : To show the **planned Todos** length\n call the **getTodosByTypes("Planned", props.daysTasks)** method\n and bind the return todos length as a card value.\n (refer **getTodosByTypes()** method in below common methods)
-        DayStatsPanel -> DayStatsPanel : To show the **On-demand Todos** length\n call the **getTodosByTypes("On Demand", props.daysTasks)** method\n and bind the return todos length as a card value.\n (refer **getTodosByTypes()** method in below common methods)
-        DayStatsPanel -> DayStatsPanel : To show the **Completed Todos** length\n call the **getTodosByStatus("Completed", props.daysTasks)** method\n and bind the return todos length as a card value.\n (refer **getTodosByTypes()** method in below common methods)
+        DayStatsPanel -> DayStatsPanel : To show the **planned Todos** length\n call the **getTodosByTypes("Planned", props.daysTasks)** method\n and bind the return todos length as a card value.
+        note right of DayStatsPanel : Refer **getTodosByTypes()** method in below common methods
+        DayStatsPanel -> DayStatsPanel : To show the **On-demand Todos** length\n call the **getTodosByTypes("On Demand", props.daysTasks)** method\n and bind the return todos length as a card value.
+        note right of DayStatsPanel : Refer **getTodosByTypes()** method in below common methods
+        DayStatsPanel -> DayStatsPanel : To show the **Completed Todos** length\n call the **getTodosByStatus("Completed", props.daysTasks)** method\n and bind the return todos length as a card value.
+        note right of DayStatsPanel : Refer **getTodosByStatus()** method in below common methods
         Client <-- DayStatsPanel : User will receive the expected view.
     deactivate DayStatsPanel
 deactivate Client
@@ -87,7 +90,7 @@ activate Client #D3D3D3
     activate DayStatsPanel #D3D3D3
         DayStatsPanel -> DayStatsPanel : getTodosByTypes(\ntargetType?: string,\ntodos?: TodoItem[],\nday?: Number) method will trigger.
         alt case: todos === null ||\ntodos === undefined ||\ntargetType === null ||\ntargetType === undefined
-            DayStatsPanel -> DayStatsPanel : return **empty[]**
+            DayStatsPanel -> DayStatsPanel : return **empty `[ ]`**
         end
         alt case : day === null || day === undefined
             DayStatsPanel -> DayStatsPanel : filter the todos and get the todos\n which has the type is equals to targetType
@@ -105,7 +108,7 @@ activate Client #D3D3D3
     activate DayStatsPanel #D3D3D3
         DayStatsPanel -> DayStatsPanel : getTodosByStatus(\ntargetStatus?: string,\ntodos?: TodoItem[],\ndate?: Date \n) method will trigger.
         alt case: todos === null ||\ntodos === undefined ||\targetStatus === null ||\targetStatus === undefined
-            DayStatsPanel -> DayStatsPanel : return **empty[]**
+            DayStatsPanel -> DayStatsPanel : return **empty `[ ]`**
         end
         alt case : date === null || date === undefined
             DayStatsPanel -> DayStatsPanel : filter the todos and get the todos\n which has the status is equals to targetStatus
@@ -123,7 +126,7 @@ deactivate Client
 ... ...
 ... ...
 
-Client -> DayStatsPanel : When the user onclicks any attendance status in the **menu**
+Client -> DayStatsPanel : When the user Clicks any attendance status in the **menu**
 activate Client #D3D3D3
     activate DayStatsPanel #D3D3D3
         DayStatsPanel -> DayStatsPanel : **onMenuSelect(test: string)** method will trigger.
