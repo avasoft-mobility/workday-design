@@ -7,20 +7,23 @@ activate Client #D3D3D3
 activate Text #D3D3D3
 
 note right of Client:**Props:** \n\tvalue: string, \n\ttype: {\n\t\t"heading" \n\t\t|| "small" \n\t\t|| "title1" \n\t\t|| "title2" \n\t\t|| "title3" \n\t\t|| "titleX" \n\t\t|| "regular1" \n\t\t|| "regular2" \n\t\t|| "regular3" \n\t\t|| "regular4" \n\t}, \n\tcolor: string
-Text -> Text: When the component did mount or Text type \nvalue changed call the **setStyle** method and \npass the values which should match the type of \nthe text and set the response value of the \nmethod to the variable **textStyle** \n**Note:** Refer setStyle method below
+Text -> Text: When the component did mount or Text type \nvalue changed call the **setStyle** method and \npass the values which should match the type of \nthe text and set the response value of the \nmethod to the variable **textStyle**
+note right of Text: Refer **setStyle** method below in **Functions**
 
 Text -> Text : Bind the **value from props** and \nset the style by using **textStyle** variable
 
-Client <-- Text : \treturn the **view**
+Client <-- Text : \treturn the appropriate **view**
 deactivate Text
 deactivate Client
 
 ... ...
 ... ...
-note over Client: Click function
+... ...
+...~~**Functions**~~...
+... ...
 ... ...
 
-Client -> Text: call the **setStyle(fontSize, fontWeight)** method
+Client -> Text: **setStyle(fontSize, fontWeight)** method
 activate Client #D3D3D3
 activate Text #D3D3D3
 Text -> Text : form an object with **fontSize** and **fontWeight** \nand return the value in the type \n**React.CSSProperties**
