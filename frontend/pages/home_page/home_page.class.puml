@@ -1,6 +1,6 @@
-@startuml homePage class diagram
+@startuml HomePage class diagram
 
-class LeadsAction {
+class HomePage {
   checkUrl() \t\t\t\t\t\t : \t\t void
   ..
   initialize() \t\t\t\t\t\t\t : \t\t void

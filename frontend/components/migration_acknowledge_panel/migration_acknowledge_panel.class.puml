@@ -1,6 +1,6 @@
-@startuml BasicChip class diagram
+@startuml MigrationAcknowledgePanel class diagram
 
-class BreadCrumbs {
+class MigrationAcknowledgePanel {
   getRole() \t\t\t\t\t\t\t : \t\t Void
   ..
   getStepperState() \t\t\t\t\t : \t\t 1 | 2 | 3 | undefined

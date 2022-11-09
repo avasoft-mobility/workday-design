@@ -2,7 +2,7 @@
 participant Client
 participant HomePage
 participant usersService.ts
-participant Backend
+participant Users_Backend
 
 Client -> HomePage : when the user gets navigated to this route\n "/:userId/myTODO" ||\n "/:userId/teamTODO"
 activate Client #D3D3D3
@@ -12,10 +12,10 @@ activate Client #D3D3D3
         alt case: currentUserInfo.accessToken is defined
             HomePage -> usersService.ts : getUserById(currentUserInfo.userId)
             activate usersService.ts #D3D3D3
-                usersService.ts -> Backend :(GET) `/users/${userId}`
-                activate Backend #D3D3D3
-                    usersService.ts <-- Backend : AxiosResponse
-                deactivate Backend
+                usersService.ts -> Users_Backend :(GET) `/users/${userId}`
+                activate Users_Backend #D3D3D3
+                    usersService.ts <-- Users_Backend : AxiosResponse
+                deactivate Users_Backend
                 usersService.ts -> usersService.ts : get the return response\n and save that in a variable\n called **result**.
                 HomePage <-- usersService.ts : **result**
             deactivate usersService.ts
@@ -56,10 +56,10 @@ activate Client #D3D3D3
             alt case: userId from the params is defined
                 HomePage -> usersService.ts : getUserById(currentUserInfo.userId)
                 activate usersService.ts #D3D3D3
-                    usersService.ts -> Backend :(GET) `/users/${userId}`
-                    activate Backend #D3D3D3
-                        usersService.ts <-- Backend : AxiosResponse
-                    deactivate Backend
+                    usersService.ts -> Users_Backend :(GET) `/users/${userId}`
+                    activate Users_Backend #D3D3D3
+                        usersService.ts <-- Users_Backend : AxiosResponse
+                    deactivate Users_Backend
                     usersService.ts -> usersService.ts : get the return response\n and save that in a variable\n called **result**.
                     HomePage <-- usersService.ts : **result**
                 deactivate usersService.ts
@@ -117,10 +117,10 @@ activate Client #D3D3D3
     activate HomePage #D3D3D3
         HomePage -> usersService.ts : getMyTeamReports(currentUserInfo.userId)
         activate usersService.ts #D3D3D3
-            usersService.ts -> Backend :(GET) `/users/${userId}/my-team`
-            activate Backend #D3D3D3
-                usersService.ts <-- Backend : AxiosResponse
-            deactivate Backend
+            usersService.ts -> Users_Backend :(GET) `/users/${userId}/my-team`
+            activate Users_Backend #D3D3D3
+                usersService.ts <-- Users_Backend : AxiosResponse
+            deactivate Users_Backend
             usersService.ts -> usersService.ts : get the return response\n and save that in a variable\n called **myTeamReports**.
             HomePage <-- usersService.ts : **myTeamReports.data**
         deactivate usersService.ts

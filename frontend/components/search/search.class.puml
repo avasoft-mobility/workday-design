@@ -1,6 +1,6 @@
 @startuml Search class diagram
 
-class LeadsAction {
+class Search {
   onChange(text: string)\t\t\t\t\t\t\t\t\t: \t\t void
   ..
   onFocusInput(event: React.FocusEvent<HTMLInputElement>)\t: \t\t void

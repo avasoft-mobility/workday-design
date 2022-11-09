@@ -1,6 +1,6 @@
 @startuml BasicPopOver class diagram
 
-class LeadsAction {
+class BasicPopOver {
   handleClick(event: React.MouseEvent<HTMLButtonElement>)\t\t\t: \t\t void
   ..
   handleClose() \t\t\t\t\t\t\t\t\t\t\t\t\t: \t\t void

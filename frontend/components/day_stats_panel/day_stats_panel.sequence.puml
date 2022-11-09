@@ -2,7 +2,7 @@
 participant Client
 participant DayStatsPanel
 participant attendanceService.ts
-participant Backend
+participant Attendance_Backend
 
 Client -> DayStatsPanel : call the component in any component with **<DayStatsPanel {...props}/>**
 activate Client #D3D3D3
@@ -12,10 +12,10 @@ activate Client #D3D3D3
         DayStatsPanel -> attendanceService.ts : getAttendance(props.userId!,\nnew Date(props.selectedDate?.toDate().setHours(0, 0, 0, 0)!))
         activate attendanceService.ts #D3D3D3
             attendanceService.ts -> attendanceService.ts : change the props date format to **"YYYY-MM-DD"**\n and save that in a variable called **parsedDate**.
-            attendanceService.ts -> Backend : GET (`/attendance?userId=${userId}&date=${parsedDate}`)
-            activate Backend #D3D3D3
-                attendanceService.ts <-- Backend : AxiosResponse
-            deactivate Backend
+            attendanceService.ts -> Attendance_Backend : GET (`/attendance?userId=${userId}&date=${parsedDate}`)
+            activate Attendance_Backend #D3D3D3
+                attendanceService.ts <-- Attendance_Backend : AxiosResponse
+            deactivate Attendance_Backend
             attendanceService.ts -> attendanceService.ts : get the return response and\n save that in a variable called\n **attendance**.
             DayStatsPanel <-- attendanceService.ts : attendance
         deactivate attendanceService.ts
@@ -58,10 +58,10 @@ activate Client #D3D3D3
     activate DayStatsPanel #D3D3D3
         DayStatsPanel -> attendanceService.ts : updateAttendance(request.userId, request.attendaceStatus, request.date)
         activate attendanceService.ts #D3D3D3
-            attendanceService.ts -> Backend : (POST)\n(`/attendance?userId=${userId}&date=${date}`, {\nattendanceStatus: status,\n})
-            activate Backend #D3D3D3
-                attendanceService.ts  <-- Backend : AxiosResponse
-            deactivate Backend 
+            attendanceService.ts -> Attendance_Backend : (POST)\n(`/attendance?userId=${userId}&date=${date}`, {\nattendanceStatus: status,\n})
+            activate Attendance_Backend #D3D3D3
+                attendanceService.ts  <-- Attendance_Backend : AxiosResponse
+            deactivate Attendance_Backend 
             DayStatsPanel <-- attendanceService.ts : AxiosResponse
         deactivate attendanceService.ts
         alt case: if the return response is success

@@ -2,7 +2,7 @@
 participant Client
 participant MigrationAcknowledgePanel
 participant usersService.ts
-participant Backend
+participant Users_Backend
 
 Client -> MigrationAcknowledgePanel : call the component in any component with **<MigrationAcknowledgePanel/>**
 activate Client #D3D3D3
@@ -11,10 +11,10 @@ activate Client #D3D3D3
         MigrationAcknowledgePanel -> MigrationAcknowledgePanel : when the page gets mounted or updated\nbelow api call will trigger.
         MigrationAcknowledgePanel -> usersService.ts : getUserById(currentUserInfo.userId)
             activate usersService.ts #D3D3D3
-                usersService.ts -> Backend :(GET) `/users/${userId}`
-                activate Backend #D3D3D3
-                    usersService.ts <-- Backend : AxiosResponse
-                deactivate Backend
+                usersService.ts -> Users_Backend :(GET) `/users/${userId}`
+                activate Users_Backend #D3D3D3
+                    usersService.ts <-- Users_Backend : AxiosResponse
+                deactivate Users_Backend
                 usersService.ts -> usersService.ts : get the return response\n and save that in a variable\n called **result**.
                 MigrationAcknowledgePanel <-- usersService.ts : **result**
             deactivate usersService.ts
@@ -30,10 +30,10 @@ activate Client #D3D3D3
         MigrationAcknowledgePanel -> MigrationAcknowledgePanel : when the page gets mounted or updated\nbelow api call will trigger.
         MigrationAcknowledgePanel -> usersService.ts : getMigrationDetails(migrationId,currentUserInfo.userId)
             activate usersService.ts #D3D3D3
-                usersService.ts -> Backend :(GET) `/users/${userId}/reportee-migration/${migrationId}`
-                activate Backend #D3D3D3
-                    usersService.ts <-- Backend : AxiosResponse
-                deactivate Backend
+                usersService.ts -> Users_Backend :(GET) `/users/${userId}/reportee-migration/${migrationId}`
+                activate Users_Backend #D3D3D3
+                    usersService.ts <-- Users_Backend : AxiosResponse
+                deactivate Users_Backend
                 usersService.ts -> usersService.ts : get the return response\n and save that in a variable\n called **response**.
                 MigrationAcknowledgePanel <-- usersService.ts : **response**
             deactivate usersService.ts
@@ -231,10 +231,10 @@ activate Client #D3D3D3
     activate MigrationAcknowledgePanel #D3D3D3
         MigrationAcknowledgePanel -> usersService.ts : updateMigration(currentUserInfo.userId, migrationId!, decision)
             activate usersService.ts #D3D3D3
-                usersService.ts -> Backend :(GET) `/users/${userId}/reportee-migration/${migrationId}/${status}`
-                activate Backend #D3D3D3
-                    usersService.ts <-- Backend : AxiosResponse
-                deactivate Backend
+                usersService.ts -> Users_Backend :(GET) `/users/${userId}/reportee-migration/${migrationId}/${status}`
+                activate Users_Backend #D3D3D3
+                    usersService.ts <-- Users_Backend : AxiosResponse
+                deactivate Users_Backend
                 usersService.ts -> usersService.ts : get the return response\n and save that in a variable\n called **response**.
                 MigrationAcknowledgePanel <-- usersService.ts : **response**
             deactivate usersService.ts

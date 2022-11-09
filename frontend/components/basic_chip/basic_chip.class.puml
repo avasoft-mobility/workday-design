@@ -1,6 +1,6 @@
 @startuml BasicChip class diagram
 
-class BreadCrumbs {
+class BasicChip {
   setChipStyle: \t\t {color: string;background: string;}
 }
 

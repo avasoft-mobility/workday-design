@@ -2,7 +2,7 @@
 participant Client
 participant BasicPopover
 participant reportService.ts
-participant Backend
+participant Reports_Backend
 
 Client -> BasicPopover : call the component in any component with **<BasicPopover {...props} />**
 activate Client #D3D3D3
@@ -49,10 +49,10 @@ activate Client #D3D3D3
         BasicPopover -> BasicPopover : update **true** to the **isLoading** variable
         BasicPopover -> reportService.ts : downloadLastDayTodoReport(\naccounts[0].localAccountId)
         activate reportService.ts #D3D3D3
-            reportService.ts -> Backend : (GET) `/reports/${userId}/daily`
-            activate Backend #D3D3D3
-                reportService.ts <-- Backend :AxiosResponse
-            deactivate Backend
+            reportService.ts -> Reports_Backend : (GET) `/reports/${userId}/daily`
+            activate Reports_Backend #D3D3D3
+                reportService.ts <-- Reports_Backend :AxiosResponse
+            deactivate Reports_Backend
             reportService.ts -> reportService.ts : get the return response and\n save that in a variable called **response**
             BasicPopover <-- reportService.ts : response
         deactivate reportService.ts
@@ -72,10 +72,10 @@ activate Client #D3D3D3
         BasicPopover -> BasicPopover : update **true** to the **isLoading** variable
         BasicPopover -> reportService.ts : downloadLastTwoWeekTodoReport(\naccounts[0].localAccountId)
         activate reportService.ts #D3D3D3
-            reportService.ts -> Backend : (GET) `/reports/${userId}/weekly`
-            activate Backend #D3D3D3
-                reportService.ts <-- Backend :AxiosResponse
-            deactivate Backend
+            reportService.ts -> Reports_Backend : (GET) `/reports/${userId}/weekly`
+            activate Reports_Backend #D3D3D3
+                reportService.ts <-- Reports_Backend :AxiosResponse
+            deactivate Reports_Backend
             reportService.ts -> reportService.ts : get the return response and\n save that in a variable called **response**
             BasicPopover <-- reportService.ts : response
         deactivate reportService.ts
@@ -95,10 +95,10 @@ activate Client #D3D3D3
         BasicPopover -> BasicPopover : update **true** to the **isLoading** variable
         BasicPopover -> reportService.ts : downloadLastDayAttendanceReport(\naccounts[0].localAccountId)
         activate reportService.ts #D3D3D3
-            reportService.ts -> Backend : (GET) `/reports/${userId}/attendance`
-            activate Backend #D3D3D3
-                reportService.ts <-- Backend :AxiosResponse
-            deactivate Backend
+            reportService.ts -> Reports_Backend : (GET) `/reports/${userId}/attendance`
+            activate Reports_Backend #D3D3D3
+                reportService.ts <-- Reports_Backend :AxiosResponse
+            deactivate Reports_Backend
             reportService.ts -> reportService.ts : get the return response and\n save that in a variable called **response**
             BasicPopover <-- reportService.ts : response
         deactivate reportService.ts
