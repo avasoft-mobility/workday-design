@@ -1,0 +1,105 @@
+@startuml UserCalendarPage
+
+class UserInfo {
+  userId: \t\t string
+  imageUrl: \t\t string
+  accessToken: \t string
+  reportings: \t string[]
+  role: \t\t string
+  employeeId: \t string
+}
+
+class UserCalendarPage {
+    formatAMPM: \t\t\t\t\t string
+    ..
+    currentUserInfo: \t\t\t\t UserInfo
+    ..
+    nav: \t\t\t\t\t\t\t instance of useNavigate
+    ..
+    userId: \t\t\t\t\t\t string
+    ..
+    isLoading: \t\t\t\t\t boolean
+    ..
+    isAttendanceLoading: \t\t\t boolean
+    ..
+    visible: \t\t\t\t\t\t boolean
+    ..
+    childrenDrawer: \t\t\t\t boolean
+    ..
+    selectedDate: \t\t\t\t\t Date
+    ..
+    todoStatuses: \t\t\t\t\t TodoStatses[]
+    ..
+    todoTypes: \t\t\t\t\t TodoType[]
+    ..
+    currentTime: \t\t\t\t\t Date
+    ..
+    currentMonthTodos: \t\t\t TodoItem[]
+    ..
+    currentMonthAttendance: \t\t AttendanceItem[]
+    ..
+    currentPracticeId: \t\t\t\t string
+    ..
+    tags: \t\t\t\t\t\t TagType[]
+    ..
+    highLightedDates: \t\t\t\t string[]
+    ..
+    highlightedTagIds: \t\t\t\t string[]
+    ..
+    searchParams: \t\t\t\t instance of useSearchParams
+    ..
+    userName: \t\t\t\t\t string
+    ..
+    userRole: \t\t\t\t\t string
+    ..
+    statistics: \t\t\t\t\t\t any
+    ..
+    selectLocked: \t\t\t\t\t boolean
+    ..
+    attendanceValue: \t\t\t\t string
+    ..
+    initialise(): \t\t\t\t\t void
+    ..
+    getStatistics(): \t\t\t\t\t void
+    ..
+    fetchTags(): \t\t\t\t\t void
+    ..
+    setUserDetails(): \t\t\t\t void
+    ..
+    setUpWithQueryString(): \t\t\t void
+    ..
+    setupUserCalander(): \t\t\t void
+    ..
+    showDrawer(): \t\t\t\t\t void
+    ..
+    getListData(): \t\t\t\t\t {type: string, content: string}[]
+    ..
+    getWorkingHours(): \t\t\t\t number[]
+    ..
+    isAllTasksCompleted(): \t\t\t boolean
+    ..
+    getAttendanceStatus(): \t\t\t []
+    ..
+    menuTapped(): \t\t\t\t void
+    ..
+    generateMenu(): \t\t\t\t component
+    ..
+    dateCellRender(): \t\t\t\t component
+    ..
+    getPendingTodosCount(): \t\t number
+    ..
+    getViewingMonthTodo(): \t\t\t void
+    ..
+    getViewingPracticeId(): \t\t\t void
+    ..
+    getViewingMonthAttendance(): \t void
+    ..
+    onSelectedDateChange(): \t\t void
+    ..
+    dateHighlighted(): \t\t\t\t boolean
+    ..
+    isPastDate(): \t\t\t\t\t boolean
+    ..
+    getSelectedDateAttendance(): \t string
+}
+@enduml

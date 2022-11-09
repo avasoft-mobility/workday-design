@@ -1,0 +1,53 @@
+@startuml UserCalendarPage
+participant Client
+participant helpers.ts
+
+Client -> helpers.ts: call **getMonthName(date)**
+activate Client #D3D3D3
+activate helpers.ts #D3D3D3
+
+helpers.ts -> helpers.ts :  Extract's month name from given date
+helpers.ts --> Client : return name of the date
+deactivate helpers.ts
+deactivate Client
+
+... ...
+
+Client -> helpers.ts: call **getTodosByTypes(targetType, todos, day)**
+activate Client #D3D3D3
+activate helpers.ts #D3D3D3
+
+alt if todos and targetType is null or not valid
+    helpers.ts --> Client : return null array .i.e.([])
+end
+
+alt if todos and targetType is exits but day is null
+    helpers.ts --> Client: return todos which are matching \nthe targetType 
+end
+
+alt if all the parameters exits
+    helpers.ts --> Client: return todos which are matching \nthe targetType for the given day
+end
+deactivate helpers.ts
+deactivate Client
+
+... ...
+
+Client -> helpers.ts: call **getTodosByStatus(targetStatus, todos, date)**
+activate Client #D3D3D3
+activate helpers.ts #D3D3D3
+
+alt if todos and targetStatus is null or not valid
+    helpers.ts --> Client : return null array .i.e.([])
+end
+
+alt if todos and targetStatus is exits but date is null
+    helpers.ts --> Client: return todos which are matching \nthe targetStatus 
+end
+
+alt if all the parameters exits
+    helpers.ts --> Client: return todos which are matching \nthe targetStatus for the given date
+end
+deactivate helpers.ts
+deactivate Client
+@enduml
