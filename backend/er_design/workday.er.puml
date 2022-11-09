@@ -6,7 +6,7 @@ hide circle
 skinparam linetype ortho
 
 entity microsoft_users{
-    *_id: number
+    *_id: string
     --
     *userId: string,
     *name: string,
@@ -17,11 +17,11 @@ entity microsoft_users{
     *reportings: string,
     *last_access: Date,
     *managerId: string,
-    *isAdmin: Boolean,
+    *isAdmin: boolean,
 }
 
 entity microsoft_users_overrides{
-    *_id: number
+    *_id: string
     --
     *toUserId: string,
     *reportees: string[],
@@ -29,23 +29,23 @@ entity microsoft_users_overrides{
     *acknowledgedBy: string,
     *acceptedBy: string,
     *rejectedBy: string,
-    *isActive: string,
+    *isActive: boolean,
     *mailRequestId: string,
 }
 
-entity leader_ships{
-    *_id: number
+entity leaderships{
+    *_id: string
     --
     *microsoftUserId: string,
     *name: string,
     *domain: string,
     *mail: string,
     *hrpoc: string,
-    *hrmail: string,
+    *hrmail: string[],
 }
 
 entity tags{
-    *_id: number
+    *_id: string
     --
     *microsoftUserId: string,
     *tagName: string,
@@ -55,7 +55,7 @@ entity tags{
 }
 
 entity todos{
-    *_id: number
+    *_id: string
     --
     *microsoftUserId: string,
     *title: string,
@@ -69,9 +69,9 @@ entity todos{
 }
 
 entity attendance{
-    *_id: number
+    *_id: string
     --
-    *microsoftUserId: string,
+    *microsoftUserID: string,
     *attendance_status: string,
     *date: Date,
     *createdAt: Date 
@@ -79,11 +79,11 @@ entity attendance{
 }
 
 entity mobile_version{
-    *_id: number
+    *_id: string
     --
-    *isRequired: Boolean,
-    *appId: string,
-    *latestVersion: string,
+    *isrequired: boolean,
+    *appid: string,
+    *latestversion: string,
     *createdAt: Date 
     *updatedAt: Date,
 }
