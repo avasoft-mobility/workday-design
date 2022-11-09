@@ -1,10 +1,10 @@
 @startuml getMicrosoftUser
-participant Client #64D1AF
+participant Consumer #64D1AF
 participant microsoftUser.service.ts
 participant DB #FFC0CB
 
-Client -> microsoftUser.service.ts : getMicrosoftUser(userId)
-activate Client #D3D3D3
+Consumer -> microsoftUser.service.ts : getMicrosoftUser(userId)
+activate Consumer #D3D3D3
 activate microsoftUser.service.ts #D3D3D3   
 
 microsoftUser.service.ts -> microsoftUser.service.ts: create a new variable **currentUser**
@@ -15,7 +15,7 @@ note right of DB: query: \n{\nuserId: userId \n}
 
 DB --> microsoftUser.service.ts: return **MicrosoftUser** and \nstore the response in the variable **currentUser**
 deactivate DB
-microsoftUser.service.ts --> Client: return **currentUser** as **TeamReport**
+microsoftUser.service.ts --> Consumer: return **currentUser** as **TeamReport**
 deactivate microsoftUser.service.ts
-deactivate Client
+deactivate Consumer
 @enduml

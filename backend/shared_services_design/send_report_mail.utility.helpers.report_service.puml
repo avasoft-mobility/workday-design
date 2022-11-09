@@ -1,12 +1,12 @@
 @startuml sendReportMail method
-participant Client #64D1AF
+participant Consumer #64D1AF
 participant utility.ts
 
 utility.ts -> utility.ts : import **sgMail** from "@sendgrid/mail";
 utility.ts -> utility.ts : import **fs** from "fs";
 
-Client -> utility.ts : **sendReportMail(filePath ,toMailIds ,subject ,body)**
-activate Client #D3D3D3
+Consumer -> utility.ts : **sendReportMail(filePath ,toMailIds ,subject ,body)**
+activate Consumer #D3D3D3
 activate utility.ts #D3D3D3
     utility.ts -> utility.ts : declare a variable **fileStream** and read the file using \nthe **fs.readFileSync(filePath)** and store it 
     utility.ts -> utility.ts : declare a variable **fileName** and split the **filePath** by "/" \nand assign the value to it.
@@ -17,8 +17,8 @@ activate utility.ts #D3D3D3
     note right of utility.ts : **msg** = {\n\tto: **toMailIds**\n\tfrom: "workday@avasoft.com",\n\tsubject: **subject**,\n\thtml: **html**,\n\tattachments: **attachments**,\n}
 
     utility.ts -> utility.ts : using the **sgMail.sendMultiple(msg)** send the mail with content \nand assign the return value to a **result** variable
-    Client <-- utility.ts : **result** of sgMail.ClientResponse
+    Consumer <-- utility.ts : **result** of sgMail.ConsumerResponse
 deactivate utility.ts
-deactivate Client
+deactivate Consumer
 
 @enduml

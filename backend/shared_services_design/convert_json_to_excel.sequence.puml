@@ -1,10 +1,10 @@
 @startuml convertJsonToExcel
-participant Client #64D1AF
+participant Consumer #64D1AF
 participant utility.ts
 
-Client -> utility.ts : **convertJsonToExcel**\n**(data,fileName)**
+Consumer -> utility.ts : **convertJsonToExcel**\n**(data,fileName)**
 activate utility.ts #D3D3D3
-activate Client #D3D3D3
+activate Consumer #D3D3D3
 
 utility.ts -> utility.ts : declare a variable **reportWorkSheet** and\nusing the **XLXS.utils.json_to_sheet method with report** \nand assign value to it
 utility.ts -> utility.ts : declare a variable **workbook** and\nusing the **XLXS.utils.book_new method** \nand assign it variable
@@ -12,7 +12,7 @@ utility.ts -> utility.ts : using **XLXS.utils.book_append_sheet(workbook, report
 utility.ts -> utility.ts : create a variable **path** and assign string like **"/tmp/"+fileName+"_" + new Date().getTime() + ".xlsx"**
 utility.ts -> utility.ts : using **XLXS.writeFile(workbook, path)** \nwhich is write the content into xl sheet with above data
 
-Client <-- utility.ts : return **path**
+Consumer <-- utility.ts : return **path**
 deactivate utility.ts
 @enduml
 

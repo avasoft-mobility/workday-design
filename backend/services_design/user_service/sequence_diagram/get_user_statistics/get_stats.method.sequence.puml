@@ -1,12 +1,12 @@
 @startuml get stats method
-participant Client #64D1AF
+participant Consumer #64D1AF
 participant microsoftUser.router.ts
 participant TodoLambda
 participant AttendanceLambda
 participant DB #FFC0CB
 
-Client -> microsoftUser.router.ts : "getStats(userId: string)"
-activate Client #D3D3D3
+Consumer -> microsoftUser.router.ts : "getStats(userId: string)"
+activate Consumer #D3D3D3
     activate microsoftUser.router.ts #D3D3D3
         microsoftUser.router.ts -> microsoftUser.router.ts : create a variable\n called **result** and assign\n initial values of **-1** to it\n in **UserTodoStatistics**\n datatype
         microsoftUser.router.ts -> microsoftUser.router.ts : getDateForStats()
@@ -38,11 +38,11 @@ activate Client #D3D3D3
         deactivate DB 
         microsoftUser.router.ts -> microsoftUser.router.ts : get the return response and save that\n in a variable called **user**
         alt case: **user** is undefined
-            Client <-- microsoftUser.router.ts : result
+            Consumer <-- microsoftUser.router.ts : result
         end
         microsoftUser.router.ts -> microsoftUser.router.ts : getTodosForStats(userId,\nmoment(interestedDate).format("YYYY-MM-DD"),\nmoment(fromDate).format("YYYY-MM-DD"),\nmoment(toDate).format("YYYY-MM-DD"),\nuser.reportings)
         activate microsoftUser.router.ts #D16587
-            microsoftUser.router.ts -> TodoLambda : lambdaClient.post(\n"/todos/stats",{userId: userId,},\n{interestedDate: interestedDate,\nstartDate: fromDate,endDate: toDate,reportings: reportings,})
+            microsoftUser.router.ts -> TodoLambda : lambdaConsumer.post(\n"/todos/stats",{userId: userId,},\n{interestedDate: interestedDate,\nstartDate: fromDate,endDate: toDate,reportings: reportings,})
             activate TodoLambda #D3D3D3
                 microsoftUser.router.ts <-- TodoLambda : TodoStats
             deactivate TodoLambda
@@ -52,7 +52,7 @@ activate Client #D3D3D3
         microsoftUser.router.ts -> microsoftUser.router.ts : get the return response and\n save that in a variable called **statsTodos**
         microsoftUser.router.ts -> microsoftUser.router.ts : getAttendanceForStats(\nuserId,\nmoment(interestedDate).format("YYYY-MM-DD"),\nmoment(fromDate).format("YYYY-MM-DD"),\nmoment(toDate).format("YYYY-MM-DD"),\nuser.reportings)
         activate microsoftUser.router.ts #D16587
-            microsoftUser.router.ts -> AttendanceLambda : lambdaClient.post("/attendance/stats",\n{userId: userId,},\n{interestedDate: interestedDate,startDate: fromDate,\nendDate: toDate,reportings: reportings,})
+            microsoftUser.router.ts -> AttendanceLambda : lambdaConsumer.post("/attendance/stats",\n{userId: userId,},\n{interestedDate: interestedDate,startDate: fromDate,\nendDate: toDate,reportings: reportings,})
             activate AttendanceLambda #D3D3D3
                 microsoftUser.router.ts <-- AttendanceLambda : AttendanceStats
             deactivate AttendanceLambda
@@ -73,7 +73,7 @@ activate Client #D3D3D3
         deactivate microsoftUser.router.ts
         microsoftUser.router.ts -> microsoftUser.router.ts : get the return response and save\n that in a existing variable called **result.teamStatistics**
         microsoftUser.router.ts -> microsoftUser.router.ts : assign **interestedDate** value to\n the **result.date**
-        Client <-- microsoftUser.router.ts : result
+        Consumer <-- microsoftUser.router.ts : result
     deactivate microsoftUser.router.ts
-deactivate Client
+deactivate Consumer
 @enduml

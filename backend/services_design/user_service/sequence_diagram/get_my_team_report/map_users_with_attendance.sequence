@@ -1,8 +1,8 @@
 @startuml mapUsersWithAttendance
-participant Client #64D1AF
+participant Consumer #64D1AF
 participant microsoftUser.service.ts
 
-Client -> microsoftUser.service.ts : **mapUsersWithAttendance**\n**(reportingsDetail, reportingsAttendance)**
+Consumer -> microsoftUser.service.ts : **mapUsersWithAttendance**\n**(reportingsDetail, reportingsAttendance)**
 activate microsoftUser.service.ts
 microsoftUser.service.ts -> microsoftUser.service.ts: create a new variable **response**
 
@@ -10,5 +10,5 @@ loop reportingsDetail
     microsoftUser.service.ts -> microsoftUser.service.ts: Loop the reportingsDetail and compare each reportee's **userId** in \n**reportingsDetail** with each reportee's **microsoftUserID** in \n**reportingAttendance** \n**if matched** \nadd a new property **attendanceStatus** in **reportingsDetail** and\nassign the matched reportingAttendance detail like \n**{attendanceStatus: reportingAttendance.attendance_status}** \n**else** \nadd a new property **attendanceStatus** in **reportingsDetail** and \nassign **Not Filled** value\nstore the final response to the **response** variable
 end
 
-microsoftUser.service.ts -> Client: return response as TeamReport[]
+microsoftUser.service.ts -> Consumer: return response as TeamReport[]
 @enduml

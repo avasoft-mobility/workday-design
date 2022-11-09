@@ -1,11 +1,11 @@
 @startuml getTodosByMultipleDates
-participant Client #64D1AF
+participant Consumer #64D1AF
 participant todos.service.ts
 participant Utilities.ts
 participant DB #FFC0CB
 
-Client -> todos.service.ts : getTodosByMultipleDates(userId, startDate, endDate)
-activate Client #D3D3D3
+Consumer -> todos.service.ts : getTodosByMultipleDates(userId, startDate, endDate)
+activate Consumer #D3D3D3
 activate todos.service.ts #D3D3D3
     todos.service.ts -> Utilities.ts : Declare a variable **fromDate** and \nCall **processUTCDateConversion(startDate)**
     activate Utilities.ts #D3D3D3
@@ -28,12 +28,12 @@ activate todos.service.ts #D3D3D3
     deactivate 
     
     alt if queryResult's length is 0
-        todos.service.ts --> Client : return TodoResponse\n(code: 200, body: [])
+        todos.service.ts --> Consumer : return TodoResponse\n(code: 200, body: [])
     end
 
     alt if queryResult's length is greater than 0
-        todos.service.ts --> Client : return TodoResponse\n(code: 200, message: "Successful", body: queryResult)
+        todos.service.ts --> Consumer : return TodoResponse\n(code: 200, message: "Successful", body: queryResult)
         deactivate todos.service.ts
     end
-deactivate Client
+deactivate Consumer
 @enduml

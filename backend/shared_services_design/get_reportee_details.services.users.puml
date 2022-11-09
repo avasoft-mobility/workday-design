@@ -1,12 +1,12 @@
 @startuml getReporteeDetails method
-participant Client #64D1AF
+participant Consumer #64D1AF
 participant microsoftUser.service.ts
 participant DB #FFC0CB
 
-activate Client #D3D3D3
+activate Consumer #D3D3D3
 activate microsoftUser.service.ts #D3D3D3
  
-Client -> microsoftUser.service.ts : request **MicrosodtUser[]** for particluar userIds\n **getReporteeDetails(userIds)**
+Consumer -> microsoftUser.service.ts : request **MicrosodtUser[]** for particluar userIds\n **getReporteeDetails(userIds)**
 
 microsoftUser.service.ts -> DB : decalre a variable **response** and request DB for MicrosoftUser details
 
@@ -17,7 +17,7 @@ microsoftUser.service.ts <-- DB : return **MicrosoftUser[]**
 
 deactivate DB
 
-Client <-- microsoftUser.service.ts : return **response** as **MicrosoftUser[]**
+Consumer <-- microsoftUser.service.ts : return **response** as **MicrosoftUser[]**
 deactivate microsoftUser.service.ts
-deactivate Client
+deactivate Consumer
 @enduml

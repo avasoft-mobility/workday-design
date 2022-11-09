@@ -1,10 +1,10 @@
 @startuml getMultipleMicrosoftUser
-participant Client #64D1AF
+participant Consumer #64D1AF
 participant microsoftUser.service.ts
 participant DB #FFC0CB
 
-Client -> microsoftUser.service.ts : getMultipleMicrosoftUser(usersId)
-activate Client #D3D3D3
+Consumer -> microsoftUser.service.ts : getMultipleMicrosoftUser(usersId)
+activate Consumer #D3D3D3
 activate microsoftUser.service.ts #D3D3D3   
 
 microsoftUser.service.ts -> microsoftUser.service.ts: create a new variable **usersDetails**
@@ -15,7 +15,7 @@ note right of DB: query: \n{\nuserId: { $in: usersId } \n}
 
 DB --> microsoftUser.service.ts: return **MicrosoftUser[]** and \nstore the response in the variable **usersDetails**
 deactivate DB
-microsoftUser.service.ts --> Client: return **usersDetails** as **TeamReport**
+microsoftUser.service.ts --> Consumer: return **usersDetails** as **TeamReport**
 deactivate microsoftUser.service.ts
-deactivate Client
+deactivate Consumer
 @enduml

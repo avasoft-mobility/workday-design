@@ -1,16 +1,16 @@
 @startuml getUserTodos
-participant Client #64D1AF
+participant Consumer #64D1AF
 participant microsoftUser.service.ts
 
-Client -> microsoftUser.service.ts : **getUserTodos(userId, defaultTags, date)**
-activate Client #D3D3D3
+Consumer -> microsoftUser.service.ts : **getUserTodos(userId, defaultTags, date)**
+activate Consumer #D3D3D3
 activate microsoftUser.service.ts #D3D3D3
 
 microsoftUser.service.ts -> microsoftUser.service.ts : create a new variable **response**
 microsoftUser.service.ts -> microsoftUser.service.ts : make **(GET)** **/todos** api call, \n**Refer:** get todos technical design \nand store the response to the variable **response**
 
     alt if response in null
-        microsoftUser.service.ts --> Client : return [](null array)
+        microsoftUser.service.ts --> Consumer : return [](null array)
     end
     
     alt if response in not null
@@ -22,7 +22,7 @@ microsoftUser.service.ts -> microsoftUser.service.ts : make **(GET)** **/todos**
         microsoftUser.service.ts -> microsoftUser.service.ts: call **todoETABasedSorting(userTodos)** \n**Refer:** todoETABasedSorting method below
         note right of microsoftUser.service.ts: Sort the **userTodos** based on the \neach todo's **highest eta** and \nreturn the response
     end
-Client <-- microsoftUser.service.ts : return response
+Consumer <-- microsoftUser.service.ts : return response
 deactivate microsoftUser.service.ts
-deactivate Client
+deactivate Consumer
 @enduml

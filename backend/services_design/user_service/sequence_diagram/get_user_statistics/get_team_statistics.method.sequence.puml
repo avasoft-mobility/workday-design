@@ -1,9 +1,9 @@
 @startuml get team statistics
-participant Client #64D1AF
+participant Consumer #64D1AF
 participant microsoftUser.router.ts
 
-Client -> microsoftUser.router.ts : getTeamStatistics(\nuser,statsTodos,statsAttendance\n)
-activate Client #D3D3D3
+Consumer -> microsoftUser.router.ts : getTeamStatistics(\nuser,statsTodos,statsAttendance\n)
+activate Consumer #D3D3D3
     activate microsoftUser.router.ts #D3D3D3
         microsoftUser.router.ts -> microsoftUser.router.ts : create a variable\n called **result** and assign\n initial values of **-1** to it\n in **TeamStats** datatype
         microsoftUser.router.ts -> microsoftUser.router.ts : getTeamTotalReportes(user)
@@ -50,7 +50,7 @@ activate Client #D3D3D3
         microsoftUser.router.ts -> microsoftUser.router.ts : assign **totalWorkingHours** to **result.totalWorkingAta**
         microsoftUser.router.ts -> microsoftUser.router.ts : assign **averageWorkingHours** to **result.avgWorkingAta**
     deactivate microsoftUser.router.ts
-    Client <-- microsoftUser.router.ts : result
-deactivate Client
+    Consumer <-- microsoftUser.router.ts : result
+deactivate Consumer
 
 @enduml

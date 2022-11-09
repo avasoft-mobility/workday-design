@@ -1,9 +1,9 @@
 @startuml get my statistics
-participant Client #64D1AF
+participant Consumer #64D1AF
 participant microsoftUser.router.ts
 
-Client -> microsoftUser.router.ts : "getMyStatistics(\nuserId,statsTodos,statsAttendance\n)"
-activate Client #D3D3D3
+Consumer -> microsoftUser.router.ts : "getMyStatistics(\nuserId,statsTodos,statsAttendance\n)"
+activate Consumer #D3D3D3
     activate microsoftUser.router.ts #D3D3D3
         microsoftUser.router.ts -> microsoftUser.router.ts : create a variable\n called **result** and assign\n initial values of **-1** to it\n in **MyStats** datatype
         microsoftUser.router.ts -> microsoftUser.router.ts :  getMyCurrentWorkingHours(\nstatsTodos,statsAttendance);
@@ -47,8 +47,8 @@ activate Client #D3D3D3
             microsoftUser.router.ts -> microsoftUser.router.ts : return(totalAta / presentAttendance.length).toFixed(2)
         deactivate microsoftUser.router.ts
         microsoftUser.router.ts ->  microsoftUser.router.ts : get the return response and save that in a\n variable called **result.myPreWekWrkngHrs**
-        Client <-- microsoftUser.router.ts : result
+        Consumer <-- microsoftUser.router.ts : result
     deactivate microsoftUser.router.ts
-deactivate Client
+deactivate Consumer
 
 @enduml

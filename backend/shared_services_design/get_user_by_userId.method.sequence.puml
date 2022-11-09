@@ -1,17 +1,17 @@
 @startuml getUserByUserId
-participant Client #64D1AF
+participant Consumer #64D1AF
 participant microsoftUser.service.ts
 participant DB #FFC0CB
 
-Client -> microsoftUser.service.ts : getUserByUserId(id: string)
-activate Client #D3D3D3
+Consumer -> microsoftUser.service.ts : getUserByUserId(id: string)
+activate Consumer #D3D3D3
     activate microsoftUser.service.ts #D3D3D3
         microsoftUser.service.ts -> DB : microsoftUsersSchema.findOne({userId: id,})
         activate DB #D3D3D3
             microsoftUser.service.ts <-- DB : MicrosoftUser
         deactivate DB
         microsoftUser.service.ts -> microsoftUser.service.ts : get the return resposne and\n save that in a variable called\n **queryResult**
-        Client <-- microsoftUser.service.ts : MicrosoftUser
+        Consumer <-- microsoftUser.service.ts : MicrosoftUser
     deactivate microsoftUser.service.ts
-deactivate Client
+deactivate Consumer
 @enduml

@@ -1,13 +1,13 @@
 @startuml Utilities
-participant Client #64D1AF
+participant Consumer #64D1AF
 participant Utilities.ts
 
-Client -> Utilities.ts : processUTCDateConversion(date)
+Consumer -> Utilities.ts : processUTCDateConversion(date)
 activate Utilities.ts #D3D3D3
     Utilities.ts -> Utilities.ts : declare a variable **dateQuery**
     Utilities.ts -> Utilities.ts : assign new Date(date) to **dateQuery**
     Utilities.ts -> Utilities.ts : change parsed **dateQuery** to previous day by \nusing moment(**dateQuery**).subtract(-1).toDate() \nand assign the value to **dateQuery**
     Utilities.ts -> Utilities.ts : change the **dateQuery** time to 0:0:0 by \nusing **new Date(dateQuery.setHours(0, 0, 0, 0));** \nand assign the value to **dateQuery**
-    Client <-- Utilities.ts : return **dateQuery** as Date
+    Consumer <-- Utilities.ts : return **dateQuery** as Date
 deactivate Utilities.ts
 @enduml

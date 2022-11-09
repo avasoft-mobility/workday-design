@@ -1,8 +1,8 @@
 @startuml mapUsersWithReporterName
-participant Client #64D1AF
+participant Consumer #64D1AF
 participant microsoftUser.service.ts
 
-Client -> microsoftUser.service.ts : **mapUsersWithReporterName**\n**(reportingsDetail, currentUser)**
+Consumer -> microsoftUser.service.ts : **mapUsersWithReporterName**\n**(reportingsDetail, currentUser)**
 activate microsoftUser.service.ts
 microsoftUser.service.ts -> microsoftUser.service.ts: create a new variable **response**
 
@@ -12,5 +12,5 @@ loop reportingsDetail(targetUser)
     end
 end
 
-microsoftUser.service.ts -> Client: return response as TeamReport[]
+microsoftUser.service.ts -> Consumer: return response as TeamReport[]
 @enduml

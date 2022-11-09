@@ -1,13 +1,13 @@
 @startuml GenerateWeeklyReport method
 
-participant Client
+participant Consumer
 participant utility.ts
 participant ReportGenerator.ts
 
 utility.ts -> utility.ts : import **XLXS** from "xlxs"
 
-Client -> utility.ts : **generateWeeklyReport(microsoftUserId)**
-activate Client  #D3D3D3
+Consumer -> utility.ts : **generateWeeklyReport(microsoftUserId)**
+activate Consumer  #D3D3D3
 activate utility.ts #D3D3D3
 
 
@@ -126,7 +126,7 @@ activate ReportGenerator.ts #D3D3D3
 deactivate ReportGenerator.ts
 
 alt #dbdbdb report is undefined
-    Client <-- utility.ts : return ""
+    Consumer <-- utility.ts : return ""
 else #FFFFFF
     utility.ts -> utility.ts : declare a variable **exportedPath** and call **convertJsonToExcel with report and "Daily_attendance_reports"** \nand assign value to it
     activate utility.ts #D16587
@@ -137,10 +137,10 @@ else #FFFFFF
         utility.ts -> utility.ts : using **XLXS.writeFile(workbook, path)** \nwhich is write the content into xl sheet with above data
         utility.ts -> utility.ts : return **path** as **string**
     deactivate utility.ts 
-    Client <-- utility.ts : return **exportedPath** as string
+    Consumer <-- utility.ts : return **exportedPath** as string
     deactivate utility.ts
 end
 
 deactivate utility.ts
-deactivate Client
+deactivate Consumer
 @enduml

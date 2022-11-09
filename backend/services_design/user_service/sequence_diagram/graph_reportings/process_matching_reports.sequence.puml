@@ -1,9 +1,9 @@
 @startuml getCommonTags
-participant Client #64D1AF
+participant Consumer #64D1AF
 participant microsoftUser.service.ts
 
-Client -> microsoftUser.service.ts : **processMatchingReports(matchingReports, targetUser, loggedInUser)**
-activate Client #D3D3D3
+Consumer -> microsoftUser.service.ts : **processMatchingReports(matchingReports, targetUser, loggedInUser)**
+activate Consumer #D3D3D3
 activate microsoftUser.service.ts #D3D3D3
 
 microsoftUser.service.ts -> microsoftUser.service.ts : create a new variable **duplicateTargetUser** \nand assign a **targetUser** to it
@@ -29,7 +29,7 @@ microsoftUser.service.ts -> microsoftUser.service.ts : create a new variable **r
         microsoftUser.service.ts -> microsoftUser.service.ts : form the new object structure \nwith _id, userId, name, role, practice, mail, reportings, \n**(reportingDetails: [](null array))**, managerId, \n**(order: 1)**, last_access and __v \nthen push to the response variable and return the response
     end
 
-Client <-- microsoftUser.service.ts : return GraphViewUser[]
+Consumer <-- microsoftUser.service.ts : return GraphViewUser[]
 deactivate microsoftUser.service.ts
-deactivate Client
+deactivate Consumer
 @enduml

@@ -19,6 +19,8 @@ activate Client #D3D3D3
         end
         ManageTagsPanel -> ManageTagsPanel :  when the component gets updated or mounted\n or when the **[props.visible]** gets updated,\n update the **tagId** value as **undefined**\n update the **input** value as "empty string".
         ManageTagsPanel -> ManageTagsPanel :  when the component gets updated or mounted\n or when the **[props.onTagMode]** gets updated,\n update the **tagVisible** value as **!props.onTagMode**
+        ManageTagsPanel -> ManageTagsPanel : Implement antd Drawer in manage tags panel.
+        ' ManageTagsPanel -> ManageTagsPanel : 
         Client <-- ManageTagsPanel : component will be displayed to the user
     deactivate ManageTagsPanel
 deactivate Client
@@ -113,7 +115,8 @@ activate Client #D3D3D3
     activate ManageTagsPanel #D3D3D3
         ManageTagsPanel -> ManageTagsPanel : onTagAnalytics(tags: TagType[])
         ManageTagsPanel -> ManageTagsPanel : update the **tagVisible** value as **false**
-        ManageTagsPanel -> ManageTagsPanel : update the **tagAnalyticPanel** value as \n<TagsAnalyticPanel\nonPrevious={() => {\n  setTagsVisible(true);\n}}\n tags={tags}\nonTapViewCalender={props.onViewCalender(dates, tagIds)}\n userId={props.userId}/>
+        ManageTagsPanel -> ManageTagsPanel : Inplement the **TagsAnalyticPanel** 
+        note right of ManageTagsPanel : Refer the TagsAnalyticPanel sequence diagram\nin components/tag_analytic folder
         ManageTagsPanel -> ManageTagsPanel : update the **selectedTags** value as **empty []**
         ManageTagsPanel -> ManageTagsPanel : update the **selectedTagIds** value as **empty []**
         Client <-- ManageTagsPanel : component will render and\n tag analytics view is shown in the side bar
