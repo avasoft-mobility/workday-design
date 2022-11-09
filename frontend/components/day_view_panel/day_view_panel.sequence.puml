@@ -1,25 +1,53 @@
 @startuml DayViewPanel
 participant Client
 participant DayViewPanel
-participant attendance_service_backend
+participant attendance_service.ts
+participant attendance_backend
 
 Client -> DayViewPanel : call the component **<DayViewPanel {props}/>**
 activate Client #D3D3D3
 activate DayViewPanel #D3D3D3
 
-note right of Client:**Props:** \n\trefreshHandler: void, \n\tuserId: string, \n\tcurrentPracticeId: string, \n\ttodos: TodoItem[], \n\tselectedDate: Moment, \n\tvisible: boolean, \n\tsetVisible: void, \n\tchildrenDrawerVisible: boolean, \n\tsetChildrenDrawerVisible: void, \n\ttags: TagType[] or undefined, \n\thighlightedTaskIds: string[], \n\tisEditable: boolean, \n\tattendanceStatus: string
+note left of DayViewPanel:**Props:** \n\trefreshHandler\t\t\t : \tvoid \n\tuserId\t\t\t\t : \tstring \n\tcurrentPracticeId\t\t : \tstring \n\ttodos\t\t\t\t : \tTodoItem[] \n\tselectedDate\t\t\t : \tMoment \n\tvisible\t\t\t\t : \tboolean \n\tsetVisible\t\t\t\t : \tvoid \n\tchildrenDrawerVisible\t\t : \tboolean \n\tsetChildrenDrawerVisible\t : \tvoid \n\ttags\t\t\t\t\t : \tTagType[] or undefined \n\thighlightedTaskIds\t\t : \tstring[] \n\tisEditable\t\t\t\t : \tboolean \n\tattendanceStatus\t\t : \tstring
 
-DayViewPanel -> DayViewPanel : Bind **Working status** of the user for the \nselected date by using the **getDayAttendance** \nmethod when the component mounted \n**Note:** Refer the method below
+DayViewPanel -> DayViewPanel : Bind **Working status** of the user for the \nselected date by using the **getDayAttendance** \nmethod when the component mounted
+note right of DayViewPanel : Refer the **getDayAttendance** method below in Functions
+
 DayViewPanel -> DayViewPanel : When the component get mounted then \nHighlight the **Selected todos** whenever \nthe user opted for tag analytics use \n**highlightedTaskIds** to know whether the \nuser opted or not
-DayViewPanel -> DayViewPanel : Bind **Selected calendar date**, \n**Working status**, \n**Todo statistics for selected date** \nby using the **DayStatsPanel** component \n**Note:** Refer the design for \n**DayStatusPanel** in **day_stats_panel** \nfolder
-DayViewPanel -> DayViewPanel : Bind **Total estimated work hours** \nfor the selected date by using the\n**getWorkHours** method \n**Note:** Refer the method below 
-DayViewPanel -> DayViewPanel : Bind **Total Actual working hours** \nfor the selected date by using the\n**getWorkHours** method \n**Note:** Refer the method below 
-DayViewPanel -> DayViewPanel : Bind **Newly added task** or\n**Existing tasks** for the selected date by \nusing the **TodoViewPanel** component. \nBefore moving to next step first refer \nthe **TodoViewPanel** design and continue \nwith the methods **viewTodo**, **deleteTodo** \nand **deleteTodo** below \n**Note:** Refer the design for \n**TodoViewPanel** in **todo_view_panel** \nfolder
-DayViewPanel -> DayViewPanel : Show **Add Task** button only on \n**current day** and **day before current day** \nby using the **isEditable** from props value. \n**Note:** Refer **Add Task onClick** functionalities below
-DayViewPanel -> DayViewPanel : Bind **AddTodoPanel** component to add the \ntask for the current day or day before current \nday when the user clicked the **Add Task** button, \ncreate **getComponent** method to handle the \nfunctionlities and Before moving to next step first refer \nthe **AddTodoPanel** design and continue \nwith the method **addNewTodo** below \n**Note:** Refer the design for \n**AddTodoPanel** in **add_todo_panel** \nfolder and **getComponent** method below
-DayViewPanel -> DayViewPanel : Bind **EditTodoPanel** component to edit the \nexisting tasks for current day and day before \ncurrent day when the user clicked the **Edit** button, \ncreate **getComponent** method to handle the \nfunctionlities and Before moving to next step first refer \nthe **EditTodoPanel** design and continue \nwith the method **editExistingTodo** below \n**Note:** Refer the design for \n**EditTodoPanel** in **edit_todo_panel** \nfolder and **getComponent** method below
-DayViewPanel -> DayViewPanel : Bind **EditTodoPanel** component to view the \nexisting tasks for all the days when the user \nclicked the **View** button, \ncreate **getComponent** method to handle the \nfunctionlities \n**Note:** Refer the design for \n**EditTodoPanel** in **edit_todo_panel** \nfolder and **getComponent** method below
-DayViewPanel -> DayViewPanel : Refer day view panel close functionality below
+DayViewPanel -> DayViewPanel : Bind **Selected calendar date**, \n**Working status**, \n**Todo statistics for selected date** \nby using the **DayStatsPanel** component
+note right of DayViewPanel : Refer the **DayStatusPanel** in **day_stats_panel** \nfolder
+
+DayViewPanel -> DayViewPanel : Bind **Total estimated work hours** \nfor the selected date by using the\n**getWorkHours** method
+note right of DayViewPanel : Refer the **getWorkHours** method below in Functions
+
+DayViewPanel -> DayViewPanel : Bind **Total Actual working hours** \nfor the selected date by using the\n**getWorkHours** method 
+note right of DayViewPanel : Refer the **getWorkHours** method below in Functions
+
+DayViewPanel -> DayViewPanel : Bind **Newly added task** or\n**Existing tasks** for the selected date by \nusing the **TodoViewPanel** component. \nBefore moving to next step first refer \nthe **TodoViewPanel** design and continue \nwith the methods **viewTodo**, **deleteTodo** \nand **editTodo** below
+note right of DayViewPanel : Refer the **TodoViewPanel** in **todo_view_panel** \nfolder and methods below in Functions
+
+DayViewPanel -> DayViewPanel : Show **Add Task** button only on **current working day** \nand **previous working day** by using the **isEditable** \nvalue from props
+note right of DayViewPanel : Refer **Add Task** onclick function in below \nClick Functionalities
+
+DayViewPanel -> DayViewPanel : Bind **AddTodoPanel** component to add the \ntask for the current working day or previous working \nday by statisfying the following condition
+    alt If the user clicked the **Add Task** button \nand the childrenDrawerMode is equal to "add"
+        DayViewPanel -> DayViewPanel : call **getComponent** method to populate the \n**AddTodoPanel** component. Before moving \nto next step first refer the **AddTodoPanel** component \ndesign and continue with the method **addNewTodo**
+        note right of DayViewPanel : Refer the **getComponent** and **addNewTodo** methods \nin Functions \nRefer the **AddTodoPanel** component in **add_todo_panel** \nfolder
+    end
+
+DayViewPanel -> DayViewPanel : Bind **EditTodoPanel** component to edit the \nexisting tasks for current working day or previous working \nday
+    alt If the user clicked the **Edit** button \nand the childrenDrawerMode is \nequal to "edit"
+        DayViewPanel -> DayViewPanel : call **getComponent** method to populate the \n**EditTodoPanel** component. Before moving \nto next step first refer the **EditTodoPanel** component \ndesign and continue with the method **editExistingTodo**
+        note right of DayViewPanel : Refer the **getComponent** and **editExistingTodo** methods \nin Functions \nRefer the **EditTodoPanel** component in **edit_todo_panel** \nfolder
+    end
+
+DayViewPanel -> DayViewPanel : Bind **EditTodoPanel** component to view the \nexisting tasks for all the days
+    alt If the user clicked the **view** button \nand the childrenDrawerMode is \nequal to "view"
+        DayViewPanel -> DayViewPanel : call **getComponent** method to populate the \n**EditTodoPanel** component
+        note right of DayViewPanel : Refer the **getComponent** in Functions \nRefer the **EditTodoPanel** component in **edit_todo_panel** \nfolder
+    end
+
+note right of DayViewPanel : Refer the **Day view Panel** close functionality in Click Functionalities
 
 Client <-- DayViewPanel : \treturn the appropriate **view**
 deactivate DayViewPanel
@@ -27,18 +55,24 @@ deactivate Client
 
 ... ...
 ... ...
-note over Client: Click function
+... ...
+...~~**Functions**~~...
+... ...
 ... ...
 
-Client -> DayViewPanel: call **getDayAttendance**
+Client -> DayViewPanel: **getDayAttendance**
 activate Client #D3D3D3
 activate DayViewPanel #D3D3D3
 
-DayViewPanel -> attendance_service_backend: call the **getAttendance** method in \nattendance services file to trigger the \nget attendance api 
-    activate attendance_service_backend #D3D3D3
-    attendance_service_backend -> attendance_service_backend: get the working status of the \nuser for the specific date 
-    attendance_service_backend --> DayViewPanel: return attendance details
-    deactivate attendance_service_backend
+DayViewPanel -> attendance_service.ts: call the **getAttendance** method in \nattendance services file 
+    activate attendance_service.ts #D3D3D3
+    attendance_service.ts -> attendance_backend: call **Base URL/attendance?** \n**userId=${userId}&date=${parsedDate}**
+    activate attendance_backend #D3D3D3
+    attendance_backend -> attendance_backend: get the **working status** of the \nuser for the specific date
+    attendance_backend --> attendance_service.ts: return attendance details
+    deactivate attendance_backend
+    attendance_service.ts --> DayViewPanel: return attendance details
+    deactivate attendance_service.ts
     DayViewPanel -> DayViewPanel: set the reponse to the varibale **attendanceStatus**
 DayViewPanel --> Client: **render** the entire component
 
@@ -46,7 +80,7 @@ deactivate DayViewPanel
 deactivate Client
 ... ...
 
-Client -> DayViewPanel: call **getWorkHours**
+Client -> DayViewPanel: **getWorkHours**
 activate Client #D3D3D3
 activate DayViewPanel #D3D3D3
     DayViewPanel -> DayViewPanel: calculate the total eta and ata by using the todos from props 
@@ -55,29 +89,34 @@ activate DayViewPanel #D3D3D3
 deactivate Client
 ... ...
 
-Client -> DayViewPanel: on day view panel drawer closed trigger **onClose**
-activate Client #D3D3D3
-activate DayViewPanel #D3D3D3
-    DayViewPanel -> DayViewPanel: Whenever the user closed the \n**Day view panel** drawer or page \ngot refreshed then set the variable \n**visible** to **false** and variable **isLoading** to **true** 
-    DayViewPanel --> Client: return closes the day view panel \ndrawer
-    deactivate DayViewPanel
-deactivate Client
-... ...
-
-Client -> DayViewPanel: call **showChildrenDrawer**
+Client -> DayViewPanel: **showChildrenDrawer**
 activate Client #D3D3D3
 activate DayViewPanel #D3D3D3
     DayViewPanel -> DayViewPanel: Whenever the user opens the \n**Add or Edit or View todo panel** drawer \nthen call the **setChildrenDrawerVisible** function \nfrom props and pass the parameter as **true** 
-    DayViewPanel --> Client: return opens appropriate drawer component
+    DayViewPanel --> Client: opens appropriate drawer component
     deactivate DayViewPanel
 deactivate Client
 ... ...
 
-Client -> DayViewPanel: call **onChildrenDrawerClose**
+Client -> DayViewPanel: call **getComponent**
 activate Client #D3D3D3
 activate DayViewPanel #D3D3D3
-    DayViewPanel -> DayViewPanel: Whenever the user closes the \n**Add or Edit or View todo panel** drawer \nthen call the **setChildrenDrawerVisible** function \nfrom props and pass the parameter as **false** 
-    DayViewPanel --> Client: return opens appropriate drawer component
+    DayViewPanel -> DayViewPanel: This method returns the **AddTodoPanel** component \nif the value of the **childrenDrawerMode** is **"add"** or \nit returns **EditTodoPanel** component if the value of \nthe **childrenDrawerMode** is **"edit"** or **"view"**. If not \nmatched with any of the options, return **null** tag
+    DayViewPanel --> Client: display the appropriate component
+    deactivate DayViewPanel
+deactivate Client
+... ...
+
+Client -> DayViewPanel: call **addNewTodo**
+activate Client #D3D3D3
+activate DayViewPanel #D3D3D3
+    DayViewPanel -> DayViewPanel: When the user filled the task details and clicked the add \ntodo button, enable the loader by assign the **submittingChanges** \nvariable value to **true** and call the **addTodo** method in todo \nservices file to trigger the post todo api. Disable the loader \nafter getting a response whether it is success or fail. \nTo disable it set **submittingChanges** variable to **false**
+    DayViewPanel -> DayViewPanel: if the response status code is 200, check if **"add"** or \n**"add_and_continue"** button is clicked by the user
+    DayViewPanel -> DayViewPanel: if user has clicked the **"add" button**, close the **Add todo panel** \ndrawer and refresh the page. To close the drawer call \n**onChildrenDrawerClose** method and to refresh trigger \nthe **refreshHandler** method from props
+    note right of DayViewPanel: Refer **onChildrenDrawerClose** method in Click Functionalities
+    
+    DayViewPanel -> DayViewPanel: if user has clicked the **"add_and_continue"** button, \nclear all the fields and allow the user to continue with the \nadd task drawer without closing it. To do that set \n**childrenDrawerMode** variable to **"add"**
+    DayViewPanel --> Client: New todo will be added
     deactivate DayViewPanel
 deactivate Client
 ... ...
@@ -91,32 +130,56 @@ activate DayViewPanel #D3D3D3
 deactivate Client
 ... ...
 
-Client -> DayViewPanel: call **getComponent**
+Client -> DayViewPanel: call **editExistingTodo**
 activate Client #D3D3D3
 activate DayViewPanel #D3D3D3
-    DayViewPanel -> DayViewPanel: This method returns the **AddTodoPanel** component \nif the value of the **childrenDrawerMode** is **"add"** or \nit returns **EditTodoPanel** component if the value of \nthe **childrenDrawerMode** is **"edit"** or **"view"**. If not \nmatched with any of the options, return **null** tag
-    DayViewPanel --> Client: return component
+    DayViewPanel -> DayViewPanel: When the user has **modified** the **task** details and clicked the **edit todo** \nbutton, check the user has filled the **working status** or **not** if \nfilled, enable the loader by assign the **submittingChanges** \nvariable value to **true** and call the **editTodoById** \nmethod in todo services file to trigger the put todo api 
+    DayViewPanel -> DayViewPanel: \nDisable the loader after getting a response whether it is success \nor fail. To disable it set **submittingChanges** variable to \n**false** and close the **Edit todo panel** drawer and refresh \nthe page. To close the drawer call \n**onChildrenDrawerClose** method and to refresh, trigger the \n**refreshHandler** method from props
+    note right of DayViewPanel: Refer **onChildrenDrawerClose** method in Click Functionalities
+
+    DayViewPanel --> Client: Existing todo will be updated
     deactivate DayViewPanel
 deactivate Client
 ... ...
 
-Client -> DayViewPanel: on Add Task button onClick call **showAddNewTaskPanel**
+... ...
+... ...
+...~~**Click Functionalities**~~...
+... ...
+... ...
+
+Client -> DayViewPanel: When **Add Task** button clicked \nby the user, call **showAddNewTaskPanel**
 activate Client #D3D3D3
 activate DayViewPanel #D3D3D3
-    DayViewPanel -> DayViewPanel: When the user clicked the **add todo** button, check \nthe user has filled the **working status** or not if filled, \nopen the **add todo panel**. To do that first set \n**childrenDrawerMode** variable value to **"add"** and \ncall the **showChildrenDrawer** method. If not filled, \nprompt the message **"Please fill your attendance"**. \n**Note:** Refer showChildrenDrawer method in current file
-    DayViewPanel --> Client: return void
+    alt If the user has filled the working status
+        DayViewPanel -> DayViewPanel: open the **add todo panel**. To do that first set \n**childrenDrawerMode** variable value to **"add"** and \ncall the **showChildrenDrawer** method
+        note right of DayViewPanel: Refer the **showChildrenDrawer** method in Functions
+        DayViewPanel --> Client: It will open the add todo panel
+    end
+
+    alt If the user has not filled the working status
+        DayViewPanel -> DayViewPanel: prompt the message **"Please fill your attendance"**
+        DayViewPanel --> Client: Promp error message to the user
+        deactivate DayViewPanel
+    end
+deactivate Client
+... ...
+
+
+Client -> DayViewPanel: on day view panel drawer closed trigger **onClose**
+activate Client #D3D3D3
+activate DayViewPanel #D3D3D3
+    DayViewPanel -> DayViewPanel: Whenever the user closed the \n**Day view panel** drawer or page \ngot refreshed then set the variable \n**visible** to **false** and variable **isLoading** to **true** 
+    DayViewPanel --> Client: return closes the day view panel \ndrawer
     deactivate DayViewPanel
 deactivate Client
 ... ...
 
-Client -> DayViewPanel: call **addNewTodo**
+Client -> DayViewPanel: call **onChildrenDrawerClose**
 activate Client #D3D3D3
 activate DayViewPanel #D3D3D3
-    DayViewPanel -> DayViewPanel: When the user filled the task details and clicked the add \ntodo button, enable the loader by assign the **submittingChanges** \nvariable value to **true** and call the **addTodo** method in todo \nservices file to trigger the post todo api. Disable the loader \nafter getting a response whether it is success or fail. \nTo disable it set **submittingChanges** variable to **false**
-    DayViewPanel -> DayViewPanel: if the response status code is 200, check if **"add"** or \n**"add_and_continue"** button is clicked by the user
-    DayViewPanel -> DayViewPanel: if user has clicked the **"add" button**, close the **Add todo panel** \ndrawer and refresh the page. To close the drawer call \n**onChildrenDrawerClose** method and to refresh trigger \nthe **refreshHandler** method from props. \n**Note:** Refer onChildrenDrawerClose method in current file
-    DayViewPanel -> DayViewPanel: if user has clicked the **"add_and_continue"** button, \nclear all the fields and allow the user to continue with the \nadd task drawer without closing it. To do that set \n**childrenDrawerMode** variable to **"add"**
-    DayViewPanel --> Client: return void
+    DayViewPanel -> DayViewPanel: Whenever the user closes the \n**Add or Edit or View todo panel** drawer \nthen call the **setChildrenDrawerVisible** function \nfrom props and pass the parameter as **false** 
+    DayViewPanel --> Client: opens appropriate drawer component
     deactivate DayViewPanel
 deactivate Client
 ... ...
@@ -124,18 +187,10 @@ deactivate Client
 Client -> DayViewPanel: call **editTodo**
 activate Client #D3D3D3
 activate DayViewPanel #D3D3D3
-    DayViewPanel -> DayViewPanel: When the user clicked the edit todo button, check the user has \nfilled the working status or not if filled, open the **edit todo** \n**panel**. To do that first set **childrenDrawerMode** variable \nvalue to **"edit"** and call the **showChildrenDrawer** method and set \nthe appropriate todo details in **currentFocusingTodo** variable. \nIf not filled, prompt the message **"Please fill your attendance"**. \n**Note:** Refer **showChildrenDrawer** method in current file
-    DayViewPanel --> Client: return void
-    deactivate DayViewPanel
-deactivate Client
-... ...
+    DayViewPanel -> DayViewPanel: When the user clicked the edit todo button, check the user has \nfilled the working status or not if filled, open the **edit todo** \n**panel**. To do that first set **childrenDrawerMode** variable \nvalue to **"edit"** and call the **showChildrenDrawer** method and set \nthe appropriate todo details in **currentFocusingTodo** variable. \nIf not filled, prompt the message **"Please fill your attendance"**
+    note right of DayViewPanel: Refer **showChildrenDrawer** method in Functions
 
-Client -> DayViewPanel: call **editExistingTodo**
-activate Client #D3D3D3
-activate DayViewPanel #D3D3D3
-    DayViewPanel -> DayViewPanel: When the user has **modified** the **task** details and clicked the **edit todo** \nbutton, check the user has filled the **working status** or **not** if \nfilled, enable the loader by assign the **submittingChanges** \nvariable value to **true** and call the **editTodoById** \nmethod in todo services file to trigger the put todo api 
-    DayViewPanel -> DayViewPanel: \nDisable the loader after getting a response whether it is success \nor fail. To disable it set **submittingChanges** variable to \n**false** and close the **Edit todo panel** drawer and refresh \nthe page. To close the drawer call \n**onChildrenDrawerClose** method and to refresh, trigger the \n**refreshHandler** method from props. **Note:** Refer \nonChildrenDrawerClose method in current file
-    DayViewPanel --> Client: return void
+    DayViewPanel --> Client: opens the Edit Todo Panel
     deactivate DayViewPanel
 deactivate Client
 ... ...
@@ -143,8 +198,10 @@ deactivate Client
 Client -> DayViewPanel: call **viewTodo**
 activate Client #D3D3D3
 activate DayViewPanel #D3D3D3
-    DayViewPanel -> DayViewPanel: When the user clicked the **view todo** button, check the user has \nfilled the **working status** or **not** if filled, open the **edit todo** \n**panel**. To do that first set **childrenDrawerMode** variable\nvalue to **"view"** and call the **showChildrenDrawer** method. If not \nfilled, prompt the message **"Please fill your attendance"**. **Note:**\nRefer **showChildrenDrawer** method in the current file
-    DayViewPanel --> Client: return void
+    DayViewPanel -> DayViewPanel: When the user clicked the **view todo** button, check the user has \nfilled the **working status** or **not** if filled, open the **edit todo** \n**panel**. To do that first set **childrenDrawerMode** variable\nvalue to **"view"** and call the **showChildrenDrawer** method. If not \nfilled, prompt the message **"Please fill your attendance"**
+    note right of DayViewPanel: Refer **showChildrenDrawer** method in Functions
+
+    DayViewPanel --> Client: opens the Edit Todo Panel
     deactivate DayViewPanel
 deactivate Client
 ... ...
@@ -154,7 +211,7 @@ activate Client #D3D3D3
 activate DayViewPanel #D3D3D3
     DayViewPanel -> DayViewPanel: When the user clicked the **delete todo** button, check the user has \nfilled the **working status** or **not** if filled, prompt the delete \nconfirmation popup, if user confirmed the delete prompt, enable \nthe loader by assign the **submittingChanges** variable value \nto **true** and call the **deleteTodoById** method in todo services \nfile to trigger the Delete todo api. If not filled, prompt the \nmessage **"Please fill your attendance"**.
     DayViewPanel -> DayViewPanel: Disable the loader after getting a response whether it is success \nor fail. To disable it set **submittingChanges** variable to \n**false** and close the **Delete confirmation popup** and \nrefresh the page. To refresh trigger the **refreshHandler** method \nfrom props
-    DayViewPanel --> Client: return void
+    DayViewPanel --> Client: delete the appropriate todo
     deactivate DayViewPanel
 deactivate Client
 ... ...
