@@ -1,6 +1,6 @@
 @startuml user service class diagram
 
-class tagsService {
+class MicrosoftUserService {
   getMyTeamReport  \t\t\t\t\t\t Response
   ..
   getMicrosoftUser  \t\t\t\t\t\t TeamReport
@@ -38,6 +38,12 @@ class tagsService {
   migrateReportees \t\t\t\t\t\t MicrosoftUser
   ..
   getUserById \t\t\t\t\t\t\t MicrosoftUser
+}
+
+class LeadershipRouter {
+  getLeaderShipByUserId(string) : \t\tLeadership
+  ..
+  getAllLeaderShip() : \t\tLeadership[]
 }
 
 entity Response{
@@ -98,32 +104,6 @@ entity MicrosoftUserOverride{
     toUserId: \t\t\t\t string
     ..
     reportees: \t\t\t string[]
-}
-
-entity PopulateMicrosoftUserOverride{
-    _id: \t\t\t\t\t string
-    ..
-    status: \t\t\t\t string
-    ..
-    mailRequestId: \t\t string
-    ..
-    acknowledgedBy?: \t\t string
-    ..
-    acceptedBy?: \t\t\t string
-    ..
-    rejectedBy?: \t\t\t string
-    ..
-    isActive: \t\t\t\t string
-    ..
-    createdAt: \t\t\t string
-    ..
-    updatedAt: \t\t\t string
-    ..
-    __v?: \t\t\t\t number
-    ..
-  toUser: \t\t\t\t MicrosoftUser;
-  ..
-  reportees: \t\t\t MicrosoftUser[];
 }
 
 entity TeamReport{
@@ -240,6 +220,20 @@ entity UserTodoStatistics {
   myStatistics: \t\t MyStat
   ..
   date: \t\t\t string
+}
+
+entity Leadership {
+  microsoftUserId:\tstring
+  ..
+  name: \t\t\tstring
+  ..
+  domain: \t\t\tstring
+  ..
+  mail: \t\t\tstring
+  ..
+  hrpoc: \t\t\tstring
+  ..
+  hrmail: \t\t\tstring[]
 }
 
 @enduml

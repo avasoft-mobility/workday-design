@@ -1,0 +1,48 @@
+@startuml Get Migartion Details
+
+participant Client #64D1AF
+participant app.ts
+participant leadership.router.ts
+participant DB #FFC0CB
+
+Client -> app.ts : "/users/leadership?userId=<>" in GET Method
+activate Client #D3D3D3
+    activate app.ts #D3D3D3
+        app.ts -> leadership.router.ts : Request hit on the leadership.router.ts
+        activate leadership.router.ts #D3D3D3
+            leadership.router.ts -> leadership.router.ts : get **request.params.userId**\n and assign that to the\n variable called **userId**
+
+            alt userId is defined
+                leadership.router.ts -> leadership.router.ts : declare a variable **result** and call **getLeaderShipByUserId with userId**
+                leadership.router.ts -> leadership.router.ts : **getLeaderShipByUserId(userId)**
+                activate leadership.router.ts #D16587
+                    leadership.router.ts -> DB : Request for the leaership details for the userId
+                    activate DB #D3D3D3
+                        DB -> DB : LeaderShip.findOne({\n\tmicrosoftUserId: userId,\n});
+                        leadership.router.ts <-- DB : return **Leadership**
+                    deactivate DB
+                deactivate leadership.router.ts
+                alt result is undefined
+                    app.ts <-- leadership.router.ts : status: 400 \nsend: (**message: "Couldn't find leadership details for this userId"**);
+                else 
+                    app.ts <-- leadership.router.ts : status: 200\nsend: **result**;
+                end  
+            else 
+                leadership.router.ts -> leadership.router.ts : declare a variable **result** and call **getLeaderShipByUserId with userId**
+                leadership.router.ts -> leadership.router.ts : **getAllLeaderShip(userId)**
+                activate leadership.router.ts #D16587
+                    leadership.router.ts -> DB : Request for all leadership details
+                    activate DB #D3D3D3
+                        DB -> DB : LeaderShip.find();
+                        leadership.router.ts <-- DB : return **Leadership[]**
+                    deactivate DB
+                deactivate leadership.router.ts
+                app.ts <-- leadership.router.ts : status(200)\nsend(**result**);
+            end
+        deactivate leadership.router.ts
+        Client <-- app.ts : return response
+    deactivate app.ts
+deactivate Client
+@enduml
+
+
