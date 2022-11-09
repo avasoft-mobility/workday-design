@@ -24,7 +24,8 @@ alt if userId is null
 end
 
 microsoftUser.service.ts -> microsoftUser.service.ts : create a new variable **currentUser**
-microsoftUser.service.ts -> microsoftUser.service.ts : call **getMicrosoftUser(userId)** \n**Refer:** getMicrosoftUser method in shared_services_design folder \nand assign the response to the **currentUser**
+microsoftUser.service.ts -> microsoftUser.service.ts : call **getMicrosoftUser(userId)** 
+note right of microsoftUser.service.ts : **Refer:** getMicrosoftUser method in shared_services_design folder \nand assign the response to the **currentUser**
 
 alt if currentUser is null
     microsoftUser.router.ts <-- microsoftUser.service.ts : return Response\n(code: 404, message: "User not found", body: [])
@@ -34,14 +35,18 @@ alt if currentUser is not null
     microsoftUser.service.ts -> microsoftUser.service.ts : remove current user's user id from the \ncurrent user's reportings array
 
     microsoftUser.service.ts -> microsoftUser.service.ts : create a new variable **reportingsDetail**
-    microsoftUser.service.ts -> microsoftUser.service.ts : call **getMultipleMicrosoftUser(currentUser.reportings)** \n**Refer:** getMultipleMicrosoftUser method in shared_services_design folder \nand assign the response to the **reportingsDetail**
+    microsoftUser.service.ts -> microsoftUser.service.ts : call **getMultipleMicrosoftUser(currentUser.reportings)** 
+    note right of microsoftUser.service.ts : **Refer:** getMultipleMicrosoftUser method in shared_services_design folder \nand assign the response to the **reportingsDetail**
 
     microsoftUser.service.ts -> microsoftUser.service.ts : create a new variable **reportingsAttendance**
-    microsoftUser.service.ts -> microsoftUser.service.ts : call **getMicrosoftUsersAttendance(currentUser.reportings)** \n**Refer:** getMicrosoftUsersAttendance method in get_my_team_report folder \nand assign the response to the **reportingsAttendance**
+    microsoftUser.service.ts -> microsoftUser.service.ts : call **getMicrosoftUsersAttendance(currentUser.reportings)** 
+    note right of microsoftUser.service.ts : **Refer:** getMicrosoftUsersAttendance method in get_my_team_report folder \nand assign the response to the **reportingsAttendance**
 
     alt if reportingsAttendance is not null
-        microsoftUser.service.ts -> microsoftUser.service.ts : call **mapUsersWithAttendance(reportingsDetail, reportingsAttendance)** \n**Refer:** mapUsersWithAttendance method below \nand assign the response to the **reportingUsers**
-        microsoftUser.service.ts -> microsoftUser.service.ts : call **mapUsersWithReporterName(reportingsDetail, currentUser)** \n**Refer:** mapUsersWithReporterName method below \nand assign the response to the **reportingUsers**
+        microsoftUser.service.ts -> microsoftUser.service.ts : call **mapUsersWithAttendance(reportingsDetail, reportingsAttendance)** 
+        note right of microsoftUser.service.ts : **Refer:** mapUsersWithAttendance method below \nand assign the response to the **reportingUsers**
+        microsoftUser.service.ts -> microsoftUser.service.ts : call **mapUsersWithReporterName(reportingsDetail, currentUser)** 
+        note right of microsoftUser.service.ts : **Refer:** mapUsersWithReporterName method below \nand assign the response to the **reportingUsers**
     end
 
     alt if reportingsAttendance is null

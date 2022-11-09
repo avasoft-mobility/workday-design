@@ -7,7 +7,8 @@ activate Client
 activate ReportGenerator.ts #D3D3D3
     ReportGenerator.ts -> ReportGenerator.ts : declare a variable **currentDate** and \nassign current date to it
     ReportGenerator.ts -> ReportGenerator.ts : declare a variable **lastWorkingDate** and \nassign current date in time format
-    ReportGenerator.ts -> ReportGenerator.ts : call **isMonday(currentDate)** \n**Refer:** isMonday method in **ReportGenerator** folder
+    ReportGenerator.ts -> ReportGenerator.ts : call **isMonday(currentDate)** 
+    note right of ReportGenerator.ts :  **Refer:** isMonday method in **ReportGenerator** folder
 
     alt if isMonday method return true
         ReportGenerator.ts -> ReportGenerator.ts: minus three days to **lastWorkingDate**

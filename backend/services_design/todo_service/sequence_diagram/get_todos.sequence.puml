@@ -20,7 +20,7 @@ end
 
 alt if date exist
     todos.service.ts -> todos.service.ts
-    note right of todos.service.ts: call getTodosByDate(userId, date, object)\n Refer getTodosByDate() technical design
+    note right of todos.service.ts: call getTodosByDate(userId, date, object)Refer getTodosByDate() technical design
     todos.service.ts -> todos.controller.ts : return TodoResponse\n(code: 200, message: "Successful", body: Todo | Todo[])
 end
 

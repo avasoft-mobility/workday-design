@@ -7,7 +7,8 @@ activate Consumer #D3D3D3
 activate microsoftUser.service.ts #D3D3D3
 
 microsoftUser.service.ts -> microsoftUser.service.ts : create a new variable **response**
-microsoftUser.service.ts -> microsoftUser.service.ts : make **(GET)** **/todos** api call, \n**Refer:** get todos technical design \nand store the response to the variable **response**
+microsoftUser.service.ts -> microsoftUser.service.ts : make **(GET)** **/todos** api call, 
+note right of microsoftUser.service.ts :  **Refer:** get todos technical design \nand store the response to the variable **response**
 
     alt if response in null
         microsoftUser.service.ts --> Consumer : return [](null array)
@@ -16,10 +17,12 @@ microsoftUser.service.ts -> microsoftUser.service.ts : make **(GET)** **/todos**
     alt if response in not null
         microsoftUser.service.ts -> microsoftUser.service.ts : create a new variable **userTodos**
         loop response
-            microsoftUser.service.ts --> microsoftUser.service.ts : Loop the response and form the new object structure with _id, \nuserId, microsoftUserId, title, comments, status, type, eta, \nata, date, **tags: call the fetchTodoDefaultTags(todo.tags ? todo.tags : [],** \n**defaultTags) method** \n**Refer:** fetchTodoDefaultTags technical design in shared_services_design folder \nand __v then push the newly formed object to the **userTodos** variable
+            microsoftUser.service.ts --> microsoftUser.service.ts : Loop the response and form the new object structure with _id, \nuserId, microsoftUserId, title, comments, status, type, eta, \nata, date, **tags: call the fetchTodoDefaultTags(todo.tags ? todo.tags : [],** \n**defaultTags) method** 
+            note right of microsoftUser.service.ts : **Refer:** fetchTodoDefaultTags technical design in shared_services_design folder \nand __v then push the newly formed object to the **userTodos** variable
         end
 
-        microsoftUser.service.ts -> microsoftUser.service.ts: call **todoETABasedSorting(userTodos)** \n**Refer:** todoETABasedSorting method below
+        microsoftUser.service.ts -> microsoftUser.service.ts: call **todoETABasedSorting(userTodos)** 
+        note right of microsoftUser.service.ts : **Refer:** todoETABasedSorting method below.
         note right of microsoftUser.service.ts: Sort the **userTodos** based on the \neach todo's **highest eta** and \nreturn the response
     end
 Consumer <-- microsoftUser.service.ts : return response

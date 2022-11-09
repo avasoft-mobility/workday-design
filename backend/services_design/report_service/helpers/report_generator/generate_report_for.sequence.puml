@@ -6,7 +6,8 @@ Client -> ReportGenerator.ts : **generateReportFor(date)**
 activate Client #D3D3D3
 activate ReportGenerator.ts #D3D3D3
     ReportGenerator.ts -> ReportGenerator.ts : declare a variable **targetUser**
-    ReportGenerator.ts -> ReportGenerator.ts : call **`base url/users/${this.targetId}`** \napi to get the **target user** detail and \nto know about **targetId** \n**Refer:** report_generator_constructor design file \nand store the response in variable **targetUser**
+    ReportGenerator.ts -> ReportGenerator.ts : call **`base url/users/${this.targetId}`** \napi to get the **target user** detail and \nto know about **targetId**.
+    note right of ReportGenerator.ts : **Refer:** report_generator_constructor design file \nand store the response in variable **targetUser**
     alt if targetUser is null
         ReportGenerator.ts --> Client : return null
     end
@@ -17,7 +18,9 @@ activate ReportGenerator.ts #D3D3D3
 
         loop reportingUsers
             ReportGenerator.ts -> ReportGenerator.ts: declare a variable **userReport**
-            ReportGenerator.ts -> ReportGenerator.ts: loop the **reportingUsers** and \ngenerate todo report for each user \nby calling **generateUserTodoReport(userId, date)** \n**Refer:** generateUserTodoReport method in **report_generator** folder \nstore the response to variable **userReport** and \npush the userReport to variable **reports**
+            ReportGenerator.ts -> ReportGenerator.ts: loop the **reportingUsers** and \ngenerate todo report for each user \nby calling **generateUserTodoReport(userId, date)**
+            note right of ReportGenerator.ts: **Refer:** generateUserTodoReport method in **report_generator** folder \nstore the response to variable **userReport** and \npush the userReport to variable **reports**
+            
         end
         ReportGenerator.ts -> ReportGenerator.ts: like above generate todo report for all the target user's \nreportees and return **reports**
         ReportGenerator.ts --> Client: return **reports**
