@@ -11,16 +11,30 @@ activate UserCalendarPage #D3D3D3
 
 note right of Client:**Props:** \n\thighlightedDates: string[], \n\ttagIds: string[], \n\tisHisTODO: boolean, \n\ttodoUser: any
 
-UserCalendarPage -> UserCalendarPage : When the component mounted call **initialise** \nmethod. \n**Note** : Refer method below
-UserCalendarPage -> UserCalendarPage : When the component mounted or **todoUser** \nvalue from props changed call **setUserDetails** \nmethod. \n**Note** : Refer method below
+UserCalendarPage -> UserCalendarPage : When the component mounted call **initialise** \nmethod
+note right of UserCalendarPage: Refer **initialise** method in Functions
+
+UserCalendarPage -> UserCalendarPage : When the component mounted or **todoUser** \nvalue from props changed call **setUserDetails** \nmethod
+note right of UserCalendarPage: Refer **setUserDetails** method in Functions
+
 UserCalendarPage -> UserCalendarPage : When the component mounted or any of the two \nvalues **highlightedDates** or **tagIds** from props \nchanged update variable **highlightedDates** value \nwith highlightedDates value from props and \nalso update variable **highlightedTagIds** value \nwith tagIds value from props
-UserCalendarPage -> UserCalendarPage : When the component mounted or variable \n**selectedDate** updated call **onSelectedDateChange** \nmethod. \n**Note** : Refer method below
+UserCalendarPage -> UserCalendarPage : When the component mounted or variable \n**selectedDate** updated call **onSelectedDateChange** \nmethod
+note right of UserCalendarPage: Refer **onSelectedDateChange** method in Functions
 
 UserCalendarPage -> UserCalendarPage : Bind current month's overall statistics that \ncontains **Total planned todos of current month** \n, **Total on-demand todos of current month**, \n**Total todos count, Total completed todos count** and \n**Previous week's average working hours** with displaying \nthe current **month's name** of the logged \nin user. If the logged in user seeing any one \nof their reportee's todos, show only **Reportee's** \n**profile picture**, **Name**, **Role** and \n**Previous week's average working hours**.
-UserCalendarPage -> UserCalendarPage : To know the total planned todos and on demand todos \ncount Refer **getTodosByTypes()** method design in \n**helpers folder**
-UserCalendarPage -> UserCalendarPage : To know the total completed todos count \nand To get the month's name Refer **getTodosByStatus()** \nand **getMonthName** methods design in \n**helpers folder**
+UserCalendarPage -> UserCalendarPage : To know the total planned todos and on demand todos \ncount
+note right of UserCalendarPage: Refer **getTodosByTypes** method in **helpers** folder
+
+UserCalendarPage -> UserCalendarPage : To know the total completed todos count \nand To get the month's name
+note right of UserCalendarPage: Refer **getTodosByStatus** and **getMonthName** \nmethods in **helpers** folder
+
 UserCalendarPage -> UserCalendarPage : Bind current time zone of India, Mountain \nstandard time of US and Central standard \ntime of US
-UserCalendarPage -> UserCalendarPage : Bind current month's calendar and display the \ntotal count of the **Completed** todos, **Pending** todos and **In** \n**progress** todos of each day and **working status** of \neach day in each date cell \n**Note1: **Refer **dateCellRender(date, dateHighlighted(date))** \nand **dateHighlighted** methods below \n**Note2: **When the user clicked the any of the date cell, Open \nthe Drawer .i.e(**DayViewPanel** component) Refer component\ndesign for more details. To open drawer refer **showDrawer** method \nbelow
+UserCalendarPage -> UserCalendarPage : Bind current month's calendar and display the \ntotal count of the **Completed** todos, **Pending** todos and **In** \n**progress** todos of each day and **working status** of \neach day in each date cell
+note right of UserCalendarPage: Refer **dateCellRender(date, dateHighlighted(date))** \nand **dateHighlighted** methods in Functions
+
+UserCalendarPage -> UserCalendarPage : When the user clicked the any of the date cell, Open \nthe Drawer .i.e(**DayViewPanel** component) Refer component\ndesign for more details. To open drawer call **showDrawer** method
+note right of UserCalendarPage: Refer **showDrawer** method in Functions
+
 UserCalendarPage -> UserCalendarPage : When the user hover the date cell, Display **Total** \n**estimated hours** and **Total actual hours** of \nthe appropriate date which the user has hovered and \nalso display the **clear all task**  button for \ncurrent date and future dates only on when the \nuser has **pending** or **in progress** tasks.
 
 Client <-- UserCalendarPage : \treturn the appropriate **view**
@@ -29,7 +43,9 @@ deactivate Client
 
 ... ...
 ... ...
-note over Client: Click function
+... ...
+...~~**Functions**~~...
+... ...
 ... ...
 
 Client -> UserCalendarPage: call **initialize()**
@@ -38,7 +54,8 @@ activate UserCalendarPage #D3D3D3
 
 UserCalendarPage -> UserCalendarPage : when the component mounted. \nInitially enable the loader by setting the \nisLoading variable value to **"true"** and disable \nthe loader once the methods \n**setupUserCalander**, **fetchTags** and **getStatistics** \nreturns the response
 alt if the url containes "myTODO"
-    UserCalendarPage -> UserCalendarPage : call **setUpWithQueryString()** \n**Note: **Refer method below  
+    UserCalendarPage -> UserCalendarPage : call **setUpWithQueryString()**  
+    note right of UserCalendarPage: Refer **setUpWithQueryString** method in Functions
 end
 
 UserCalendarPage --> Client : return void
@@ -54,7 +71,8 @@ activate UserCalendarPage #D3D3D3
 
 UserCalendarPage -> UserCalendarPage : call **getViewingMonthTodo()** and store the response in \nvariable **todoPromise**
 UserCalendarPage -> UserCalendarPage : call **getViewingMonthAttendance()** and store the response \nin variable **attendancePromise**
-UserCalendarPage -> UserCalendarPage : wait until both the functions response and then call \n**getViewingPracticeId** \n**Note: **Refer all the three methods below
+UserCalendarPage -> UserCalendarPage : wait until both the functions response and then call \n**getViewingPracticeId**
+note right of UserCalendarPage: Refer all the three methods in Functions
 
 UserCalendarPage --> Client : return void
 
@@ -71,7 +89,8 @@ alt if the userId and the selectedDate is not null. \nNote: Refer class design t
     UserCalendarPage -> todoServices.ts : call **getTodoForUserByMonth(userId, month, year)** \nextract month and year from selectedDate
     activate todoServices.ts
 
-    todoServices.ts -> todoServices.ts : get the todos for the given month \nand year \n**Note**: Refer backend **get todos EP** design
+    todoServices.ts -> todoServices.ts : get the todos for the given month \nand year
+    note right of todoServices.ts: Refer backend **get todos EP** design
     todoServices.ts --> UserCalendarPage : return array of todo
 
     deactivate todoServices.ts
@@ -96,7 +115,9 @@ activate UserCalendarPage #D3D3D3
 alt if the userId and the selectedDate is not null. \nNote: Refer class design to know about userId \nand selecetedDate
     UserCalendarPage -> attendancesServices.ts : call **getAttendanceRange(userId, firstDay, lastDay)** \nextract firstDay and lastDay from selectedDate
     activate attendancesServices.ts
-    attendancesServices.ts -> attendancesServices.ts : get the attendance details for the given date range\n**Note**: Refer backend **get attendance EP** design
+    attendancesServices.ts -> attendancesServices.ts : get the attendance details for the given date range\n
+    note right of attendancesServices.ts: Refer backend **get attendance EP** design
+
     attendancesServices.ts --> UserCalendarPage : return array of attendance
     deactivate attendancesServices.ts
     UserCalendarPage -> UserCalendarPage : set the response to **currentMonthAttendance** variable
@@ -120,7 +141,9 @@ activate UserCalendarPage #D3D3D3
 alt if the userId and the selectedDate is not null. \nNote: Refer class design to know about userId \nand selecetedDate
     UserCalendarPage -> usersService.ts : call **getUserById(userId)**
     activate usersService.ts
-    usersService.ts -> usersService.ts : get the user details of the given userId \n**Note**: Refer backend **get user by id EP** design
+    usersService.ts -> usersService.ts : get the user details of the given userId
+    note right of usersService.ts: Refer backend **get user by id EP** design
+
     usersService.ts --> UserCalendarPage : return user
     deactivate usersService.ts
 
@@ -148,7 +171,9 @@ activate UserCalendarPage #D3D3D3
 alt if the userId is not undefined. \nNote: Refer class design to know about userId
     UserCalendarPage -> usersService.ts : call **getTags(userId)**
     activate usersService.ts
-    usersService.ts -> usersService.ts : get all the appropriate tags for the given userId \n**Note**: Refer backend **get tags EP** design
+    usersService.ts -> usersService.ts : get all the appropriate tags for the given userId
+    note right of usersService.ts: Refer backend **get tags EP** design
+
     usersService.ts --> UserCalendarPage : return array of tag
     deactivate usersService.ts
     UserCalendarPage -> UserCalendarPage : set the response to **tags** variable
@@ -166,7 +191,9 @@ activate UserCalendarPage #D3D3D3
 
 UserCalendarPage -> usersService.ts : call **fetchStatistics(userId)**
 activate usersService.ts
-usersService.ts -> usersService.ts : get the appropriate statistics for the given userId \n**Note**: Refer backend **get statistics EP** design
+usersService.ts -> usersService.ts : get the appropriate statistics for the given userId
+note right of usersService.ts: Refer backend **get statistics EP** design
+
 usersService.ts --> UserCalendarPage : return statistics of the user
 deactivate usersService.ts
 UserCalendarPage -> UserCalendarPage : set the response to **statistics** variable
@@ -256,12 +283,14 @@ alt if highLightedDates length is not equal to 0
     end
 
     alt if shouldHighlight is true
-        UserCalendarPage -> UserCalendarPage : call **generateMenu(dateValue, workingHours[0],** \n**workingHours[1], true)** and return the response \nNote: Refer method below
+        UserCalendarPage -> UserCalendarPage : call **generateMenu(dateValue, workingHours[0],** \n**workingHours[1], true)** and return the response
+        note right of UserCalendarPage: Refer **generateMenu** method in Functions
     end
 end
 
 alt if highLightedDates length is equal to 0
-    UserCalendarPage -> UserCalendarPage : call **generateMenu(dateValue, workingHours[0],** \n**workingHours[1], isAllTasksCompleted)** and return the \nresponse \nNote: Refer method below
+    UserCalendarPage -> UserCalendarPage : call **generateMenu(dateValue, workingHours[0],** \n**workingHours[1], isAllTasksCompleted)** and return the \nresponse
+    note right of UserCalendarPage: Refer **generateMenu** method in Functions
 end
 
 UserCalendarPage --> Client:  return component with appropriate view
@@ -275,7 +304,8 @@ Client -> UserCalendarPage: **getListData(date)**
 activate Client #D3D3D3
 activate UserCalendarPage #D3D3D3
 
-UserCalendarPage -> UserCalendarPage : call **getTodosForDate(date, currentMonthTodos)** and store the reponse \nin variable **todos** \n**Note: **Refer method below
+UserCalendarPage -> UserCalendarPage : call **getTodosForDate(date, currentMonthTodos)** and store the reponse \nin variable **todos**
+note right of UserCalendarPage: Refer **getTodosForDate** method in Functions
 
 alt if the todos is undefined or null or \ntodos's length is less than or equal to 0
     UserCalendarPage --> Client: return null array .i.e.([])
@@ -309,7 +339,8 @@ Client -> UserCalendarPage: **getWorkingHours(date)**
 activate Client #D3D3D3
 activate UserCalendarPage #D3D3D3
 
-UserCalendarPage -> UserCalendarPage : call **getTodosForDate(date, currentMonthTodos)** and store the reponse \nin variable **todos** \n**Note: **Refer method below
+UserCalendarPage -> UserCalendarPage : call **getTodosForDate(date, currentMonthTodos)** and store the reponse \nin variable **todos**
+note right of UserCalendarPage: Refer **getTodosForDate** method in Functions
 
 alt if the todos is undefined or null or \ntodos's length is less than or equal to 0
     UserCalendarPage --> Client: return [0,0]
@@ -328,7 +359,8 @@ Client -> UserCalendarPage: **isAllTasksCompleted(date)**
 activate Client #D3D3D3
 activate UserCalendarPage #D3D3D3
 
-UserCalendarPage -> UserCalendarPage : call **getTodosForDate(date, currentMonthTodos)** and store the reponse \nin variable **todos** \n**Note: **Refer method below
+UserCalendarPage -> UserCalendarPage : call **getTodosForDate(date, currentMonthTodos)** and store the reponse \nin variable **todos**
+note right of UserCalendarPage: Refer **getTodosForDate** method in Functions
 
 alt if the todos is undefined or null or \ntodos's length is less than or equal to 0
     UserCalendarPage --> Client: return true
@@ -364,7 +396,9 @@ Client -> UserCalendarPage: **getAttendanceStatus(date)**
 activate Client #D3D3D3
 activate UserCalendarPage #D3D3D3
 
-UserCalendarPage -> UserCalendarPage : call **getAttendanceForDate(date, currentMonthAttendance)** and store the reponse \nin variable **attendance** \n**Note: **Refer method below
+UserCalendarPage -> UserCalendarPage : call **getAttendanceForDate(date, currentMonthAttendance)** and store the reponse \nin variable **attendance**
+note right of UserCalendarPage: Refer **getAttendanceForDate** method in Functions
+
 UserCalendarPage --> Client: return attendance
 
 deactivate UserCalendarPage
@@ -396,7 +430,8 @@ activate UserCalendarPage #D3D3D3
 UserCalendarPage -> UserCalendarPage: Bind total **estimated Hours**
 UserCalendarPage -> UserCalendarPage: Bind total **actual Hours**
 UserCalendarPage -> UserCalendarPage: Bind **Clear All Tasks** button when satisfying \nthe following condition which is **isHisTodo** value \nprops should be **true**, **estimates** hours should be \ngreater than 0 and **isAllTasksCompleted** should be **false**
-UserCalendarPage -> UserCalendarPage: when user clicked **Clear All Tasks** button call \n**menuTapped(key, date)** method \n**Note: **Refer method below
+UserCalendarPage -> UserCalendarPage: when user clicked **Clear All Tasks** button call \n**menuTapped(key, date)** method
+note right of UserCalendarPage: Refer **menuTapped** method in Functions
 
 UserCalendarPage --> Client: return appropriate view
 deactivate UserCalendarPage
