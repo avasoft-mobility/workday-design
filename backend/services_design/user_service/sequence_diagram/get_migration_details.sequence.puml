@@ -1,0 +1,61 @@
+@startuml Get Migartion Details
+
+participant Client #64D1AF
+participant app.ts
+participant microsoftUser.router.ts
+participant microsoftUser.service.ts
+participant DB #FFC0CB
+
+Client -> app.ts : "/users/:userId/reportee-migration/:migrationId" in GET Method
+activate Client #D3D3D3
+    activate app.ts #D3D3D3
+        app.ts -> microsoftUser.router.ts : Request hit on the microsoftUser.router.ts
+        activate microsoftUser.router.ts #D3D3D3
+            microsoftUser.router.ts -> microsoftUser.router.ts : get **request.params.userId**\n and assign that to the\n variable called **userId**
+            microsoftUser.router.ts -> microsoftUser.router.ts : get **request.params.migrationId**\n and assign that to the\n variable called **migrationId**
+            microsoftUser.router.ts -> microsoftUser.service.ts : getMigration(userId, migrationId)
+            activate microsoftUser.service.ts #D3D3D3
+                alt case: userId is undefined
+                    microsoftUser.router.ts <-- microsoftUser.service.ts : code: 400,\n message: "User Id is required"
+                end
+                alt case: migrationiD is not valid
+                    microsoftUser.router.ts <-- microsoftUser.service.ts : code: 400,\n message: "Migration Id is not valid"
+                end
+                microsoftUser.service.ts -> DB : Request for the migrationDetails and store that in a variable called\n **result**
+                activate DB #D3D3D3
+                    DB -> DB : microsoftUserOverrideSchema.findOne({\n_id: migrationId,})
+                    microsoftUser.service.ts <-- DB : return **MicrosoftUserOverride**
+                deactivate DB
+                alt case : result is undefined
+                    microsoftUser.router.ts <-- microsoftUser.service.ts : code: 404,\nmessage: `Migration detail is not found for this Migration Id: ${migrationId}`,
+                end
+
+                microsoftUser.service.ts -> microsoftUser.service.ts : Filter the result.reportees and remove the result.toUser from that\nand store it in **reporteeIds** variable
+
+                microsoftUser.service.ts -> DB : Request the microsoftUser[] for the reportees in migration request and \nassign the value to **microsoftUsers** variable
+                activate DB #D3D3D3
+                    DB -> DB : microsoftUserOverrideSchema.find({\nuserId: { $in: reporteeIds },})
+                    microsoftUser.service.ts <-- DB : return **MicrosoftUserOverride[]**
+                deactivate DB
+
+                microsoftUser.service.ts -> DB : Request the microsoftUser details of migration requsted User and \nassign the value to **microsoftUsers** variable
+                activate DB #D3D3D3
+                    DB -> DB : microsoftUserOverrideSchema.findOne({\nuserId: result.toUserId,})
+                    microsoftUser.service.ts <-- DB : return **MicrosoftUserOverride**
+                deactivate DB
+
+                microsoftUser.service.ts -> microsoftUser.service.ts : declare a variable **MicrosoftUserOverridePopulated** of  PopulateMicrosoftUserOverride \nand assign the values of the **result**
+                note right of microsoftUser.service.ts : **MicrosoftUserOverridePopulated** : {\n\t_id: result._id,\n\ttoUser: toUser as MicrosoftUser,\n\treportees: microsoftUsers as MicrosoftUser[],\n\tstatus: result.status,\n\tmailRequestId: result.mailRequestId,\n\tacknowledgedBy: result.acknowledgedBy ? result.acknowledgedBy : undefined,\n\tacceptedBy: result.acceptedBy ? result.acceptedBy : undefined,\n\trejectedBy: result.rejectedBy ? result.rejectedBy : undefined,\n\tisActive: result.isActive,\n\tcreatedAt: result.createdAt,\n\tupdatedAt: result.updatedAt,\n\t__v: result.__v,\n}
+                microsoftUser.router.ts <-- microsoftUser.service.ts : code: 200,\nbody: **MicrosoftUserOverridePopulated**
+                alt case: response.code === 200
+                    app.ts <-- microsoftUser.router.ts : status: response.code\n message:  response.message
+                end
+                app.ts <-- microsoftUser.router.ts : status: response.code\n message:  response.body
+                Client <-- app.ts : return response
+            deactivate microsoftUser.service.ts
+        deactivate microsoftUser.router.ts
+    deactivate app.ts
+deactivate Client
+@enduml
+
+

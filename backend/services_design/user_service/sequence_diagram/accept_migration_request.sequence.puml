@@ -17,9 +17,8 @@ activate Client #D3D3D3
                 alt case: userId is undefined
                     microsoftUser.router.ts <-- microsoftUser.service.ts : code: 400,\n message: "User Id is required"
                 end
-                alt case: userId is undefined
-                    microsoftUser.router.ts <-- microsoftUser.service.ts : code: 400,\n message: "User Id is required"
-                end
+                alt case: migrationId is not valid
+                    microsoftUser.router.ts <-- microsoftUser.service.ts : code: 400,\n message: "Migration Id is not a valid id"
                 microsoftUser.router.ts -> microsoftUser.router.ts : getUserById(userId)
                 activate microsoftUser.router.ts #D16587
                     note right of microsoftUser.router.ts :refer get_user_by_userId method
