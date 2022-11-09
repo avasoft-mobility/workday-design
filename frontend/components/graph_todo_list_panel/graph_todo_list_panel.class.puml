@@ -1,8 +1,8 @@
 @startuml GraphTodoListPanel
 
 class GraphTodoListPanel {
-    getTagChipColor(): \t\t\t string
+    getTagChipColor()\t\t\t : \tstring
     ..
-    getTagsETAComponent(): \t component (React.ReactNode)
+    getTagsETAComponent()\t : \tcomponent (React.ReactNode)
 }
 @enduml

@@ -1,26 +1,26 @@
 @startuml AddTodoPanel
 
 class AddTodoPanel {
-    todoType: \t\t string
+    todoType\t\t\t : \tstring
     ..
-    tag: \t\t\t\t string[]
+    tag\t\t\t\t : \tstring[]
     ..
-    datePickerVisibility: \t boolean
+    datePickerVisibility\t : \tboolean
     ..
-    dates: \t\t\t Date[]
+    dates\t\t\t : \tDate[]
     ..
-    form: \t\t\t form instance
+    form\t\t\t\t : \tform instance
     ..
-    formActionType: \t "add" or "add_and_continue"
+    formActionType\t : \t"add" or "add_and_continue"
     ..
-    regex: \t\t\t string
+    regex\t\t\t : \tstring
     ..
-    onFinish(): \t\t void
+    onFinish()\t\t : \tvoid
     ..
-    onFinishFailed(): \t void
+    onFinishFailed()\t : \tvoid
     ..
-    onTagSelected(): \t void
+    onTagSelected()\t : \tvoid
     ..
-    handleCheckBox(): \t void
+    handleCheckBox()\t : \tvoid
 }
 @enduml

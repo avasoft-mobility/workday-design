@@ -1,8 +1,8 @@
 @startuml GraphUserTile
 
 class GraphUserTile {
-    LightTooltip: \t\t\t Component
+    LightTooltip\t\t\t : \tComponent
     ..
-    getWorkingStatusIcon(): \t React.ReactNode
+    getWorkingStatusIcon()\t : \tReact.ReactNode
 }
 @enduml

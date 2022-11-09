@@ -1,105 +1,105 @@
 @startuml UserCalendarPage
 
 class UserInfo {
-  userId: \t\t string
-  imageUrl: \t\t string
-  accessToken: \t string
-  reportings: \t string[]
-  role: \t\t string
-  employeeId: \t string
+  userId\t\t : \tstring
+  imageUrl\t\t : \tstring
+  accessToken\t : \tstring
+  reportings\t : \tstring[]
+  role\t\t\t : \tstring
+  employeeId\t : \tstring
 }
 
 class UserCalendarPage {
-    formatAMPM: \t\t\t\t\t string
+    formatAMPM\t\t\t\t : \tstring
     ..
-    currentUserInfo: \t\t\t\t UserInfo
+    currentUserInfo\t\t\t : \tUserInfo
     ..
-    nav: \t\t\t\t\t\t\t instance of useNavigate
+    nav\t\t\t\t\t\t : \tinstance of useNavigate
     ..
-    userId: \t\t\t\t\t\t string
+    userId\t\t\t\t\t : \tstring
     ..
-    isLoading: \t\t\t\t\t boolean
+    isLoading\t\t\t\t\t : \tboolean
     ..
-    isAttendanceLoading: \t\t\t boolean
+    isAttendanceLoading\t\t : \tboolean
     ..
-    visible: \t\t\t\t\t\t boolean
+    visible\t\t\t\t\t : \tboolean
     ..
-    childrenDrawer: \t\t\t\t boolean
+    childrenDrawer\t\t\t\t : \tboolean
     ..
-    selectedDate: \t\t\t\t\t Date
+    selectedDate\t\t\t\t : \tDate
     ..
-    todoStatuses: \t\t\t\t\t TodoStatses[]
+    todoStatuses\t\t\t\t : \tTodoStatses[]
     ..
-    todoTypes: \t\t\t\t\t TodoType[]
+    todoTypes\t\t\t\t : \tTodoType[]
     ..
-    currentTime: \t\t\t\t\t Date
+    currentTime\t\t\t\t : \tDate
     ..
-    currentMonthTodos: \t\t\t TodoItem[]
+    currentMonthTodos\t\t\t : \tTodoItem[]
     ..
-    currentMonthAttendance: \t\t AttendanceItem[]
+    currentMonthAttendance\t\t : \tAttendanceItem[]
     ..
-    currentPracticeId: \t\t\t\t string
+    currentPracticeId\t\t\t : \tstring
     ..
-    tags: \t\t\t\t\t\t TagType[]
+    tags\t\t\t\t\t\t : \tTagType[]
     ..
-    highLightedDates: \t\t\t\t string[]
+    highLightedDates\t\t\t : \tstring[]
     ..
-    highlightedTagIds: \t\t\t\t string[]
+    highlightedTagIds\t\t\t : \tstring[]
     ..
-    searchParams: \t\t\t\t instance of useSearchParams
+    searchParams\t\t\t\t : \tinstance of useSearchParams
     ..
-    userName: \t\t\t\t\t string
+    userName\t\t\t\t : \tstring
     ..
-    userRole: \t\t\t\t\t string
+    userRole\t\t\t\t\t : \tstring
     ..
-    statistics: \t\t\t\t\t\t any
+    statistics\t\t\t\t\t : \tany
     ..
-    selectLocked: \t\t\t\t\t boolean
+    selectLocked\t\t\t\t : \tboolean
     ..
-    attendanceValue: \t\t\t\t string
+    attendanceValue\t\t\t : \tstring
     ..
-    initialise(): \t\t\t\t\t void
+    initialise()\t\t\t\t\t : \tvoid
     ..
-    getStatistics(): \t\t\t\t\t void
+    getStatistics()\t\t\t\t : \tvoid
     ..
-    fetchTags(): \t\t\t\t\t void
+    fetchTags()\t\t\t\t : \tvoid
     ..
-    setUserDetails(): \t\t\t\t void
+    setUserDetails()\t\t\t : \tvoid
     ..
-    setUpWithQueryString(): \t\t\t void
+    setUpWithQueryString()\t\t : \tvoid
     ..
-    setupUserCalander(): \t\t\t void
+    setupUserCalander()\t\t : \tvoid
     ..
-    showDrawer(): \t\t\t\t\t void
+    showDrawer()\t\t\t\t : \tvoid
     ..
-    getListData(): \t\t\t\t\t {type: string, content: string}[]
+    getListData()\t\t\t\t : \t{type: string, content: string}[]
     ..
-    getWorkingHours(): \t\t\t\t number[]
+    getWorkingHours()\t\t\t : \tnumber[]
     ..
-    isAllTasksCompleted(): \t\t\t boolean
+    isAllTasksCompleted()\t\t : \tboolean
     ..
-    getAttendanceStatus(): \t\t\t []
+    getAttendanceStatus()\t\t : \t[]
     ..
-    menuTapped(): \t\t\t\t void
+    menuTapped()\t\t\t\t : \tvoid
     ..
-    generateMenu(): \t\t\t\t component
+    generateMenu()\t\t\t : \tcomponent
     ..
-    dateCellRender(): \t\t\t\t component
+    dateCellRender()\t\t\t : \tcomponent
     ..
-    getPendingTodosCount(): \t\t number
+    getPendingTodosCount()\t : \tnumber
     ..
-    getViewingMonthTodo(): \t\t\t void
+    getViewingMonthTodo()\t\t : \tvoid
     ..
-    getViewingPracticeId(): \t\t\t void
+    getViewingPracticeId()\t\t : \tvoid
     ..
-    getViewingMonthAttendance(): \t void
+    getViewingMonthAttendance()\t : \tvoid
     ..
-    onSelectedDateChange(): \t\t void
+    onSelectedDateChange()\t : \tvoid
     ..
-    dateHighlighted(): \t\t\t\t boolean
+    dateHighlighted()\t\t\t : \tboolean
     ..
-    isPastDate(): \t\t\t\t\t boolean
+    isPastDate()\t\t\t\t : \tboolean
     ..
-    getSelectedDateAttendance(): \t string
+    getSelectedDateAttendance()\t : \tstring
 }
 @enduml
