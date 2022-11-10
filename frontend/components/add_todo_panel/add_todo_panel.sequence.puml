@@ -6,10 +6,14 @@ Client -> AddTodoPanel : call the component **<AddTodoPanel {props}/>**
 activate Client #D3D3D3
 activate AddTodoPanel #D3D3D3
 
-note left of AddTodoPanel:**Props:** \n\tsubmittingChanges: boolean, \n\tuserId: string, \n\tsubmitChanges: void, \n\ttags: TagType[] | undefined
+note left of AddTodoPanel:**Props:** \n\tsubmittingChanges\t : \tboolean \n\tuserId\t\t\t : \tstring \n\tsubmitChanges\t\t : \tvoid \n\ttags\t\t\t\t : \tTagType[] | undefined
 
 AddTodoPanel -> AddTodoPanel : Bind **Text fields** to add title and \nestimated effort of the task.
+note right of AddTodoPanel : Refer Text fields **onChange** \nfunction in Change Functionalities
+
 AddTodoPanel -> AddTodoPanel : Bind **Text area** to add the comments \nof the task
+note right of AddTodoPanel : Refer Text area **onChange** \nfunction in Change Functionalities
+
 AddTodoPanel -> AddTodoPanel : Bind **Dropdown** to choose the tags \nof the task
 AddTodoPanel -> AddTodoPanel : Bind **Radio button** to choose the type \nof the task
 AddTodoPanel -> AddTodoPanel : Bind **Checkbox** so that the user \ncan add recurring tasks 
@@ -23,10 +27,58 @@ deactivate AddTodoPanel
 deactivate Client
 
 ... ...
-
+... ...
+... ...
+...~~**Functions**~~...
+... ...
 ... ...
 
-Client -> AddTodoPanel : entering value on title field
+
+... ...
+... ...
+... ...
+...~~**Click Functionalities**~~...
+... ...
+... ...
+
+Client -> AddTodoPanel : When the user has choosed \nany **task type** **onClick**
+activate Client #D3D3D3
+activate AddTodoPanel #D3D3D3
+
+AddTodoPanel -> AddTodoPanel : set the selected todo type to the \nvariable **todoType** to update the \nselected value radio button
+AddTodoPanel --> Client: User can view the selection
+
+deactivate AddTodoPanel
+deactivate Client
+... ...
+
+Client -> AddTodoPanel : When the user has clicked the repeat \nthis task **checkbox** **onClick**
+activate Client #D3D3D3
+activate AddTodoPanel #D3D3D3
+    AddTodoPanel -> AddTodoPanel : trigger **handleCheckBox** method
+    activate AddTodoPanel #D16587
+        alt If the user has checked the checkbox
+            AddTodoPanel -> AddTodoPanel : set **true** to variable **datePickerVisibility** \nto display the multiple date picker \ndropdown to the user
+            Client <-- AddTodoPanel : User can able to view a select input with date picker
+        end
+
+        alt If the user has un checked the checkbox
+            AddTodoPanel -> AddTodoPanel : set **false** to variable **datePickerVisibility** \nto hide the multiple date picker
+            Client <-- AddTodoPanel : User can view the select input hiding
+            deactivate AddTodoPanel
+            deactivate AddTodoPanel
+        end
+
+deactivate Client
+
+... ...
+... ...
+... ...
+...~~**Change Functionalities**~~...
+... ...
+... ...
+
+Client -> AddTodoPanel : When user enters the values on \ntitle field **onChange**
 activate Client #D3D3D3
 activate AddTodoPanel #D3D3D3
 
@@ -40,16 +92,13 @@ end
 
 alt if the title is not matched \nwith the following /[a-zA-Z]/ \nregex condition
     AddTodoPanel -> Client : User can view an \nerror message **"Title should have** \n**atleast one alphabetic character."** below the field
+    deactivate AddTodoPanel
 end
 
-deactivate AddTodoPanel
 deactivate Client
-
 ... ...
 
-... ...
-
-Client -> AddTodoPanel : entering values to estimated effort field
+Client -> AddTodoPanel : When user enters the values on \nestimated effort field **onChange**
 activate Client #D3D3D3
 activate AddTodoPanel #D3D3D3
 
@@ -67,30 +116,25 @@ end
 
 alt If the entered estimated effort is lesser than 0 
     AddTodoPanel -> Client : User can view an error message **"Please enter valid Estimated** \n**Effort for this task!"** below the field
+    deactivate AddTodoPanel
 end
-deactivate AddTodoPanel
+
 deactivate Client
-
 ... ...
 
-... ...
-
-Client -> AddTodoPanel : entering values to addtional notes field
+Client -> AddTodoPanel : When the user enters values on \naddtional notes field **onChange**
 activate Client #D3D3D3
 activate AddTodoPanel #D3D3D3
 
 alt if the comments is not matched \nwith the following /[a-zA-Z]/ \nregex condition
     AddTodoPanel -> Client : User can view an error message of \n**"Title should have atleast one alphabetic character."**  below the field
+    deactivate AddTodoPanel
 end
 
-deactivate AddTodoPanel
 deactivate Client
-
 ... ...
 
-... ...
-
-Client -> AddTodoPanel : when the user has choosed any tag
+Client -> AddTodoPanel : when the user has choosed any tag **onChange**
 activate Client #D3D3D3
 activate AddTodoPanel #D3D3D3
 
@@ -102,52 +146,13 @@ end
 
 alt If the user has choosed more than one \ndefault tag
     AddTodoPanel -> Client : throw an error message and user can view \n**"Please select only one default tag"** error below the field
+    deactivate AddTodoPanel
 end
 
-deactivate AddTodoPanel
 deactivate Client
-
 ... ...
 
-... ...
-
-Client -> AddTodoPanel : when the user has choosed \nany **task type**
-activate Client #D3D3D3
-activate AddTodoPanel #D3D3D3
-
-AddTodoPanel -> AddTodoPanel : set the selected todo type to the \nvariable **todoType** to update the \nselected value radio button
-AddTodoPanel --> Client: User can view the selection
-
-deactivate AddTodoPanel
-deactivate Client
-
-... ...
-
-... ...
-
-Client -> AddTodoPanel : when the user has clicked the repeat \nthis task **checkbox**
-activate Client #D3D3D3
-activate AddTodoPanel #D3D3D3
-    AddTodoPanel -> AddTodoPanel : trigger **handleCheckBox** method
-    activate AddTodoPanel #D16587
-        alt If the user has checked the checkbox
-            AddTodoPanel -> AddTodoPanel : set **true** to variable **datePickerVisibility** \nto display the multiple date picker \ndropdown to the user
-            Client <-- AddTodoPanel : User can able to view a select input with date picker
-        end
-
-        alt If the user has un checked the checkbox
-            AddTodoPanel -> AddTodoPanel : set **false** to variable **datePickerVisibility** \nto hide the multiple date picker
-            Client <-- AddTodoPanel : User can view the select input hiding
-        end
-    deactivate AddTodoPanel
-deactivate AddTodoPanel
-deactivate Client
-
-... ...
-
-... ...
-
-Client -> AddTodoPanel : when the user has selected multiple dates
+Client -> AddTodoPanel : when the user has selected multiple \ndates **onChange**
 activate Client #D3D3D3
 activate AddTodoPanel #D3D3D3
 
@@ -156,16 +161,13 @@ AddTodoPanel --> Client: User can view the multiple dates which selected in the 
 
 deactivate AddTodoPanel
 deactivate Client
-
-... ...
-
 ... ...
 
 Client -> AddTodoPanel : when the user has clicked the \n**Add Task** button
 activate Client #D3D3D3
 activate AddTodoPanel #D3D3D3
 
-AddTodoPanel -> AddTodoPanel : set the variable **formActionType** to \n"add" and submit the form by triggering \nthe method **onFinish** after satisfying \nall the above validations
+AddTodoPanel -> AddTodoPanel : set the variable **formActionType** to \n**"add"** and submit the form by triggering \nthe method **onFinish** after satisfying \nall the above validations
 AddTodoPanel --> Client: **onFinish** method in parent will trigger and send entered values to parent \nParent can get the entered field values
 
 deactivate AddTodoPanel
