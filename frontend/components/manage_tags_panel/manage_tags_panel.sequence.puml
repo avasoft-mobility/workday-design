@@ -20,7 +20,8 @@ activate Client #D3D3D3
         ManageTagsPanel -> ManageTagsPanel :  when the component gets updated or mounted\n or when the **[props.visible]** gets updated,\n update the **tagId** value as **undefined**\n update the **input** value as "empty string".
         ManageTagsPanel -> ManageTagsPanel :  when the component gets updated or mounted\n or when the **[props.onTagMode]** gets updated,\n update the **tagVisible** value as **!props.onTagMode**
         ManageTagsPanel -> ManageTagsPanel : Implement antd Drawer in manage tags panel.
-        ' ManageTagsPanel -> ManageTagsPanel : 
+        ManageTagsPanel -> ManageTagsPanel : Implement **Input** text field from antd and\n assign **Change functionalities**.
+        ManageTagsPanel -> ManageTagsPanel : Implement **EditOutlined**button,\n **DeleteOutlined** button,\n **LineChartOutlined** buttton\n and assign click functionalities.
         Client <-- ManageTagsPanel : component will be displayed to the user
     deactivate ManageTagsPanel
 deactivate Client
@@ -101,6 +102,19 @@ activate Client #D3D3D3
             ManageTagsPanel -> ManageTagsPanel : update the **tagId** value as **empty string**
         end
         Client <-- ManageTagsPanel : tag will be updated to the DateBase.
+    deactivate ManageTagsPanel
+deactivate Client
+
+... ...
+
+Client -> ManageTagsPanel : When in **TagsAnalyticPanel's onTapViewCalender** props gets triggered\n **viewCalender** method in ManageTagsPanel will trigger
+activate Client #D3D3D3
+    activate ManageTagsPanel #D3D3D3
+        ManageTagsPanel -> ManageTagsPanel : viewCalender(dates: string[], tagIds: string[])
+        ManageTagsPanel -> ManageTagsPanel : **onViewCalender** method in the parent will trigger\nwith props as **dates, tagIds**.
+        Client <-- ManageTagsPanel : **onViewCalender** method in the parent will trigger.
+
+
     deactivate ManageTagsPanel
 deactivate Client
 
