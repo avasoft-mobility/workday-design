@@ -1,4 +1,4 @@
-@startuml home page sequence diagram
+@startuml MigrationAcknowledgePanel sequence diagram
 participant Client
 participant MigrationAcknowledgePanel
 participant usersService.ts
