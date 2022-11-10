@@ -6,11 +6,12 @@ Client -> GraphTodoListPanel : call the component **<GraphTodoListPanel {props}/
 activate Client #D3D3D3
 activate GraphTodoListPanel #D3D3D3
 
-note right of Client:**Props:** \n\ttodo: GraphTodo
+note right of Client:**Props:** \n\ttodo\t : \tGraphTodo
 
 GraphTodoListPanel -> GraphTodoListPanel : Bind **Todo title**
-GraphTodoListPanel -> GraphTodoListPanel : Bind **Common Tag** by using the\n**getTagsETAComponent** method \nwhen the tag's length is equal to 1 and \nset the appropriate **background** color \nfor the tag by using the \n**getTagChipColor** method 
-note right of GraphTodoListPanel : Refer the above mentioned methods in \n below common methods
+
+GraphTodoListPanel -> GraphTodoListPanel : Bind **Common Tag** by using the\n**getTagsETAComponent(todo.tags)** method and \nset the appropriate **background** color \nfor the tag
+note right of GraphTodoListPanel : Refer **getTagsETAComponent** methods in \nFunctions
 
 Client <-- GraphTodoListPanel : \treturn the appropriate **view**
 deactivate GraphTodoListPanel
@@ -18,16 +19,24 @@ deactivate Client
 
 ... ...
 ... ...
-...~~Common methods~~...
+... ...
+...~~**Functions**~~...
 ... ...
 
-Client -> GraphTodoListPanel: call **getTagsETAComponent**
+Client -> GraphTodoListPanel: call **getTagsETAComponent(tags)**
 activate Client #D3D3D3
 activate GraphTodoListPanel #D3D3D3
 
-GraphTodoListPanel -> GraphTodoListPanel : Bind **Common Tag** when the tag's \nlength is not equal to 0 and set \nthe appropriate **background** color \nfor the tag by using the \n**getTagChipColor** method and \nbind empty value if tag's length is 0 
-note right of GraphTodoListPanel : Refer the **getTagChipColor** method below 
-GraphTodoListPanel --> Client: return appropriate view
+alt If the tag's length is \nnot equal to 0
+    GraphTodoListPanel -> GraphTodoListPanel : Bind **Common Tag** and set \nthe appropriate **background** color \nfor the tag by using the \n**getTagChipColor** method
+    note right of GraphTodoListPanel : Refer the **getTagChipColor** method \nin Functions 
+end
+
+alt If the tag's length is \nequal to 0
+    GraphTodoListPanel -> GraphTodoListPanel : Bind empty value
+end
+
+GraphTodoListPanel --> Client: user will see the appropriate view
 deactivate GraphTodoListPanel
 deactivate Client
 ... ...
