@@ -68,7 +68,8 @@ activate AddReportingsPage #D3D3D3
         AddReportingsPage -> AddReportingsPage : Bind a **left arrow Icon** as clickable
         AddReportingsPage -> AddReportingsPage : Belew, Bind a select field to select Domain, which have options as **allDomins**
         AddReportingsPage -> AddReportingsPage : After, Bind a select field to select User, which have options as **allUsers**
-        AddReportingsPage -> AddReportingsPage : After, Bind two buttons as "+ Team member" and "Reset"
+        AddReportingsPage -> AddReportingsPage : After, Bind two buttons as "+ Add". 
+        AddReportingsPage -> AddReportingsPage : After, Bind a Clickable **IinfoIcon**.
         AddReportingsPage -> AddReportingsPage : Below, Bind three radio button to choose option for adding users \n those are for **add only user**, **add user's reportings** and **add user and user's reportings**. \nInitially **'add user'** is **enabled** other two are **disabled**
         alt \tgetMyTeamReports Api call is loading 
             AddReportingsPage -> AddReportingsPage : Bind a **loader** 
@@ -287,6 +288,15 @@ activate AddReportingsPage #D3D3D3
 deactivate AddReportingsPage
 deactivate Client
 
+... ...
+
+Client -> AddReportingsPage : User Click on the **InfoIcon**
+activate Client #D3D3D3
+activate AddReportingsPage #D3D3D3
+    AddReportingsPage -> AddReportingsPage : It enables the **popoverContent**
+    Client <-- AddReportingsPage : User can view a popover box that having an info
+deactivate AddReportingsPage
+deactivate Client
 
 ... ...
 ... ...
@@ -317,10 +327,10 @@ deactivate Client
 ... ...
 
 
-Client -> AddReportingsPage : Entering values on **Seacrch** field of reportees or selected employees
+Client -> AddReportingsPage : Entering values on **Search** field of reportees or selected employees
 activate Client #D3D3D3
 activate AddReportingsPage #D3D3D3
-    AddReportingsPage -> AddReportingsPage : **handleViewReporteesSearch(search input)
+    AddReportingsPage -> AddReportingsPage : **handleViewReporteesSearch(search input)**
     activate AddReportingsPage #D16587
         AddReportingsPage -> AddReportingsPage : Filter the **selectedEmployee** oF User[] with User.name includes the search text\n Update the **filteredEmployees** with filtered User[]
     deactivate AddReportingsPage
@@ -328,5 +338,26 @@ activate AddReportingsPage #D3D3D3
 deactivate AddReportingsPage
 deactivate Client
 
+... ...
+
+
+Client -> AddReportingsPage : Entering values on **Domain** select field 
+activate Client #D3D3D3
+activate AddReportingsPage #D3D3D3
+    AddReportingsPage -> AddReportingsPage : Filter the **Domains** with search text and populate the suggestions
+    Client <-- AddReportingsPage : User can view the suggestions in dropdown.
+deactivate AddReportingsPage
+deactivate Client
+
+... ...
+
+
+Client -> AddReportingsPage : Entering values on **Reportees** select field 
+activate Client #D3D3D3
+activate AddReportingsPage #D3D3D3
+    AddReportingsPage -> AddReportingsPage : Filter the **Reprtees** list with search text and populate the suggestions
+    Client <-- AddReportingsPage : User can view the suggestions in dropdown.
+deactivate AddReportingsPage
+deactivate Client
 
 @enduml
