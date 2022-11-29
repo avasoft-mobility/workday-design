@@ -13,10 +13,10 @@ activate microsoftUser.router.ts #D3D3D3
 
 microsoftUser.router.ts -> microsoftUser.router.ts : Declare a variable **userId** and \nassign request.params.userId
 microsoftUser.router.ts -> microsoftUser.router.ts : Declare a variable **toUser** and \nassign request.body.toUser
-microsoftUser.router.ts -> microsoftUser.router.ts : Declare a variable **reportees** and \nassign request.body.reportees
+microsoftUser.router.ts -> microsoftUser.router.ts : Declare a variable **requestReporteeIds** and \nassign request.body.reportees
 microsoftUser.router.ts -> microsoftUser.router.ts : Declare a variable **origin** as string | undefined and \nassign request.headers.origin;
 
-microsoftUser.router.ts -> microsoftUser.service.ts : declare a variabe **response** and Call **requestReporteesMigration() **\n**method with (toUser, reportees, origin)** \nand assign the return value.
+microsoftUser.router.ts -> microsoftUser.service.ts : declare a variabe **response** and Call **requestReporteesMigration() **\n**method with (toUser, requestReporteeIds, origin)** \nand assign the return value.
 
 activate microsoftUser.service.ts #D3D3D3
 
@@ -28,11 +28,18 @@ alt case :toUser is undefined
 end
 
 alt case :reportees.length === 0
-    microsoftUser.service.ts -> microsoftUser.service.ts : !reportees.length
+    microsoftUser.service.ts -> microsoftUser.service.ts : !requestReporteeIds.length
     activate  microsoftUser.service.ts #D16587
         microsoftUser.router.ts <-- microsoftUser.service.ts  : code: 400,\nmessage: "Reportees is required"
     deactivate microsoftUser.service.ts
 end
+
+microsoftUser.service.ts -> DB : microsoftUsersSchema.find({\nuserId: { $in: requestReporteeIds },\n});
+activate DB #D3D3D3
+    microsoftUser.service.ts <-- DB : MicrosoftUser[]
+deactivate DB
+microsoftUser.service.ts -> microsoftUser.service.ts : get the return response and save that\n in a variable called **reportees**.
+
 
 microsoftUser.service.ts -> microsoftUser.service.ts : declare a variable **toUserId** and assign value **toUser.userId**
 microsoftUser.service.ts -> microsoftUser.service.ts : declare a variable **status** and assign value **"Request"**
@@ -42,18 +49,17 @@ microsoftUser.service.ts -> microsoftUser.service.ts : filter the **reportees** 
 
 microsoftUser.service.ts -> microsoftUser.service.ts : declare a variable **reporteeIds** and map the **reportees** \nand return the each items userId to it
 
-microsoftUser.service.ts -> microsoftUser.service.ts : declare a variable **toUserReportees** and assign value **toUser.reportings**
 
 microsoftUser.service.ts -> microsoftUser.service.ts : filter the **toUserReportees** and remove **toUserId** from it 
 
-alt case: reporteeIds.sort() equals toUserReportees.sort()
+alt case: requestReporteeIds.sort() equals toUserReportees.sort()
      microsoftUser.router.ts <-- microsoftUser.service.ts  : code: 400,\nmessage: "Migration request failed due to requesting for the same reporting details"
 end
 
 microsoftUser.service.ts -> DB : declare a variable **result** and request DB for create migration Request
 
 activate DB #D3D3D3
-    DB -> DB : microsoftUserOverrideSchema.create({\n\ttoUserId: toUserId,\n\treportees: reporteeIds,\n\tstatus: status,\n});
+    DB -> DB : microsoftUserOverrideSchema.create({\n\ttoUserId: toUserId,\n\treportees: requestReporteeIds,\n\tstatus: status,\n});
     microsoftUser.service.ts <-- DB : return **MicrosoftUserOverride**
 deactivate DB
 
