@@ -65,7 +65,6 @@ activate AddReportingsPage #D3D3D3
         note right of AddReportingsPage : Refer migration_acknowledge_panel for **<MigrationAcknowledgePanel />**\nin migration_acknowledge_panel folder
         Client <-- AddReportingsPage : User can able to **view their migration details** and do action against the migration request
     else 
-        AddReportingsPage -> AddReportingsPage : Bind a **left arrow Icon** as clickable
         AddReportingsPage -> AddReportingsPage : Belew, Bind a select field to select Domain, which have options as **allDomins**
         AddReportingsPage -> AddReportingsPage : After, Bind a select field to select User, which have options as **allUsers**
         AddReportingsPage -> AddReportingsPage : After, Bind two buttons as "+ Add". 
@@ -91,15 +90,6 @@ deactivate Client
 ... ...
 ... ...
 ...~~**Click Functionalities**~~...
-... ...
-
-Client -> AddReportingsPage : Click on the **left arrow icon**
-activate Client #D3D3D3
-activate AddReportingsPage #D3D3D3
-    AddReportingsPage -> AddReportingsPage : App navigate to Home page
-    Client <-- AddReportingsPage : User can view their home page
-deactivate AddReportingsPage
-deactivate Client
 
 ... ...
 
@@ -186,17 +176,6 @@ activate AddReportingsPage #D3D3D3
     Client <-- AddReportingsPage : User can view the selected option
 deactivate AddReportingsPage
 deactivate Client
-
-... ...
-
-Client -> AddReportingsPage : Click on the **Reset button**
-activate Client #D3D3D3
-activate AddReportingsPage #D3D3D3
-    AddReportingsPage -> AddReportingsPage : Update the **resourceList** with emptyUser which have no value\nand Update the **selectedDomain** as []
-    Client <-- AddReportingsPage : User can view the **placeHolders** in **Domain** and **User** selection
-deactivate AddReportingsPage
-deactivate Client
-
 ... ...
 
 Client -> AddReportingsPage : **getReporteesDetails(string[])**
@@ -209,7 +188,7 @@ deactivate Client
 
 ... ...
 
-Client -> AddReportingsPage : Click on the **+ Team Member** button
+Client -> AddReportingsPage : Click on the **+ Add** button
 activate Client #D3D3D3
 activate AddReportingsPage #D3D3D3
     alt Radio button is not checked
@@ -244,7 +223,7 @@ deactivate Client
 
 ... ...
 
-Client -> AddReportingsPage : Click on **Cancel** Button
+Client -> AddReportingsPage : Click on **Reset** Button
 activate Client #D3D3D3
 activate AddReportingsPage #D3D3D3
     AddReportingsPage -> AddReportingsPage : Call **cancelMigration()**
@@ -271,6 +250,8 @@ activate AddReportingsPage #D3D3D3
             AddReportingsPage -> AddReportingsPage : Form an **RequestedData** in type of **reporteeMigration** with **Reporter and selectedEmployees**
             AddReportingsPage -> usersService.ts : **sendReporteeMigrationRequest(RequestedData, loggined user's userId)**
             activate usersService.ts #D3D3D3
+                usersService.ts -> usersService.ts : Create a new object **requestBody** with **toUser as RequestData.toUser**
+                usersService.ts -> usersService.ts : Iterate the **RequestData.reportees of User[]** and form a new array of **User.userId** and \nassign the value to **requestBody.reportees**
                 usersService.ts -> User_Backend : **"/users/:userId/reportee-migration/request"** in POST Method \nwith **RequestedData in Body**
                 activate User_Backend #D3D3D3
                     return return AxiosReponse
