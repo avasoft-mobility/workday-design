@@ -65,11 +65,11 @@ activate AddReportingsPage #D3D3D3
         note right of AddReportingsPage : Refer migration_acknowledge_panel for **<MigrationAcknowledgePanel />**\nin migration_acknowledge_panel folder
         Client <-- AddReportingsPage : User can able to **view their migration details** and do action against the migration request
     else 
-        AddReportingsPage -> AddReportingsPage : Belew, Bind a select field to select Domain, which have options as **allDomins**
-        AddReportingsPage -> AddReportingsPage : After, Bind a select field to select User, which have options as **allUsers**
-        AddReportingsPage -> AddReportingsPage : After, Bind two buttons as "+ Add". 
+        AddReportingsPage -> AddReportingsPage : Belew, Bind a select field to select Domain, which have options as **allDomins**\n which is disable when **getAllEmployee and getAllDomains** call 
+        AddReportingsPage -> AddReportingsPage : After, Bind a select field to select User, which have options as **allUsers**\n which is disable when **getAllEmployee and getAllDomains** call
+        AddReportingsPage -> AddReportingsPage : After, Bind two buttons as "+ Add". \n which is disable when **migrationRequest** call
         AddReportingsPage -> AddReportingsPage : After, Bind a Clickable **IinfoIcon**.
-        AddReportingsPage -> AddReportingsPage : Below, Bind three radio button to choose option for adding users \n those are for **add only user**, **add user's reportings** and **add user and user's reportings**. \nInitially **'add user'** is **enabled** other two are **disabled**
+        AddReportingsPage -> AddReportingsPage : Below, Bind three radio button to choose option for adding users \n those are for **add only user**, **add user's reportings** and **add user and user's reportings**. \nInitially all radio buttons are diabled
         alt \tgetMyTeamReports Api call is loading 
             AddReportingsPage -> AddReportingsPage : Bind a **loader** 
         else getMyTeamReports Api call completed
@@ -80,7 +80,7 @@ activate AddReportingsPage #D3D3D3
                 AddReportingsPage -> AddReportingsPage : Bind a **delete icon** in card which is display only when **hover** the card
             end
         end 
-        AddReportingsPage -> AddReportingsPage : Bind two buttons for submit and cancel the Migration request
+        AddReportingsPage -> AddReportingsPage : Bind two buttons for submit and Reset the Migration request\n both are disable when **migrationRequest , getDomains, getAllEmployees calls and **\n **selectedEmployees.length === 0 && currentUserInfo.reportings.length === 0 **
         Client <-- AddReportingsPage : User can able to see the expected view and can **able to rise a migration request**
     end 
 deactivate AddReportingsPage
@@ -191,6 +191,9 @@ deactivate Client
 Client -> AddReportingsPage : Click on the **+ Add** button
 activate Client #D3D3D3
 activate AddReportingsPage #D3D3D3
+    alt resoutce is not selected
+        Client <-- AddReportingsPage : User can get a dismissible snack bar which indicates to select an reportee.
+    end
     alt Radio button is not checked
         Client <-- AddReportingsPage : User can get a dismissible snack bar which indicates to select option.
     end
@@ -208,11 +211,19 @@ activate AddReportingsPage #D3D3D3
         AddReportingsPage -> AddReportingsPage : Filter the **resourceList.reportings**, remove if resourceList.userId and current userId is present 
         AddReportingsPage -> AddReportingsPage : Declare a variable **employees** and call **getReporteesDetails with resourceList.reportings** and assign the value
         AddReportingsPage -> AddReportingsPage : Concatinate the **selectedEmployees and employees** and remove duplicates and update it in **selectedEmployees**
+        AddReportingsPage -> AddReportingsPage : Find **newlyAddedEmployees** by filter the **filteredEmployees** with **selectedClonedEmployees**
+        alt **newlyAddedEmployees** length is zero
+            Client <-- AddReportingsPage : User can get a dismissible snack bar which indicates a error message
+        end
         Client <-- AddReportingsPage : User can get a dismissible snack bar which indicates a success message
     else selectedTeam is "Add Employee and Team"
         AddReportingsPage -> AddReportingsPage : Filter the **resourceList.reportings**, remove if current userId is present 
         AddReportingsPage -> AddReportingsPage : Declare a variable **employees** and call **getReporteesDetails with resourceList.reportings** and assign the value
         AddReportingsPage -> AddReportingsPage : Concatinate the **selectedEmployees and employees** and remove duplicates and update it in **selectedEmployees**
+        AddReportingsPage -> AddReportingsPage : Find **newlyAddedEmployees** by filter the **filteredEmployees** with **selectedClonedEmployees**
+        alt **newlyAddedEmployees** length is zero
+            Client <-- AddReportingsPage : User can get a dismissible snack bar which indicates a error message
+        end
         Client <-- AddReportingsPage : User can get a dismissible snack bar which indicates a success message
     end
     AddReportingsPage -> AddReportingsPage : Update the **resourceList** with emptyUser which have no value\nand Update the **selectedDomain** as []

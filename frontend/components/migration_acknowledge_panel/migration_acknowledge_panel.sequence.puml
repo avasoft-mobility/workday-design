@@ -55,11 +55,30 @@ activate Client #D3D3D3
                     MigrationAcknowledgePanel -> MigrationAcknowledgePanel : update role as **"UnAuthorised"**.
                     MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return
                 end
-                alt case : user.userId is equals migrationDetails.toUser.userId
+                alt case : user.userId is equals migrationDetails.toUser.userId and\n\t\tloggined User not an Admin and not a practiceHead
                     MigrationAcknowledgePanel -> MigrationAcknowledgePanel : update **role** as **"read"**.
                     MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return
                 end
                 alt case: user.reportings.includes(migrationDetails.toUser.userId)
+
+                    alt case: migrationDetails.toUser.managerId !== user.userId and user not a practiceHead
+                        alt case: user.userId === migrationDetails.toUser.userId || user.isAdmin
+                            MigrationAcknowledgePanel -> MigrationAcknowledgePanel : update **role** as **"Admin"**.
+                            MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return
+                        end
+                        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : update **role** as **"UnAuthorised**.
+                        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return
+                    end
+
+                    alt case: User is a practiceHead
+                        alt case: user.isAdmin && migrationDetails.status === "acknowledged"
+                            MigrationAcknowledgePanel -> MigrationAcknowledgePanel : update **role** as **"Admin"**.
+                            MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return
+                        end
+                        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : update **role** as **"Manager**.
+                        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return
+                    end
+
                     alt case: user is admin && migrationDetails.status is equals to **"requested"**
                         MigrationAcknowledgePanel -> MigrationAcknowledgePanel : update **role** as **"Manager"**.
                         MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return
@@ -82,15 +101,24 @@ activate Client #D3D3D3
                     MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return 1
                 end
                 alt case: migrationRequest.status is equals to "acknowledged"
+                    alt case: migrationRequest.acknowledgedBy === "-" 
+                        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return 1
+                    end
                     MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return 2
                 end
                 alt case: migrationRequest.status is equals to "rejected"
+                    alt case: migrationRequest.acknowledgedBy === "-" 
+                        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return 1
+                    end
                     alt case: migrationRequest.acknowledgedBy is defined
                         MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return 2
                     end
                     MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return 1
                 end
                 alt case : migrationRequest.status is equals to "accepted"
+                    alt case: migrationRequest.acknowledgedBy === "-" 
+                        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return 2
+                    end
                     MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return 3
                 end
                 MigrationAcknowledgePanel -> MigrationAcknowledgePanel: return
@@ -164,7 +192,7 @@ activate Client #D3D3D3
                 alt case : migrationRequest.status is equals to "accepted"
                     MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return `${migrationRequest?.acceptedBy} accepted`
                 end
-                alt case: migrationRequest.status is equals to "rejected" && migrationRequest.acknowledgedBy is defined
+                alt case: migrationRequest.status is equals to "rejected" 
                     MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return `${migrationRequest?.rejectedBy} rejected`
                 end
                 MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return "Waiting for admin approval"
@@ -215,7 +243,10 @@ activate Client #D3D3D3
             MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return empty description of "You are not Authorized to view this"
         end
         MigrationAcknowledgePanel -> MigrationAcknowledgePanel : bind the **Table** from antD and pass\n **reportees** variable as a **dataSource**
+        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : bind the **Color info** which indicates which color for newly added reportees and which else are removed
         MigrationAcknowledgePanel -> MigrationAcknowledgePanel : bind the **Steps** from antD and\n call the **getStepperState()**,**getStatusOfStep()**\n **getAcknowledgeStepStatus()**,**getAcknowledgeStepDescription()**,\n **getAcceptedStepStatus()**, **getAcceptedgeStepDescription()**\n fot step datas.
+        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : If the **migrationRequest.acknowledgedBy**  === "-"  then there only have two steps in migration roadmap.
+        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : If the **!migrationRequest.acknowledgedBy and migrationRequest.status is rejected**\n then there only have two steps in migration roadmap.
         Client <-- MigrationAcknowledgePanel : User will receive the expected view.
     deactivate MigrationAcknowledgePanel
 deactivate Client
