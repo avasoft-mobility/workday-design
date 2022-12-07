@@ -41,11 +41,17 @@ activate Client #D3D3D3
         MigrationAcknowledgePanel -> MigrationAcknowledgePanel : save the return response promise in a variable\n called **migrationinfo**.
         alt case : when the response is failure
             MigrationAcknowledgePanel -> MigrationAcknowledgePanel : update **migrationRequest** variable values to **undefined**
-            MigrationAcknowledgePanel -> MigrationAcknowledgePanel : update **reportees** variable values to **empty `[ ]`**
+            MigrationAcknowledgePanel -> MigrationAcknowledgePanel : update **overAllReportee** variable values to **empty `[ ]`**
         end
         alt case : when the response is success
-            MigrationAcknowledgePanel -> MigrationAcknowledgePanel :  update **migrationRequest** variable values to **response.date**
-            MigrationAcknowledgePanel -> MigrationAcknowledgePanel :  update **reportees** variable values to **response.data.reportees**
+            MigrationAcknowledgePanel -> MigrationAcknowledgePanel :  update **migrationRequest** variable values to **response.data**.
+            MigrationAcknowledgePanel -> MigrationAcknowledgePanel : create a variable called **overAllReportees** and merge\n**response.data.removedReportees**,**response.data.newReportees**,\n**response.data.existingReportees**.
+            MigrationAcknowledgePanel -> MigrationAcknowledgePanel : update **overallReportee** variable values to **overAllReportees**.
+            MigrationAcknowledgePanel -> MigrationAcknowledgePanel : create a varaible called **removeIds** and store all the userIds\n which are in the **response.data.removedReportees**.
+            MigrationAcknowledgePanel -> MigrationAcknowledgePanel : update **removedReporteeIds** variable values to **removeIds**.
+            MigrationAcknowledgePanel -> MigrationAcknowledgePanel : create a varaible called **newlyAddedIds** and store all the userIds\n which are in the **response.data.newReportees**.
+            MigrationAcknowledgePanel -> MigrationAcknowledgePanel : update **newlyAddedReporteeIds** variable values to **newlyAddedIds**.
+
         end
         MigrationAcknowledgePanel -> MigrationAcknowledgePanel : when the Components gets mounted or updated or \n when the **migrationRequest**, **currentUser**,\n **migrationUpdateMutation.isSuccess** value changes\n call the **getRole()** method
         MigrationAcknowledgePanel -> MigrationAcknowledgePanel : getRole(migrationRequest!, currentUser)
@@ -242,7 +248,7 @@ activate Client #D3D3D3
         alt case: role is equals to "UnAuthorised"
             MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return empty description of "You are not Authorized to view this"
         end
-        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : bind the **Table** from antD and pass\n **reportees** variable as a **dataSource**
+        MigrationAcknowledgePanel -> MigrationAcknowledgePanel : bind the **Table** from antD and pass\n **overAllReportee** variable as a **dataSource**
         MigrationAcknowledgePanel -> MigrationAcknowledgePanel : bind the **Color info** which indicates which color for newly added reportees and which else are removed
         MigrationAcknowledgePanel -> MigrationAcknowledgePanel : bind the **Steps** from antD and\n call the **getStepperState()**,**getStatusOfStep()**\n **getAcknowledgeStepStatus()**,**getAcknowledgeStepDescription()**,\n **getAcceptedStepStatus()**, **getAcceptedgeStepDescription()**\n fot step datas.
         MigrationAcknowledgePanel -> MigrationAcknowledgePanel : If the **migrationRequest.acknowledgedBy**  === "-"  then there only have two steps in migration roadmap.
@@ -282,6 +288,23 @@ activate Client #D3D3D3
     activate MigrationAcknowledgePanel #D3D3D3
         MigrationAcknowledgePanel -> MigrationAcknowledgePanel : returns the reject button and\n ${decisionText} button
         Client <-- MigrationAcknowledgePanel : component will be displayed to the user.
+    deactivate MigrationAcknowledgePanel
+deactivate Client
+
+... ...
+... ...
+
+Client -> MigrationAcknowledgePanel : **applyRespectiveStyle(userId: string, value: string | number)**
+activate Client #D3D3D3
+    activate MigrationAcknowledgePanel #D3D3D3
+        alt case: removedReporteeIds has userId
+            MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return the text with value as **value** in props\nand also the text should be in **darkRedColor**.
+        else case: newlyAddedReporteeIds has userId
+            MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return the text with value as **value** in props\nand also the text should be in **darkGreenColor**. 
+        else 
+            MigrationAcknowledgePanel -> MigrationAcknowledgePanel : return the text with value as **value** in props\nand also the text should be in **blackColor**.
+        end
+        Client <-- MigrationAcknowledgePanel :  The called Component will receive the particular **Text message**.
     deactivate MigrationAcknowledgePanel
 deactivate Client
 
